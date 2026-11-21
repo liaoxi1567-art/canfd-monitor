@@ -289,6 +289,86 @@ static void codec_boundaries(const send_plan_t *valid)
     input=(memory_json_t){large,sizeof large,0,512};CHECK(sp_json_decode(memory_json_read,&input,&parsed,project,error)==SP_ERR_FORMAT);
     CHECK(!memcmp(&parsed,valid,sizeof parsed));
 }
+
+#ifdef CANFD_WINSIM_HW
+/* APM key tables (/APMKEY/K1.TXT … K4.TXT): the keysim service is replaced by
+ * this one-slot request double, like the send-plan double above. */
+#include "services/keysim/keysim_file.h"
+static ks_io_request_t key_request;
+static bool key_pending;
+static int key_result=1;
+static unsigned key_done,key_loaded_mask;
+static ks_table_t key_loaded[WINSIM_NUM_CH];
+bool keysim_io_peek(ks_io_request_t *out){if(!key_pending)return false;*out=key_request;return true;}
+void keysim_io_complete(uint32_t id,int result){if(!key_pending||id!=key_request.id)return;key_pending=false;key_result=result;key_done++;}
+void keysim_table_loaded(uint8_t ch,const ks_table_t *table){if(ch<WINSIM_NUM_CH){key_loaded[ch]=*table;key_loaded_mask|=1u<<ch;}}
+static void key_io(unsigned kind,uint8_t ch,const ks_table_t *table)
+{
+    static unsigned serial;unsigned before=key_done;
+    memset(&key_request,0,sizeof key_request);key_request.id=++serial;key_request.kind=(uint8_t)kind;key_request.ch=ch;
+    if(table)key_request.table=*table;
+    key_pending=true;key_loaded_mask=0;
+    for(unsigned i=0;i<1000&&key_done==before;i++)storage_sd_task();
+    CHECK(key_done==before+1);
+}
+static ks_table_t key_table(const char *name,unsigned n)
+{
+    ks_table_t t;memset(&t,0,sizeof t);t.valid=true;snprintf(t.name,sizeof t.name,"%s",name);
+    for(unsigned i=0;i<n;i++){snprintf(t.keys[i].name,sizeof t.keys[i].name,"档%u",i+1);t.keys[i].mv=(uint16_t)(4000u-700u*i);t.keys[i].ohm=1000.0f*(float)(i+1);}
+    t.n=(uint8_t)n;return t;
+}
+static bool read_text(const char *path,char *buffer,size_t capacity)
+{
+    FIL file;UINT count=0;if(f_open(&file,path,FA_READ)!=FR_OK)return false;
+    FRESULT result=f_read(&file,buffer,(UINT)(capacity-1u),&count);buffer[count]=0;
+    return f_close(&file)==FR_OK&&result==FR_OK;
+}
+static unsigned key_dir_entries(void)
+{
+    DIR dir;FILINFO info;unsigned n=0;CHECK(f_opendir(&dir,"0:/APMKEY")==FR_OK);
+    while(f_readdir(&dir,&info)==FR_OK&&info.fname[0])n++;
+    CHECK(f_closedir(&dir)==FR_OK);return n;
+}
+static void keysim_files(void)
+{
+    char text[KS_FILE_MAX_BYTES+1];FILINFO info;
+    ks_table_t learned=key_table("学习 · K2",3),scanned=key_table("扫描 · K2",5);
+    key_io(KS_IO_SAVE,1,&learned);CHECK(key_result==0);
+    CHECK(read_text("0:/APMKEY/K2.TXT",text,sizeof text));
+    CHECK(!strncmp(text,"CANFD-APMKEY 1\nchannel=2\nname=学习 · K2\n",strlen("CANFD-APMKEY 1\nchannel=2\nname=学习 · K2\n")));
+    CHECK(strstr(text,"key=档1,4000,1000\n")&&key_dir_entries()==1);
+    /* Replacing keeps exactly one file: no .BAK or temporary left behind. */
+    key_io(KS_IO_SAVE,1,&scanned);CHECK(key_result==0);
+    CHECK(read_text("0:/APMKEY/K2.TXT",text,sizeof text)&&strstr(text,"name=扫描 · K2")&&key_dir_entries()==1);
+    key_io(KS_IO_LOAD,0,NULL);CHECK(key_result==0&&key_loaded_mask==2u);
+    CHECK(key_loaded[1].valid&&key_loaded[1].n==5&&!strcmp(key_loaded[1].name,"扫描 · K2")&&key_loaded[1].keys[4].mv==1200);
+    /* A hand-broken or oversized file is skipped; other channels still load. */
+    create_bytes("0:/APMKEY/K3.TXT","garbage\n",8);
+    static char big[KS_FILE_MAX_BYTES+64];memset(big,'#',sizeof big);memcpy(big,"CANFD-APMKEY 1\n",15);
+    create_bytes("0:/APMKEY/K4.TXT",big,sizeof big);
+    key_io(KS_IO_LOAD,0,NULL);CHECK(key_result==0&&key_loaded_mask==2u);
+    /* Power lost between the two renames: the backup is restored on load. */
+    CHECK(f_rename("0:/APMKEY/K2.TXT","0:/APMKEY/K2.BAK")==FR_OK);
+    key_io(KS_IO_LOAD,0,NULL);CHECK(key_result==0&&key_loaded_mask==2u&&!strcmp(key_loaded[1].name,"扫描 · K2"));
+    CHECK(f_stat("0:/APMKEY/K2.TXT",&info)==FR_OK&&f_stat("0:/APMKEY/K2.BAK",&info)==FR_NO_FILE);
+    /* Failed write keeps the previous table. */
+    fail_write=true;key_io(KS_IO_SAVE,1,&learned);fail_write=false;
+    CHECK(key_result==KS_IO_ERR_IO);
+    CHECK(read_text("0:/APMKEY/K2.TXT",text,sizeof text)&&strstr(text,"name=扫描 · K2"));
+    /* Invalid table is refused before any file is touched. */
+    ks_table_t bad=learned;bad.keys[0].mv=6000;
+    key_io(KS_IO_SAVE,1,&bad);CHECK(key_result==KS_FILE_ERR_NAME);
+    CHECK(read_text("0:/APMKEY/K2.TXT",text,sizeof text)&&strstr(text,"name=扫描 · K2"));
+    /* Read-only file is not replaced. */
+    CHECK(f_chmod("0:/APMKEY/K2.TXT",AM_RDO,AM_RDO)==FR_OK);
+    key_io(KS_IO_SAVE,1,&learned);CHECK(key_result==KS_IO_ERR_IO);
+    CHECK(f_chmod("0:/APMKEY/K2.TXT",0,AM_RDO)==FR_OK);
+    key_io(KS_IO_SAVE,0,&learned);CHECK(key_result==0&&f_stat("0:/APMKEY/K1.TXT",&info)==FR_OK);
+    /* Without a mounted card the request completes as unavailable. */
+    port_sd_unmount();key_io(KS_IO_SAVE,1,&learned);CHECK(key_result==KS_IO_ERR_UNAVAILABLE);
+    port_sd_mount();key_io(KS_IO_LOAD,0,NULL);CHECK(key_result==0&&key_loaded_mask==3u);
+}
+#endif
 static void device_file_operations(void)
 {
     CHECK(!file_port_rec_prefix_get()[0]);
@@ -1005,6 +1085,9 @@ int main(int argc,char **argv)
     CHECK(!storage_sd_raw_ready() && port_sd_file_count() == 0);
     fail_write=false;port_sd_format();CHECK(last_result[EV_SD_FORMAT_DONE]==SD_OK);
     device_file_operations();
+#ifdef CANFD_WINSIM_HW
+    keysim_files();
+#endif
     full_catalog_record_name();
     reclaim_uncached_segments();
     reclaim_latency_fixture();
@@ -1013,6 +1096,12 @@ int main(int argc,char **argv)
     rotation_full_preserves_fence(true);
     rotation_full_preserves_fence(false);
     queued_protection_follows_file_identity();
-    printf("storage_sd: %u checks passed (production FatFs on 16 MiB RAM card)\n", checks);
+    printf("storage_sd%s: %u checks passed (production FatFs on 16 MiB RAM card)\n",
+#ifdef CANFD_WINSIM_HW
+           " + APM key tables",
+#else
+           "",
+#endif
+           checks);
     return 0;
 }

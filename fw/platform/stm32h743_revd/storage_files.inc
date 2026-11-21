@@ -227,6 +227,56 @@ static int save_plan_to_sd(const sp_io_request_t *request)
     result=f_rename(temporary,path);if(result!=FR_OK){(void)f_unlink(temporary);snprintf(file_diagnostic,sizeof file_diagnostic,"/SEND/%.47s: FatFs rename error %u",request->name,(unsigned)result);return result==FR_EXIST?SP_ERR_NAME:SP_ERR_IO;}
     return SP_OK;
 }
+#ifdef CANFD_WINSIM_HW
+/* APM 按键模拟的键值表：/APMKEY/K1.TXT … K4.TXT（格式见 services/keysim/keysim_file.h）。
+ * 只在有第 12 页硬件的目标上编译；当前 Rev D/E 目标不包含这段代码。 */
+#include "services/keysim/keysim_file.h"
+#define KEYS_DIR "0:/" KS_FILE_DIR
+static ks_io_request_t keys_request FILE_CPU_WORK;
+static ks_table_t keys_table FILE_CPU_WORK;
+static bool keys_paths(uint8_t ch,char path[SD_PATH_SIZE],char backup[SD_PATH_SIZE])
+{
+    char name[8];
+    if(ks_file_name(ch,name,sizeof name)!=KS_FILE_OK||!join_path(path,SD_PATH_SIZE,KEYS_DIR,name))return false;
+    snprintf(backup,SD_PATH_SIZE,"%s/K%u.BAK",KEYS_DIR,(unsigned)ch+1u);return true;
+}
+static int keys_save(const ks_io_request_t *request)
+{
+    size_t length=0;char path[SD_PATH_SIZE],backup[SD_PATH_SIZE],temporary[SD_PATH_SIZE];
+    int status=ks_table_encode(&request->table,request->ch,file_work.json,sizeof file_work.json,&length);if(status)return status;
+    if(!keys_paths(request->ch,path,backup))return KS_IO_ERR_IO;
+    FRESULT result=f_mkdir(KEYS_DIR);if(result!=FR_OK&&result!=FR_EXIST)return KS_IO_ERR_IO;
+    FILINFO info;FRESULT exists=f_stat(path,&info);
+    if(exists==FR_OK&&(info.fattrib&AM_RDO))return KS_IO_ERR_IO;
+    if(exists!=FR_OK&&exists!=FR_NO_FILE)return KS_IO_ERR_IO;
+    if(!temporary_path(temporary,KEYS_DIR))return KS_IO_ERR_IO;
+    result=write_new(temporary,file_work.json,(UINT)length);if(result!=FR_OK)return KS_IO_ERR_IO;
+    bool backed=false;(void)f_unlink(backup);
+    if(exists==FR_OK){result=f_rename(path,backup);backed=result==FR_OK;}
+    if(result==FR_OK)result=f_rename(temporary,path);
+    if(result!=FR_OK){if(backed)(void)f_rename(backup,path);(void)f_unlink(temporary);return KS_IO_ERR_IO;}
+    if(backed)(void)f_unlink(backup);
+    return 0;
+}
+static int keys_load(void)
+{
+    for(uint8_t ch=0;ch<WINSIM_NUM_CH;ch++){
+        char path[SD_PATH_SIZE],backup[SD_PATH_SIZE];if(!keys_paths(ch,path,backup))return KS_IO_ERR_IO;
+        FILINFO info;
+        /* Power lost between the two renames: only the backup is left. */
+        if(f_stat(path,&info)==FR_NO_FILE&&f_stat(backup,&info)==FR_OK)(void)f_rename(backup,path);
+        FIL file;FRESULT result=f_open(&file,path,FA_READ);
+        if(result==FR_NO_FILE||result==FR_NO_PATH)continue;
+        if(result!=FR_OK)return KS_IO_ERR_IO;
+        bool fits=f_size(&file)<=KS_FILE_MAX_BYTES;UINT count=0;
+        if(fits)result=f_read(&file,file_work.json,KS_FILE_MAX_BYTES,&count);
+        FRESULT closed=f_close(&file);if(result!=FR_OK||closed!=FR_OK)return KS_IO_ERR_IO;
+        if(fits&&ks_table_decode(file_work.json,count,&keys_table)==KS_FILE_OK)keysim_table_loaded(ch,&keys_table);
+        /* An unreadable or oversized file is ignored; the channel keeps its RAM table. */
+    }
+    return 0;
+}
+#endif
 static void files_on_mount(void)
 {
     record_prefix[0]=0;
@@ -251,17 +301,32 @@ static void files_task(void)
 {
 #ifndef REVD_FREERTOS
     bool requested=sp_io_peek(&file_request);
-    if(!requested&&!plans_refresh_pending)return;
+#ifdef CANFD_WINSIM_HW
+    bool keys=keysim_io_peek(&keys_request);
+#else
+    bool keys=false;
+#endif
+    if(!requested&&!plans_refresh_pending&&!keys)return;
     if(!metadata_idle()||command_in!=command_out){
-        if(requested&&!recording_open&&!close_pending&&!mounted){(void)sp_io_complete(file_request.id,SP_ERR_BUSY,"SD unavailable or shared");}
+        if(!recording_open&&!close_pending&&!mounted){
+            if(requested)(void)sp_io_complete(file_request.id,SP_ERR_BUSY,"SD unavailable or shared");
+#ifdef CANFD_WINSIM_HW
+            if(keys)keysim_io_complete(keys_request.id,KS_IO_ERR_UNAVAILABLE);
+#endif
+        }
         return;
     }
-    int result=0;
-    file_diagnostic[0]=0;
-    if(requested&&file_request.kind==SP_IO_SAVE)result=save_plan_to_sd(&file_request);
-    if(!result)result=catalog_from_sd();
-    if(!result)plans_refresh_pending=false;
-    if(requested)(void)sp_io_complete(file_request.id,result,result?(file_diagnostic[0]?file_diagnostic:"/SEND read/write failed; old catalog retained"):"SD send plans updated in /SEND");
-    else if(result){plans_refresh_pending=false;post_message(MSG_SD_ERROR,result);}
+    if(requested||plans_refresh_pending){
+        int result=0;
+        file_diagnostic[0]=0;
+        if(requested&&file_request.kind==SP_IO_SAVE)result=save_plan_to_sd(&file_request);
+        if(!result)result=catalog_from_sd();
+        if(!result)plans_refresh_pending=false;
+        if(requested)(void)sp_io_complete(file_request.id,result,result?(file_diagnostic[0]?file_diagnostic:"/SEND read/write failed; old catalog retained"):"SD send plans updated in /SEND");
+        else if(result){plans_refresh_pending=false;post_message(MSG_SD_ERROR,result);}
+    }
+#ifdef CANFD_WINSIM_HW
+    if(keys)keysim_io_complete(keys_request.id,keys_request.kind==KS_IO_SAVE?keys_save(&keys_request):keys_load());
+#endif
 #endif
 }

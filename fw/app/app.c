@@ -9,6 +9,7 @@
 #include "services/disp/disp_pipe.h"
 #include "services/frame_ring/frame_ring.h"
 #include "services/input/keys.h"
+#include "services/keysim/keysim.h"
 #include "services/player/play_sm.h"
 #include "services/power/power_sm.h"
 #include "services/recorder/rec_sm.h"
@@ -86,6 +87,7 @@ static void boot_reset(void)
     led_init();
     ui_init();
     bench_init();
+    keysim_init();
 }
 
 void app_init(void)
@@ -191,6 +193,10 @@ void app_tick(uint32_t ms)
         tx_tick();
         play_tick(ms);
     }
+    if (ps == PWR_RUNNING)
+        keysim_tick(ms);
+    else
+        keysim_leave();   /* 关机或未运行：接口保持高阻 */
     led_tick();
     drain();
     /* The device and simulator advance the same owners exactly once here.

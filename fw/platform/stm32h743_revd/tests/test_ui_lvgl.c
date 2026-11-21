@@ -12,6 +12,7 @@
 #include "sim/env_sim.h"
 #include "sim/send_plan.h"
 #include "sim/tx_sequence.h"
+#include "services/keysim/keysim.h"
 #include <assert.h>
 #include "src/widgets/buttonmatrix/lv_buttonmatrix_private.h"
 
@@ -149,12 +150,25 @@ int main(int argc,char **argv)
     ui_lvgl_init(d);run(200);
     lv_indev_t *touch=lv_indev_create();lv_indev_set_type(touch,LV_INDEV_TYPE_POINTER);lv_indev_set_display(touch,d);lv_indev_set_read_cb(touch,pointer_read);
     CHECK(ui_page()==PG_HOME&&!strcmp(lv_label_get_text(title),"主页"));
-    for(int i=0;i<8;i++)CHECK(lv_obj_has_flag(home[i],LV_OBJ_FLAG_HIDDEN)==(i>=6));
+    const int home_n=keysim_available()?7:6;   /* 7th tile only where key-simulation hardware exists */
+    for(int i=0;i<8;i++)CHECK(lv_obj_has_flag(home[i],LV_OBJ_FLAG_HIDDEN)==(i>=home_n));
     CHECK(flushes>0);dump(out,"lvgl-home");glyph_check("platform/stm32h743_revd/fonts/ui_font_chars.txt");
     const page_t pages[]={PG_LIVE,PG_TX,PG_DIAG,PG_FILES,PG_CHSET,PG_SYSSET};
     for(int i=0;i<6;i++){
         click(home[i]);CHECK(ui_page()==pages[i]&&lv_obj_has_flag(home[i],LV_OBJ_FLAG_HIDDEN));
         if(i==0){CHECK(strstr(lv_label_get_text(status),"frames"));dump(out,"lvgl-live");}
+        app_touch(EV_TOUCH_BACK,0);run(120);CHECK(ui_page()==PG_HOME);
+    }
+    if(keysim_available()){
+        /* Key simulation renders through the generic list: overview, K2 page, learning. */
+        click(home[6]);CHECK(ui_page()==PG_KEYSIM&&!lv_obj_has_flag(rows[0],LV_OBJ_FLAG_HIDDEN));
+        CHECK(strstr(lv_label_get_text(row_label[0]),"K1")!=NULL);run(400);dump(out,"lvgl-keysim");
+        click(rows[1]);CHECK(ui_page()==PG_KEYCH&&strstr(lv_label_get_text(title),"K2"));dump(out,"lvgl-keych-empty");
+        click(rows[5]);CHECK(ui_page()==PG_KEYLEARN);click(rows[0]);CHECK(keysim_get()->activity==KS_LEARNING);
+        for(int pos=1;pos<=3;pos++){env_cmd("ks_switch",1,pos);run(900);env_cmd("ks_switch",1,0);run(300);}
+        CHECK(keysim_get()->learn_n==3u);refresh();dump(out,"lvgl-keylearn");
+        app_touch(EV_TOUCH_BACK,0);run(120);CHECK(ui_page()==PG_KEYCH);
+        app_touch(EV_TOUCH_BACK,0);run(120);CHECK(ui_page()==PG_KEYSIM);
         app_touch(EV_TOUCH_BACK,0);run(120);CHECK(ui_page()==PG_HOME);
     }
     click(home[1]);CHECK(rendered_send&&ui_page()==PG_TX);

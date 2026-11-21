@@ -14,6 +14,7 @@
 #include "sim/sim_api.h"
 #include "sim/tx_scope.h"
 #include "sim/tx_sequence.h"
+#include "services/keysim/keysim.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,12 +37,14 @@ static void home_and_send_routes(void){
  boot();CHECK(PG_SENDMODE==18&&PG_PROJECTS==19&&PG_PROJECTFILES==20);
  CHECK(row("实时显示")==0&&row("发送报文")==1&&row("系统设置")==5);
  CHECK(!strstr(json(),"\"l\":\"录制设置\"")&&!strstr(json(),"\"l\":\"手动编辑报文\""));
- key(KEY_DOWN);CHECK(ui_cursor()==3);key(KEY_OK);CHECK(ui_page()==PG_FILES);
+ const int columns=keysim_available()?4:3,last=keysim_available()?6:5;
+ if(keysim_available())CHECK(row("按键模拟")==6);
+ key(KEY_DOWN);CHECK(ui_cursor()==columns);key(KEY_OK);CHECK(ui_page()==(columns==3?PG_FILES:PG_CHSET));
  key(KEY_BACK);key(KEY_UP);CHECK(ui_cursor()==0);key(KEY_RIGHT);key(KEY_OK);CHECK(ui_page()==PG_TX);
  CHECK(!strstr(json(),"现有报文")&&!strstr(json(),"手动编辑报文")&&!strstr(json(),"采集日志回放"));
  tap("加载文件");CHECK(ui_page()==PG_PROJECTFILES);key(KEY_BACK);CHECK(ui_page()==PG_TX);
- key(KEY_BACK);CHECK(ui_page()==PG_HOME);for(unsigned i=0;i<12;i++)key(KEY_RIGHT);CHECK(ui_cursor()==5);
- key(KEY_DOWN);CHECK(ui_cursor()==5);key(KEY_UP);CHECK(ui_cursor()==2);
+ key(KEY_BACK);CHECK(ui_page()==PG_HOME);for(unsigned i=0;i<12;i++)key(KEY_RIGHT);CHECK(ui_cursor()==last);
+ key(KEY_DOWN);CHECK(ui_cursor()==last);key(KEY_UP);CHECK(ui_cursor()==last-columns);
 }
 static void project_files_and_unified_inventory(void){
  boot();sp_file_t files[3];memset(files,0,sizeof files);send_plan_t plan;CHECK(sp_capture(1,&plan)==0);

@@ -7,6 +7,8 @@
 #include "services/player/play_sm.h"
 #include "services/power/power_sm.h"
 #include "services/storage/storage_sm.h"
+#include "services/keysim/keysim.h"
+#include "services/keysim/keysim_file.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -287,6 +289,180 @@ static void bus_defaults(int ch)
     }
 }
 
+
+/* ---------- 按键模拟：第 12 页电路 + 4 路仿真 APM ----------
+ * 每一路：APM 内部 2.2 kΩ 上拉到 5 V（唤醒后才有电），接口侧 400 kΩ 回读负载，
+ * 可选并着的原车开关（4 个档位），以及驱动事先不知道的串联电阻（PTC + 继电器）。
+ * APM 的开关状态按演示门限判定，代替将来从 CAN 报文解码出来的信号。 */
+static const float ks_bits[WINSIM_NUM_BITS] = {
+    200.0f, 390.0f, 820.0f, 1600.0f, 3300.0f, 6200.0f,
+    13000.0f, 24000.0f, 47000.0f, 91000.0f, 180000.0f, 360000.0f, 100.0f,
+};
+static const float ks_switch_ohm[5] = { 0.0f, 5100.0f, 2200.0f, 1000.0f, 330.0f };   /* 0 = 松开 */
+static const float ks_series_ohm[WINSIM_NUM_CH] = { 12.4f, 9.8f, 15.1f, 11.2f };
+static struct {
+    bool     oe, sh;
+    uint16_t mask;
+    uint8_t  ch;
+    bool     apm_awake;
+    bool     attached[WINSIM_NUM_CH];
+    uint8_t  pos[WINSIM_NUM_CH];
+    bool     fault[WINSIM_NUM_CH];
+} KS;
+
+/* 模拟 SD 卡上的 /APMKEY/K1.TXT … K4.TXT。设备断电重启不丢，格式化或重置模拟器才清空。 */
+static struct {
+    char     text[WINSIM_NUM_CH][KS_FILE_MAX_BYTES];
+    uint16_t len[WINSIM_NUM_CH];
+} KSF;
+
+static void ks_files_clear(void)
+{
+    memset(&KSF, 0, sizeof KSF);
+}
+
+/* 和板级存储所有者同样的约定：卡就绪且空闲时处理一个请求。 */
+static void ks_storage_tick(void)
+{
+    ks_io_request_t r;
+    if (!keysim_io_peek(&r))
+        return;
+    storage_state_t st = storage_get()->state;
+    if (st == ST_MOUNTING || st == ST_FORMATTING)
+        return;   /* 等一等 */
+    if (!E.sd_present || E.msc || st != ST_READY) {
+        keysim_io_complete(r.id, KS_IO_ERR_UNAVAILABLE);
+        return;
+    }
+    if (r.kind == KS_IO_SAVE) {
+        size_t len = 0u;
+        if (E.sd_wp) {
+            keysim_io_complete(r.id, KS_IO_ERR_IO);
+            return;
+        }
+        int rc = ks_table_encode(&r.table, r.ch, KSF.text[r.ch], sizeof KSF.text[r.ch], &len);
+        if (rc == KS_FILE_OK)
+            KSF.len[r.ch] = (uint16_t)len;
+        keysim_io_complete(r.id, rc);
+    } else {
+        for (uint8_t ch = 0; ch < WINSIM_NUM_CH; ch++) {
+            ks_table_t t;
+            if (KSF.len[ch] && ks_table_decode(KSF.text[ch], KSF.len[ch], &t) == KS_FILE_OK)
+                keysim_table_loaded(ch, &t);
+        }
+        keysim_io_complete(r.id, 0);
+    }
+}
+
+static void ks_reset(void)
+{
+    ks_files_clear();
+    memset(&KS, 0, sizeof KS);
+    KS.apm_awake = true;
+    for (unsigned k = 0; k < WINSIM_NUM_CH; k++)
+        KS.attached[k] = true;
+}
+
+static float ks_port_mv(unsigned ch)
+{
+    if (KS.fault[ch])
+        return 12000.0f;
+    float vs = KS.apm_awake ? 5000.0f : 0.0f;
+    float g = 1.0f / 400000.0f;
+    if (KS.attached[ch] && KS.pos[ch])
+        g += 1.0f / ks_switch_ohm[KS.pos[ch]];
+    if (KS.oe && ch == KS.ch) {
+        float g_in = KS.sh ? 1.0f / 0.05f : 0.0f;
+        for (unsigned i = 0; i < WINSIM_NUM_BITS; i++)
+            if (KS.mask & (1u << i))
+                g_in += 1.0f / (ks_bits[i] + 5.0f);
+        if (g_in > 0.0f)
+            g += 1.0f / (ks_series_ohm[ch] + 1.0f / g_in);
+    }
+    float rp = 1.0f / g;
+    return vs * rp / (rp + 2200.0f);
+}
+
+static void     ks_shift(uint16_t mask) { KS.mask = mask; }
+static void     ks_oe(bool en) { KS.oe = en; }
+static void     ks_short(bool en) { KS.sh = en; }
+static void     ks_delay(uint32_t ms) { (void)ms; }   /* 物理模型没有时间常数 */
+static void     ks_select(uint8_t ch) { KS.ch = (uint8_t)(ch % WINSIM_NUM_CH); }
+static uint16_t ks_adc(void)
+{
+    if (!KS.oe)
+        return 0u;
+    float v = ks_port_mv(KS.ch);
+    if (v > 13200.0f)
+        v = 13200.0f;
+    return (uint16_t)(v + 0.5f);
+}
+
+bool port_keysim_hal(winsim_hal_t *out)
+{
+    out->shift_write = ks_shift;
+    out->set_oe = ks_oe;
+    out->set_short_0r = ks_short;
+    out->adc_read_mv = ks_adc;
+    out->delay_ms = ks_delay;
+    out->select_channel = ks_select;
+    return true;
+}
+
+int port_keysim_apm_state(uint8_t ch)
+{
+    if (ch >= WINSIM_NUM_CH || !KS.apm_awake || KS.fault[ch])
+        return -1;   /* APM 没醒或接口异常时没有 CAN 状态报文 */
+    float mv = ks_port_mv(ch);
+    return mv > 4000.0f ? 0 : mv > 3000.0f ? 1 : mv > 2000.0f ? 2 : mv > 1100.0f ? 3 : mv > 300.0f ? 4 : 5;
+}
+
+static int ks_cmd(const char *c, int a, int b)
+{
+    if (strcmp(c, "ks_apm") == 0) {
+        KS.apm_awake = a != 0;
+        return 0;
+    }
+    if (a < 0 || a >= (int)WINSIM_NUM_CH)
+        return -1;
+    if (strcmp(c, "ks_attach") == 0) {
+        KS.attached[a] = b != 0;
+        if (!KS.attached[a])
+            KS.pos[a] = 0u;
+    } else if (strcmp(c, "ks_switch") == 0) {
+        if (b < 0 || b > 4)
+            return -1;
+        KS.pos[a] = KS.attached[a] ? (uint8_t)b : 0u;
+    } else if (strcmp(c, "ks_fault") == 0) {
+        KS.fault[a] = b != 0;
+    } else {
+        return -1;
+    }
+    return 0;
+}
+
+static void ks_json(jw_t *j)
+{
+    jw_key(j, "keysim");
+    jw_obj(j);
+    jw_kbool(j, "apm", KS.apm_awake);
+    jw_kint(j, "selected", KS.ch);
+    jw_key(j, "ch");
+    jw_arr(j);
+    for (unsigned k = 0; k < WINSIM_NUM_CH; k++) {
+        jw_obj(j);
+        jw_kbool(j, "attached", KS.attached[k]);
+        jw_kint(j, "pos", KS.pos[k]);
+        jw_kbool(j, "fault", KS.fault[k]);
+        jw_kint(j, "port_mv", (int64_t)(ks_port_mv(k) + 0.5f));
+        jw_kint(j, "state", port_keysim_apm_state((uint8_t)k));
+        jw_kbool(j, "sd_file", KSF.len[k] != 0u);
+        jw_end_obj(j);
+    }
+    jw_end_arr(j);
+    jw_end_obj(j);
+}
+
 void env_reset(void)
 {
     memset(&E, 0, sizeof E);
@@ -302,6 +478,7 @@ void env_reset(void)
     preset_files();
     for (int ch = 0; ch < CH_NUM; ch++)
         bus_defaults(ch);
+    ks_reset();
 }
 
 void env_set_key(key_id_t k, bool down) { E.key[k] = down; }
@@ -974,6 +1151,7 @@ static void sd_tick(void)
     }
     if (E.format_due && (int32_t)(t - E.format_due) >= 0) {
         E.format_due = 0;
+        ks_files_clear();
         E.nfiles = 0;
         memset(E.file_session,0,sizeof E.file_session);
         E.sd_used = 0;
@@ -990,6 +1168,7 @@ void env_tick(uint32_t ms)
     E.rtc_elapsed_ms += ms;
     if (!E.powered)
         return;
+    ks_storage_tick();
     for (int ch = 0; ch < CH_NUM; ch++)
         bus_tick(ch, ms);
     sd_tick();
@@ -1000,6 +1179,8 @@ static bool is(const char *a, const char *b) { return strcmp(a, b) == 0; }
 
 int env_cmd(const char *c, int a, int b)
 {
+    if (strncmp(c, "ks_", 3) == 0)
+        return ks_cmd(c, a, b);
     int ch = a < 0 ? 0 : a > 1 ? 1 : a;
     if (is(c, "batt")) {
         E.batt_mv = (uint16_t)a;
@@ -1135,6 +1316,7 @@ void env_json(jw_t *j)
     for (int k = 0; k < KEY_NUM; k++)
         jw_bool(j, E.key[k]);
     jw_end_arr(j);
+    ks_json(j);
     jw_end_obj(j);
 }
 

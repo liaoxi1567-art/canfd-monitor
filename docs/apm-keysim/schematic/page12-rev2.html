@@ -1,0 +1,1517 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hardware-C 车窗按键模拟</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one reading column; the schematic breaks out full width with its own horizontal scroll */
+:root {
+  --bg: #f5f7f8; --panel: #ffffff; --fg: #15202b; --muted: #5b6875; --line: #d5dce2;
+  --accent: #0b7a6e; --accent-soft: #e2f3f0; --accent2: #b4530a; --warn: #9a5b00;
+  --sans: "IBM Plex Sans", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1418; --panel: #161d23; --fg: #dbe3ea; --muted: #8d9aa6; --line: #2a343d;
+  --accent: #3cc9b4; --accent-soft: #12302c; --accent2: #f0a050; --warn: #e0a548; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0f1418; --panel: #161d23; --fg: #dbe3ea; --muted: #8d9aa6; --line: #2a343d;
+  --accent: #3cc9b4; --accent-soft: #12302c; --accent2: #f0a050; --warn: #e0a548; color-scheme: dark; }
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 15px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 32px 64px; }
+main { max-width: 1120px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; }
+.prose { max-width: 72ch; }
+h1, h2, h3 { text-wrap: balance; line-height: 1.25; margin: 0; font-weight: 600; }
+h1 { font-size: 1.9rem; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1rem; }
+p { margin: 0; }
+section { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.eyebrow { font-family: var(--mono); font-size: .78rem; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }
+.lede { color: var(--muted); }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.fact { border-top: 2px solid var(--line); padding-top: 8px; }
+.fact b { display: block; font-family: var(--mono); font-weight: 500; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.fact.new { border-color: var(--accent); }
+.fact span { color: var(--muted); font-size: .88rem; }
+figure { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 12px; }
+.scroll { overflow-x: auto; }
+figure svg { display: block; width: 100%; min-width: 1400px; height: auto; color: var(--fg); }
+figure svg text { font-family: var(--mono); font-size: 12px; fill: currentColor; stroke: none; }
+figure svg .small { font-size: 11px; }
+figure svg .tiny { font-size: 10px; }
+figure svg .ref { font-weight: 500; }
+figure svg .pin { font-size: 11px; }
+figure svg .pinno { font-size: 9px; fill: var(--muted); }
+figure svg .muted { fill: var(--muted); }
+figure svg .net { font-size: 11px; }
+figure svg .accent { color: var(--accent); stroke: var(--accent); }
+figure svg .accent2 { color: var(--accent2); stroke: var(--accent2); }
+figure svg text.accent { fill: var(--accent); stroke: none; }
+figure svg text.accent2 { fill: var(--accent2); stroke: none; }
+figure svg .bus { stroke-width: 2.2; }
+figure svg .dashed { stroke-dasharray: 3 3; }
+figcaption { color: var(--muted); font-size: .9rem; padding: 10px 4px 2px; max-width: 86ch; }
+.key { display: inline-block; width: 18px; height: 3px; vertical-align: middle; margin: 0 4px 0 10px; }
+.table { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+th, td { text-align: left; padding: 7px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 500; color: var(--muted); font-size: .8rem; letter-spacing: .03em; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td:first-child, td.num { font-family: var(--mono); white-space: nowrap; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; }
+tr.added td { background: var(--accent-soft); }
+.pill { font-family: var(--mono); font-size: .75rem; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); white-space: nowrap; }
+.pill.keep { border-color: var(--line); color: var(--muted); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.grid2 > * { min-width: 0; }
+ol, ul { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 8px; }
+code { font-family: var(--mono); font-size: .88em; }
+pre { font-family: var(--mono); font-size: .8rem; line-height: 1.5; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; overflow-x: auto; margin: 0; }
+details { border: 1px solid var(--line); border-radius: 6px; background: var(--panel); }
+details > summary { cursor: pointer; padding: 10px 14px; font-weight: 500; }
+details[open] > summary { border-bottom: 1px solid var(--line); }
+details pre { border: 0; border-radius: 0; max-height: 420px; }
+.row { display: flex; gap: 10px; align-items: center; padding: 10px 14px 0; flex-wrap: wrap; }
+button { font: inherit; font-size: .85rem; padding: 4px 12px; border-radius: 5px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
+button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.note { color: var(--muted); font-size: .88rem; }
+.warn { color: var(--warn); }
+</style>
+
+<main>
+<header class="prose" style="display:flex;flex-direction:column;gap:12px">
+  <div class="eyebrow">Hardware-C · C/062 之后 · 原理图第 12 页 · 第 2 版</div>
+  <h1>APM 车窗按键模拟</h1>
+  <p class="lede">第 2 版把模拟口从 1 路扩到 4 路，按“同一时刻只按一路”的要求复用一套电阻阵：4 个光耦继电器把公共节点分别接到 4 个接口，译码器保证任何时候最多接通一路。每路接口侧都有回读，所以任何一路都能做按键学习。</p>
+</header>
+
+<div class="facts">
+  <div class="fact new"><b>4 路</b><span>共用一套 13 位电阻阵，硬件保证同一时刻只接通一路</span></div>
+  <div class="fact"><b>2 个</b><span>主控引脚改动，和第 1 版相同：PG2、PC2_C；PC3_C 仍空着</span></div>
+  <div class="fact"><b>63 个器件</b><span>其中 4 个默认不贴；237 个引脚，53 个新网络</span></div>
+  <div class="fact"><b>23.9 mV</b><span>200–4600 mV 每 200 mV 的最差误差：1% 电阻随机抽样，每路串联电阻 5–17 Ω 并已自动标定</span></div>
+</div>
+
+<figure>
+  <div class="scroll"><svg viewBox="0 0 1940 790" role="img" aria-label="第 12 页第 2 版原理图：U801 驱动 13 位电阻阵和 0 Ω 直通，公共节点 WS_NODE 经 4 个 TLP176AM 光耦继电器分别接到 J801 的 K1–K4，每路有 PTC 和 TVS；SN74LVC139A 译码保证只接通一路，CD74HC4052 把所选通道的 1:4 分压接到 PC2_C。"><g stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="20" y="100" width="130" height="250" fill="none" class="part"/><text x="20" y="92" text-anchor="start" class="ref">U301</text><text x="85" y="122" text-anchor="middle" class="small muted">STM32H743ZIT6</text><text x="144" y="154" text-anchor="end" class="pin">PD12</text><line x1="150" y1="150" x2="175" y2="150"/><text x="144" y="184" text-anchor="end" class="pin">PD13</text><line x1="150" y1="180" x2="175" y2="180"/><text x="144" y="234" text-anchor="end" class="pin accent">PG2 · 87</text><line x1="150" y1="230" x2="175" y2="230" class="accent"/><text x="144" y="324" text-anchor="end" class="pin accent">PC2_C · 28</text><line x1="150" y1="320" x2="175" y2="320" class="accent"/><line x1="175" y1="150" x2="255" y2="150"/><line x1="175" y1="180" x2="255" y2="180"/><text x="185" y="144" text-anchor="start" class="net">EXP_SCL</text><text x="185" y="174" text-anchor="start" class="net">EXP_SDA</text><line x1="175" y1="230" x2="255" y2="230" class="accent"/><text x="182" y="224" text-anchor="start" class="net accent">WS_RST_N</text><circle cx="215" cy="230" r="2.6" fill="currentColor" class="accent"/><line x1="215" y1="230" x2="215" y2="246"/><rect x="209" y="246" width="12" height="38" fill="none"/><line x1="215" y1="284" x2="215" y2="296"/><line x1="215" y1="296" x2="215" y2="304"/><line x1="207" y1="304" x2="223" y2="304"/><line x1="210" y1="307" x2="220" y2="307"/><line x1="213" y1="310" x2="217" y2="310"/><text x="226" y="262" text-anchor="start" class="ref small">R814</text><text x="226" y="275" text-anchor="start" class="small">10k</text><line x1="175" y1="320" x2="188" y2="320" class="accent"/><polygon points="188,320 196,313 243.6,313 243.6,327 196,327" fill="none" class="accent"/><text x="219.8" y="324" text-anchor="middle" class="net tiny accent">WS_ADC</text><text x="20" y="380" text-anchor="start" class="small muted">I²C4 已在用：</text><text x="20" y="396" text-anchor="start" class="small muted">U111 TUSB320、J302</text><text x="20" y="412" text-anchor="start" class="small muted">上拉 R304/R305 4.7 kΩ 已有</text><rect x="280" y="110" width="130" height="330" fill="none" class="part"/><text x="280" y="102" text-anchor="start" class="ref">U801  TCA9539PWR</text><text x="345" y="432" text-anchor="middle" class="small muted">I²C 0x74</text><text x="286" y="134" text-anchor="start" class="pin">VCC</text><text x="276" y="127" text-anchor="end" class="pinno">24</text><line x1="255" y1="130" x2="280" y2="130"/><text x="286" y="154" text-anchor="start" class="pin">SCL</text><text x="276" y="147" text-anchor="end" class="pinno">22</text><line x1="255" y1="150" x2="280" y2="150"/><text x="286" y="184" text-anchor="start" class="pin">SDA</text><text x="276" y="177" text-anchor="end" class="pinno">23</text><line x1="255" y1="180" x2="280" y2="180"/><text x="286" y="234" text-anchor="start" class="pin">RESET</text><text x="276" y="227" text-anchor="end" class="pinno">3</text><line x1="255" y1="230" x2="280" y2="230"/><text x="286" y="334" text-anchor="start" class="pin">A0</text><text x="276" y="327" text-anchor="end" class="pinno">21</text><line x1="255" y1="330" x2="280" y2="330"/><text x="286" y="354" text-anchor="start" class="pin">A1</text><text x="276" y="347" text-anchor="end" class="pinno">2</text><line x1="255" y1="350" x2="280" y2="350"/><text x="286" y="384" text-anchor="start" class="pin">INT</text><text x="276" y="377" text-anchor="end" class="pinno">1</text><line x1="255" y1="380" x2="280" y2="380"/><text x="286" y="424" text-anchor="start" class="pin">GND</text><text x="276" y="417" text-anchor="end" class="pinno">12</text><line x1="255" y1="420" x2="280" y2="420"/><polyline points="255,130 240,130 240,116" fill="none"/><line x1="232" y1="116" x2="248" y2="116"/><text x="240" y="110" text-anchor="middle" class="small">+3V3</text><text x="160" y="128" text-anchor="start" class="small muted">C801 100nF</text><polyline points="255,330 255,350" fill="none"/><circle cx="255" cy="350" r="2.6" fill="currentColor"/><line x1="255" y1="350" x2="255" y2="356"/><line x1="255" y1="356" x2="255" y2="364"/><line x1="247" y1="364" x2="263" y2="364"/><line x1="250" y1="367" x2="260" y2="367"/><line x1="253" y1="370" x2="257" y2="370"/><line x1="251" y1="376" x2="259" y2="384"/><line x1="251" y1="384" x2="259" y2="376"/><line x1="255" y1="420" x2="255" y2="428"/><line x1="247" y1="428" x2="263" y2="428"/><line x1="250" y1="431" x2="260" y2="431"/><line x1="253" y1="434" x2="257" y2="434"/><text x="404" y="134" text-anchor="end" class="pin">P00</text><text x="414" y="127" text-anchor="start" class="pinno">4</text><line x1="410" y1="130" x2="432" y2="130"/><text x="436" y="134" text-anchor="start" class="net">G0</text><text x="404" y="154" text-anchor="end" class="pin">P01</text><text x="414" y="147" text-anchor="start" class="pinno">5</text><line x1="410" y1="150" x2="432" y2="150"/><text x="436" y="154" text-anchor="start" class="net">G1</text><text x="404" y="174" text-anchor="end" class="pin">P02</text><text x="414" y="167" text-anchor="start" class="pinno">6</text><line x1="410" y1="170" x2="432" y2="170"/><text x="436" y="174" text-anchor="start" class="net">G2</text><text x="404" y="194" text-anchor="end" class="pin">P03</text><text x="414" y="187" text-anchor="start" class="pinno">7</text><line x1="410" y1="190" x2="432" y2="190"/><text x="436" y="194" text-anchor="start" class="net">G3</text><text x="404" y="214" text-anchor="end" class="pin">P04</text><text x="414" y="207" text-anchor="start" class="pinno">8</text><line x1="410" y1="210" x2="432" y2="210"/><text x="436" y="214" text-anchor="start" class="net">G4</text><text x="404" y="234" text-anchor="end" class="pin">P05</text><text x="414" y="227" text-anchor="start" class="pinno">9</text><line x1="410" y1="230" x2="432" y2="230"/><text x="436" y="234" text-anchor="start" class="net">G5</text><text x="404" y="254" text-anchor="end" class="pin">P06</text><text x="414" y="247" text-anchor="start" class="pinno">10</text><line x1="410" y1="250" x2="432" y2="250"/><text x="436" y="254" text-anchor="start" class="net">G6</text><text x="404" y="274" text-anchor="end" class="pin">P07</text><text x="414" y="267" text-anchor="start" class="pinno">11</text><line x1="410" y1="270" x2="432" y2="270"/><text x="436" y="274" text-anchor="start" class="net">G7</text><text x="404" y="294" text-anchor="end" class="pin">P10</text><text x="414" y="287" text-anchor="start" class="pinno">13</text><line x1="410" y1="290" x2="432" y2="290"/><text x="436" y="294" text-anchor="start" class="net">G8</text><text x="404" y="314" text-anchor="end" class="pin">P11</text><text x="414" y="307" text-anchor="start" class="pinno">14</text><line x1="410" y1="310" x2="432" y2="310"/><text x="436" y="314" text-anchor="start" class="net">G9</text><text x="404" y="334" text-anchor="end" class="pin">P12</text><text x="414" y="327" text-anchor="start" class="pinno">15</text><line x1="410" y1="330" x2="432" y2="330"/><text x="436" y="334" text-anchor="start" class="net">G10</text><text x="404" y="354" text-anchor="end" class="pin">P13</text><text x="414" y="347" text-anchor="start" class="pinno">16</text><line x1="410" y1="350" x2="432" y2="350"/><text x="436" y="354" text-anchor="start" class="net">G11</text><text x="404" y="374" text-anchor="end" class="pin">P14</text><text x="414" y="367" text-anchor="start" class="pinno">17</text><line x1="410" y1="370" x2="432" y2="370"/><text x="436" y="374" text-anchor="start" class="net">SHORT</text><text x="404" y="394" text-anchor="end" class="pin">P15</text><text x="414" y="387" text-anchor="start" class="pinno">18</text><line x1="410" y1="390" x2="432" y2="390" class="accent2"/><text x="436" y="394" text-anchor="start" class="net accent2">G12</text><text x="404" y="414" text-anchor="end" class="pin">P16</text><text x="414" y="407" text-anchor="start" class="pinno">19</text><line x1="410" y1="410" x2="432" y2="410" class="accent2"/><text x="436" y="414" text-anchor="start" class="net accent2">CH_A0</text><text x="404" y="434" text-anchor="end" class="pin">P17</text><text x="414" y="427" text-anchor="start" class="pinno">20</text><line x1="410" y1="430" x2="432" y2="430" class="accent2"/><text x="436" y="434" text-anchor="start" class="net accent2">CH_A1</text><line x1="470" y1="150" x2="1300" y2="150" class="bus"/><text x="470" y="140" text-anchor="start" class="net">WS_NODE</text><circle cx="530" cy="150" r="2.6" fill="currentColor"/><text x="530" y="134" text-anchor="middle" class="small muted">b0</text><line x1="530" y1="150" x2="530" y2="170"/><rect x="524" y="170" width="12" height="50" fill="none"/><text x="520" y="195" text-anchor="middle" class="ref tiny" transform="rotate(-90 520 195)">R801</text><text x="545" y="195" text-anchor="middle" class="small" transform="rotate(-90 545 195)">200</text><line x1="530" y1="220" x2="530" y2="262"/><polyline points="530,262 530,268 522,268" fill="none"/><line x1="522" y1="264" x2="522" y2="296"/><line x1="517" y1="266" x2="517" y2="294"/><polyline points="522,292 530,292 530,340" fill="none"/><polygon points="523,292 529,288.5 529,295.5" fill="currentColor"/><line x1="517" y1="280" x2="506" y2="280"/><line x1="506" y1="280" x2="506" y2="298"/><rect x="502" y="298" width="8" height="24" fill="none"/><line x1="506" y1="322" x2="506" y2="340"/><circle cx="506" cy="280" r="2.6" fill="currentColor"/><text x="503" y="275" text-anchor="end" class="net tiny">G0</text><text x="524" y="360" text-anchor="middle" class="ref tiny">Q801A</text><circle cx="582" cy="150" r="2.6" fill="currentColor"/><text x="582" y="134" text-anchor="middle" class="small muted">b1</text><line x1="582" y1="150" x2="582" y2="170"/><rect x="576" y="170" width="12" height="50" fill="none"/><text x="572" y="195" text-anchor="middle" class="ref tiny" transform="rotate(-90 572 195)">R802</text><text x="597" y="195" text-anchor="middle" class="small" transform="rotate(-90 597 195)">390</text><line x1="582" y1="220" x2="582" y2="262"/><polyline points="582,262 582,268 574,268" fill="none"/><line x1="574" y1="264" x2="574" y2="296"/><line x1="569" y1="266" x2="569" y2="294"/><polyline points="574,292 582,292 582,340" fill="none"/><polygon points="575,292 581,288.5 581,295.5" fill="currentColor"/><line x1="569" y1="280" x2="558" y2="280"/><line x1="558" y1="280" x2="558" y2="298"/><rect x="554" y="298" width="8" height="24" fill="none"/><line x1="558" y1="322" x2="558" y2="340"/><circle cx="558" cy="280" r="2.6" fill="currentColor"/><text x="555" y="275" text-anchor="end" class="net tiny">G1</text><text x="576" y="360" text-anchor="middle" class="ref tiny">Q801B</text><circle cx="634" cy="150" r="2.6" fill="currentColor"/><text x="634" y="134" text-anchor="middle" class="small muted">b2</text><line x1="634" y1="150" x2="634" y2="170"/><rect x="628" y="170" width="12" height="50" fill="none"/><text x="624" y="195" text-anchor="middle" class="ref tiny" transform="rotate(-90 624 195)">R803</text><text x="649" y="195" text-anchor="middle" class="small" transform="rotate(-90 649 195)">820</text><line x1="634" y1="220" x2="634" y2="262"/><polyline points="634,262 634,268 626,268" fill="none"/><line x1="626" y1="264" x2="626" y2="296"/><line x1="621" y1="266" x2="621" y2="294"/><polyline points="626,292 634,292 634,340" fill="none"/><polygon points="627,292 633,288.5 633,295.5" fill="currentColor"/><line x1="621" y1="280" x2="610" y2="280"/><line x1="610" y1="280" x2="610" y2="298"/><rect x="606" y="298" width="8" height="24" fill="none"/><line x1="610" y1="322" x2="610" y2="340"/><circle cx="610" cy="280" r="2.6" fill="currentColor"/><text x="607" y="275" text-anchor="end" class="net tiny">G2</text><text x="628" y="360" text-anchor="middle" class="ref tiny">Q802A</text><circle cx="686" cy="150" r="2.6" fill="currentColor"/><text x="686" y="134" text-anchor="middle" class="small muted">b3</text><line x1="686" y1="150" x2="686" y2="170"/><rect x="680" y="170" width="12" height="50" fill="none"/><text x="676" y="195" text-anchor="middle" class="ref tiny" transform="rotate(-90 676 195)">R804</text><text x="701" y="195" text-anchor="middle" class="small" transform="rotate(-90 701 195)">1.6k</text><line x1="686" y1="220" x2="686" y2="262"/><polyline points="686,262 686,268 678,268" fill="none"/><line x1="678" y1="264" x2="678" y2="296"/><line x1="673" y1="266" x2="673" y2="294"/><polyline points="678,292 686,292 686,340" fill="none"/><polygon points="679,292 685,288.5 685,295.5" fill="currentColor"/><line x1="673" y1="280" x2="662" y2="280"/><line x1="662" y1="280" x2="662" y2="298"/><rect x="658" y="298" width="8" height="24" fill="none"/><line x1="662" y1="322" x2="662" y2="340"/><circle cx="662" cy="280" r="2.6" fill="currentColor"/><text x="659" y="275" text-anchor="end" class="net tiny">G3</text><text x="680" y="360" text-anchor="middle" class="ref tiny">Q802B</text><circle cx="738" cy="150" r="2.6" fill="currentColor"/><text x="738" y="134" text-anchor="middle" class="small muted">b4</text><line x1="738" y1="150" x2="738" y2="170"/><rect x="732" y="170" width="12" height="50" fill="none"/><text x="728" y="195" text-anchor="middle" class="ref tiny" transform="rotate(-90 728 195)">R805</text><text x="753" y="195" text-anchor="middle" class="small" transform="rotate(-90 753 195)">3.3k</text><line x1="738" y1="220" x2="738" y2="262"/><polyline points="738,262 738,268 730,268" fill="none"/><line x1="730" y1="264" x2="730" y2="296"/><line x1="725" y1="266" x2="725" y2="294"/><polyline points="730,292 738,292 738,340" fill="none"/><polygon points="731,292 737,288.5 737,295.5" fill="currentColor"/><line x1="725" y1="280" x2="714" y2="280"/><line x1="714" y1="280" x2="714" y2="298"/><rect x="710" y="298" width="8" height="24" fill="none"/><line x1="714" y1="322" x2="714" y2="340"/><circle cx="714" cy="280" r="2.6" fill="currentColor"/><text x="711" y="275" text-anchor="end" class="net tiny">G4</text><text x="732" y="360" text-anchor="middle" class="ref tiny">Q803A</text><circle cx="790" cy="150" r="2.6" fill="currentColor"/><text x="790" y="134" text-anchor="middle" class="small muted">b5</text><line x1="790" y1="150" x2="790" y2="170"/><rect x="784" y="170" width="12" height="50" fill="none"/><text x="780" y="195" text-anchor="middle" class="ref tiny" transform="rotate(-90 780 195)">R806</text><text x="805" y="195" text-anchor="middle" class="small" transform="rotate(-90 805 195)">6.2k</text><line x1="790" y1="220" x2="790" y2="262"/><polyline points="790,262 790,268 782,268" fill="none"/><line x1="782" y1="264" x2="782" y2="296"/><line x1="777" y1="266" x2="777" y2="294"/><polyline points="782,292 790,292 790,340" fill="none"/><polygon points="783,292 789,288.5 789,295.5" fill="currentColor"/><line x1="777" y1="280" x2="766" y2="280"/><line x1="766" y1="280" x2="766" y2="298"/><rect x="762" y="298" width="8" height="24" fill="none"/><line x1="766" y1="322" x2="766" y2="340"/><circle cx="766" cy="280" r="2.6" fill="currentColor"/><text x="763" y="275" text-anchor="end" class="net tiny">G5</text><text x="784" y="360" text-anchor="middle" class="ref tiny">Q803B</text><circle cx="842" cy="150" r="2.6" fill="currentColor"/><text x="842" y="134" text-anchor="middle" class="small muted">b6</text><line x1="842" y1="150" x2="842" y2="170"/><rect x="836" y="170" width="12" height="50" fill="none"/><text x="832" y="195" text-anchor="middle" class="ref tiny" transform="rotate(-90 832 195)">R807</text><text x="857" y="195" text-anchor="middle" class="small" transform="rotate(-90 857 195)">13k</text><line x1="842" y1="220" x2="842" y2="262"/><polyline points="842,262 842,268 834,268" fill="none"/><line x1="834" y1="264" x2="834" y2="296"/><line x1="829" y1="266" x2="829" y2="294"/><polyline points="834,292 842,292 842,340" fill="none"/><polygon points="835,292 841,288.5 841,295.5" fill="currentColor"/><line x1="829" y1="280" x2="818" y2="280"/><line x1="818" y1="280" x2="818" y2="298"/><rect x="814" y="298" width="8" height="24" fill="none"/><line x1="818" y1="322" x2="818" y2="340"/><circle cx="818" cy="280" r="2.6" fill="currentColor"/><text x="815" y="275" text-anchor="end" class="net tiny">G6</text><text x="836" y="360" text-anchor="middle" class="ref tiny">Q804A</text><circle cx="894" cy="150" r="2.6" fill="currentColor"/><text x="894" y="134" text-anchor="middle" class="small muted">b7</text><line x1="894" y1="150" x2="894" y2="170"/><rect x="888" y="170" width="12" height="50" fill="none"/><text x="884" y="195" text-anchor="middle" class="ref tiny" transform="rotate(-90 884 195)">R808</text><text x="909" y="195" text-anchor="middle" class="small" transform="rotate(-90 909 195)">24k</text><line x1="894" y1="220" x2="894" y2="262"/><polyline points="894,262 894,268 886,268" fill="none"/><line x1="886" y1="264" x2="886" y2="296"/><line x1="881" y1="266" x2="881" y2="294"/><polyline points="886,292 894,292 894,340" fill="none"/><polygon points="887,292 893,288.5 893,295.5" fill="currentColor"/><line x1="881" y1="280" x2="870" y2="280"/><line x1="870" y1="280" x2="870" y2="298"/><rect x="866" y="298" width="8" height="24" fill="none"/><line x1="870" y1="322" x2="870" y2="340"/><circle cx="870" cy="280" r="2.6" fill="currentColor"/><text x="867" y="275" text-anchor="end" class="net tiny">G7</text><text x="888" y="360" text-anchor="middle" class="ref tiny">Q804B</text><circle cx="946" cy="150" r="2.6" fill="currentColor"/><text x="946" y="134" text-anchor="middle" class="small muted">b8</text><line x1="946" y1="150" x2="946" y2="170"/><rect x="940" y="170" width="12" height="50" fill="none"/><text x="936" y="195" text-anchor="middle" class="ref tiny" transform="rotate(-90 936 195)">R809</text><text x="961" y="195" text-anchor="middle" class="small" transform="rotate(-90 961 195)">47k</text><line x1="946" y1="220" x2="946" y2="262"/><polyline points="946,262 946,268 938,268" fill="none"/><line x1="938" y1="264" x2="938" y2="296"/><line x1="933" y1="266" x2="933" y2="294"/><polyline points="938,292 946,292 946,340" fill="none"/><polygon points="939,292 945,288.5 945,295.5" fill="currentColor"/><line x1="933" y1="280" x2="922" y2="280"/><line x1="922" y1="280" x2="922" y2="298"/><rect x="918" y="298" width="8" height="24" fill="none"/><line x1="922" y1="322" x2="922" y2="340"/><circle cx="922" cy="280" r="2.6" fill="currentColor"/><text x="919" y="275" text-anchor="end" class="net tiny">G8</text><text x="940" y="360" text-anchor="middle" class="ref tiny">Q805A</text><circle cx="998" cy="150" r="2.6" fill="currentColor"/><text x="998" y="134" text-anchor="middle" class="small muted">b9</text><line x1="998" y1="150" x2="998" y2="170"/><rect x="992" y="170" width="12" height="50" fill="none"/><text x="988" y="195" text-anchor="middle" class="ref tiny" transform="rotate(-90 988 195)">R810</text><text x="1013" y="195" text-anchor="middle" class="small" transform="rotate(-90 1013 195)">91k</text><line x1="998" y1="220" x2="998" y2="262"/><polyline points="998,262 998,268 990,268" fill="none"/><line x1="990" y1="264" x2="990" y2="296"/><line x1="985" y1="266" x2="985" y2="294"/><polyline points="990,292 998,292 998,340" fill="none"/><polygon points="991,292 997,288.5 997,295.5" fill="currentColor"/><line x1="985" y1="280" x2="974" y2="280"/><line x1="974" y1="280" x2="974" y2="298"/><rect x="970" y="298" width="8" height="24" fill="none"/><line x1="974" y1="322" x2="974" y2="340"/><circle cx="974" cy="280" r="2.6" fill="currentColor"/><text x="971" y="275" text-anchor="end" class="net tiny">G9</text><text x="992" y="360" text-anchor="middle" class="ref tiny">Q805B</text><circle cx="1050" cy="150" r="2.6" fill="currentColor"/><text x="1050" y="134" text-anchor="middle" class="small muted">b10</text><line x1="1050" y1="150" x2="1050" y2="170"/><rect x="1044" y="170" width="12" height="50" fill="none"/><text x="1040" y="195" text-anchor="middle" class="ref tiny" transform="rotate(-90 1040 195)">R811</text><text x="1065" y="195" text-anchor="middle" class="small" transform="rotate(-90 1065 195)">180k</text><line x1="1050" y1="220" x2="1050" y2="262"/><polyline points="1050,262 1050,268 1042,268" fill="none"/><line x1="1042" y1="264" x2="1042" y2="296"/><line x1="1037" y1="266" x2="1037" y2="294"/><polyline points="1042,292 1050,292 1050,340" fill="none"/><polygon points="1043,292 1049,288.5 1049,295.5" fill="currentColor"/><line x1="1037" y1="280" x2="1026" y2="280"/><line x1="1026" y1="280" x2="1026" y2="298"/><rect x="1022" y="298" width="8" height="24" fill="none"/><line x1="1026" y1="322" x2="1026" y2="340"/><circle cx="1026" cy="280" r="2.6" fill="currentColor"/><text x="1023" y="275" text-anchor="end" class="net tiny">G10</text><text x="1044" y="360" text-anchor="middle" class="ref tiny">Q806A</text><circle cx="1102" cy="150" r="2.6" fill="currentColor"/><text x="1102" y="134" text-anchor="middle" class="small muted">b11</text><line x1="1102" y1="150" x2="1102" y2="170"/><rect x="1096" y="170" width="12" height="50" fill="none"/><text x="1092" y="195" text-anchor="middle" class="ref tiny" transform="rotate(-90 1092 195)">R812</text><text x="1117" y="195" text-anchor="middle" class="small" transform="rotate(-90 1117 195)">360k</text><line x1="1102" y1="220" x2="1102" y2="262"/><polyline points="1102,262 1102,268 1094,268" fill="none"/><line x1="1094" y1="264" x2="1094" y2="296"/><line x1="1089" y1="266" x2="1089" y2="294"/><polyline points="1094,292 1102,292 1102,340" fill="none"/><polygon points="1095,292 1101,288.5 1101,295.5" fill="currentColor"/><line x1="1089" y1="280" x2="1078" y2="280"/><line x1="1078" y1="280" x2="1078" y2="298"/><rect x="1074" y="298" width="8" height="24" fill="none"/><line x1="1078" y1="322" x2="1078" y2="340"/><circle cx="1078" cy="280" r="2.6" fill="currentColor"/><text x="1075" y="275" text-anchor="end" class="net tiny">G11</text><text x="1096" y="360" text-anchor="middle" class="ref tiny">Q806B</text><circle cx="1154" cy="150" r="2.6" fill="currentColor"/><text x="1154" y="134" text-anchor="middle" class="small accent2">b12</text><line x1="1154" y1="150" x2="1154" y2="170"/><rect x="1148" y="170" width="12" height="50" fill="none" class="accent2"/><text x="1144" y="195" text-anchor="middle" class="ref tiny" transform="rotate(-90 1144 195)">R831</text><text x="1169" y="195" text-anchor="middle" class="small" transform="rotate(-90 1169 195)">100</text><line x1="1154" y1="220" x2="1154" y2="262"/><polyline points="1154,262 1154,268 1146,268" fill="none"/><line x1="1146" y1="264" x2="1146" y2="296"/><line x1="1141" y1="266" x2="1141" y2="294"/><polyline points="1146,292 1154,292 1154,340" fill="none"/><polygon points="1147,292 1153,288.5 1153,295.5" fill="currentColor"/><line x1="1141" y1="280" x2="1130" y2="280"/><line x1="1130" y1="280" x2="1130" y2="298"/><rect x="1126" y="298" width="8" height="24" fill="none"/><line x1="1130" y1="322" x2="1130" y2="340"/><circle cx="1130" cy="280" r="2.6" fill="currentColor"/><text x="1127" y="275" text-anchor="end" class="net tiny">G12</text><text x="1148" y="360" text-anchor="middle" class="ref tiny">Q808A</text><circle cx="1222" cy="150" r="2.6" fill="currentColor"/><line x1="1222" y1="150" x2="1222" y2="262"/><polyline points="1222,262 1222,268 1214,268" fill="none"/><line x1="1214" y1="264" x2="1214" y2="296"/><line x1="1209" y1="266" x2="1209" y2="294"/><polyline points="1214,292 1222,292 1222,340" fill="none"/><polygon points="1215,292 1221,288.5 1221,295.5" fill="currentColor"/><line x1="1209" y1="280" x2="1198" y2="280"/><line x1="1198" y1="280" x2="1198" y2="298"/><rect x="1194" y="298" width="8" height="24" fill="none"/><line x1="1198" y1="322" x2="1198" y2="340"/><circle cx="1198" cy="280" r="2.6" fill="currentColor"/><text x="1195" y="275" text-anchor="end" class="net tiny">SHORT</text><text x="1216" y="360" text-anchor="middle" class="ref tiny">Q807</text><text x="1216" y="373" text-anchor="middle" class="tiny muted">AO3400A</text><text x="1230" y="214" text-anchor="start" class="tiny muted">0 Ω 直通</text><line x1="470" y1="340" x2="1240" y2="340"/><line x1="470" y1="340" x2="470" y2="348"/><line x1="462" y1="348" x2="478" y2="348"/><line x1="465" y1="351" x2="475" y2="351"/><line x1="468" y1="354" x2="472" y2="354"/><text x="500" y="398" text-anchor="start" class="small muted">Q801–Q806、Q808A = BSS138DW，b0–b12 共 13 位；b12 = 100 Ω 为本版新增</text><text x="500" y="414" text-anchor="start" class="small muted">栅极下拉 100 kΩ：RN801–RN803（G0–G11）、R832（G12）、R813（SHORT）</text><line x1="1300" y1="150" x2="1300" y2="600" class="bus"/><text x="1306" y="236" text-anchor="start" class="net tiny" transform="rotate(90 1306 236)">WS_NODE</text><rect x="1800" y="128" width="40" height="516" fill="none" class="part"/><text x="1820" y="120" text-anchor="middle" class="ref">J801</text><text x="1820" y="662" text-anchor="middle" class="tiny muted">KF2EDGR-3.81-8P</text><line x1="1300" y1="150" x2="1340" y2="150"/><rect x="1340" y="124" width="84" height="52" fill="none" class="part"/><text x="1382" y="119" text-anchor="middle" class="ref tiny">U802  TLP176AM</text><text x="1336" y="146" text-anchor="end" class="pinno">4</text><text x="1428" y="146" text-anchor="start" class="pinno">6</text><line x1="1340" y1="150" x2="1368" y2="150"/><line x1="1368" y1="150" x2="1396" y2="140"/><line x1="1398" y1="150" x2="1424" y2="150"/><polygon points="1352,158 1366,158 1359,168" fill="none"/><line x1="1352" y1="168" x2="1366" y2="168"/><line x1="1370" y1="162" x2="1378" y2="156"/><line x1="1370" y1="167" x2="1378" y2="161"/><polyline points="1359,158 1359,152 1350,152" fill="none"/><line x1="1350" y1="152" x2="1350" y2="176"/><line x1="1359" y1="168" x2="1359" y2="172"/><polyline points="1359,172 1396,172 1396,176" fill="none"/><text x="1346" y="186" text-anchor="end" class="pinno">1</text><text x="1400" y="186" text-anchor="start" class="pinno">3</text><line x1="1350" y1="176" x2="1350" y2="184"/><line x1="1350" y1="184" x2="1350" y2="192.0"/><rect x="1345" y="192.0" width="10" height="30" fill="none"/><line x1="1350" y1="222.0" x2="1350" y2="230"/><text x="1340" y="205.0" text-anchor="end" class="ref tiny">R820</text><text x="1340" y="217.0" text-anchor="end" class="tiny">330</text><line x1="1350" y1="230" x2="1350" y2="236"/><line x1="1342" y1="236" x2="1358" y2="236"/><text x="1350" y="248" text-anchor="middle" class="tiny">+3V3</text><line x1="1396" y1="176" x2="1396" y2="206"/><polygon points="1396,206 1404,199 1451.6,199 1451.6,213 1404,213" fill="none" class="accent"/><text x="1427.8" y="210" text-anchor="middle" class="net tiny accent">SEL1_N</text><line x1="1424" y1="150" x2="1450" y2="150"/><line x1="1450" y1="150" x2="1472.0" y2="150"/><rect x="1472.0" y="143" width="36" height="14" fill="none"/><line x1="1476.0" y1="160" x2="1504.0" y2="140"/><line x1="1508.0" y1="150" x2="1530" y2="150"/><text x="1490.0" y="137" text-anchor="middle" class="ref tiny">F801</text><circle cx="1560" cy="150" r="2.6" fill="currentColor"/><line x1="1530" y1="150" x2="1560" y2="150"/><line x1="1560" y1="150" x2="1560" y2="169.0"/><polygon points="1552,169.0 1568,169.0 1560,185.0" fill="none"/><polygon points="1552,201.0 1568,201.0 1560,185.0" fill="none"/><polyline points="1549,182.0 1552,185.0 1568,185.0 1571,188.0" fill="none"/><line x1="1560" y1="201.0" x2="1560" y2="220"/><line x1="1560" y1="220" x2="1560" y2="228"/><line x1="1552" y1="228" x2="1568" y2="228"/><line x1="1555" y1="231" x2="1565" y2="231"/><line x1="1558" y1="234" x2="1562" y2="234"/><text x="1572" y="180" text-anchor="start" class="ref tiny">D801</text><text x="1572" y="192" text-anchor="start" class="tiny">SMF15CA</text><line x1="1560" y1="150" x2="1800" y2="150"/><circle cx="1630" cy="150" r="2.6" fill="currentColor"/><line x1="1630" y1="150" x2="1630" y2="166.0"/><rect x="1625" y="166.0" width="10" height="30" fill="none"/><line x1="1630" y1="196.0" x2="1630" y2="212"/><text x="1640" y="179.0" text-anchor="start" class="ref tiny">R815</text><text x="1640" y="191.0" text-anchor="start" class="tiny">300k 0.1%</text><line x1="1630" y1="212" x2="1630" y2="220"/><polygon points="1630,228 1638,221 1679.0,221 1679.0,235 1638,235" fill="none" class="accent"/><text x="1658.5" y="232" text-anchor="middle" class="net tiny accent">WS_S1</text><line x1="1630" y1="220" x2="1630" y2="228"/><circle cx="1720" cy="150" r="2.6" fill="currentColor"/><line x1="1720" y1="150" x2="1720" y2="166.0"/><rect x="1715" y="166.0" width="10" height="30" fill="none" class="dashed"/><line x1="1720" y1="196.0" x2="1720" y2="212"/><text x="1730" y="179.0" text-anchor="start" class="ref tiny">R827</text><text x="1730" y="191.0" text-anchor="start" class="tiny">DNP</text><line x1="1720" y1="212" x2="1720" y2="220"/><line x1="1712" y1="220" x2="1728" y2="220"/><line x1="1715" y1="223" x2="1725" y2="223"/><line x1="1718" y1="226" x2="1722" y2="226"/><text x="1546" y="140" text-anchor="end" class="net tiny">WS_K1</text><text x="1806" y="154" text-anchor="start" class="pinno">1</text><line x1="1774" y1="174" x2="1800" y2="174"/><line x1="1774" y1="174" x2="1774" y2="182"/><line x1="1766" y1="182" x2="1782" y2="182"/><line x1="1769" y1="185" x2="1779" y2="185"/><line x1="1772" y1="188" x2="1776" y2="188"/><text x="1806" y="178" text-anchor="start" class="pinno">2</text><text x="1848" y="154" text-anchor="start" class="ref small">K1</text><text x="1848" y="168" text-anchor="start" class="tiny muted">至 APM 按键</text><circle cx="1300" cy="300" r="2.6" fill="currentColor"/><line x1="1300" y1="300" x2="1340" y2="300"/><rect x="1340" y="274" width="84" height="52" fill="none" class="part"/><text x="1382" y="269" text-anchor="middle" class="ref tiny">U803  TLP176AM</text><text x="1336" y="296" text-anchor="end" class="pinno">4</text><text x="1428" y="296" text-anchor="start" class="pinno">6</text><line x1="1340" y1="300" x2="1368" y2="300"/><line x1="1368" y1="300" x2="1396" y2="290"/><line x1="1398" y1="300" x2="1424" y2="300"/><polygon points="1352,308 1366,308 1359,318" fill="none"/><line x1="1352" y1="318" x2="1366" y2="318"/><line x1="1370" y1="312" x2="1378" y2="306"/><line x1="1370" y1="317" x2="1378" y2="311"/><polyline points="1359,308 1359,302 1350,302" fill="none"/><line x1="1350" y1="302" x2="1350" y2="326"/><line x1="1359" y1="318" x2="1359" y2="322"/><polyline points="1359,322 1396,322 1396,326" fill="none"/><text x="1346" y="336" text-anchor="end" class="pinno">1</text><text x="1400" y="336" text-anchor="start" class="pinno">3</text><line x1="1350" y1="326" x2="1350" y2="334"/><line x1="1350" y1="334" x2="1350" y2="342.0"/><rect x="1345" y="342.0" width="10" height="30" fill="none"/><line x1="1350" y1="372.0" x2="1350" y2="380"/><text x="1340" y="355.0" text-anchor="end" class="ref tiny">R821</text><text x="1340" y="367.0" text-anchor="end" class="tiny">330</text><line x1="1350" y1="380" x2="1350" y2="386"/><line x1="1342" y1="386" x2="1358" y2="386"/><text x="1350" y="398" text-anchor="middle" class="tiny">+3V3</text><line x1="1396" y1="326" x2="1396" y2="356"/><polygon points="1396,356 1404,349 1451.6,349 1451.6,363 1404,363" fill="none" class="accent"/><text x="1427.8" y="360" text-anchor="middle" class="net tiny accent">SEL2_N</text><line x1="1424" y1="300" x2="1450" y2="300"/><line x1="1450" y1="300" x2="1472.0" y2="300"/><rect x="1472.0" y="293" width="36" height="14" fill="none"/><line x1="1476.0" y1="310" x2="1504.0" y2="290"/><line x1="1508.0" y1="300" x2="1530" y2="300"/><text x="1490.0" y="287" text-anchor="middle" class="ref tiny">F802</text><circle cx="1560" cy="300" r="2.6" fill="currentColor"/><line x1="1530" y1="300" x2="1560" y2="300"/><line x1="1560" y1="300" x2="1560" y2="319.0"/><polygon points="1552,319.0 1568,319.0 1560,335.0" fill="none"/><polygon points="1552,351.0 1568,351.0 1560,335.0" fill="none"/><polyline points="1549,332.0 1552,335.0 1568,335.0 1571,338.0" fill="none"/><line x1="1560" y1="351.0" x2="1560" y2="370"/><line x1="1560" y1="370" x2="1560" y2="378"/><line x1="1552" y1="378" x2="1568" y2="378"/><line x1="1555" y1="381" x2="1565" y2="381"/><line x1="1558" y1="384" x2="1562" y2="384"/><text x="1572" y="330" text-anchor="start" class="ref tiny">D802</text><text x="1572" y="342" text-anchor="start" class="tiny">SMF15CA</text><line x1="1560" y1="300" x2="1800" y2="300"/><circle cx="1630" cy="300" r="2.6" fill="currentColor"/><line x1="1630" y1="300" x2="1630" y2="316.0"/><rect x="1625" y="316.0" width="10" height="30" fill="none"/><line x1="1630" y1="346.0" x2="1630" y2="362"/><text x="1640" y="329.0" text-anchor="start" class="ref tiny">R816</text><text x="1640" y="341.0" text-anchor="start" class="tiny">300k 0.1%</text><line x1="1630" y1="362" x2="1630" y2="370"/><polygon points="1630,378 1638,371 1679.0,371 1679.0,385 1638,385" fill="none" class="accent"/><text x="1658.5" y="382" text-anchor="middle" class="net tiny accent">WS_S2</text><line x1="1630" y1="370" x2="1630" y2="378"/><circle cx="1720" cy="300" r="2.6" fill="currentColor"/><line x1="1720" y1="300" x2="1720" y2="316.0"/><rect x="1715" y="316.0" width="10" height="30" fill="none" class="dashed"/><line x1="1720" y1="346.0" x2="1720" y2="362"/><text x="1730" y="329.0" text-anchor="start" class="ref tiny">R828</text><text x="1730" y="341.0" text-anchor="start" class="tiny">DNP</text><line x1="1720" y1="362" x2="1720" y2="370"/><line x1="1712" y1="370" x2="1728" y2="370"/><line x1="1715" y1="373" x2="1725" y2="373"/><line x1="1718" y1="376" x2="1722" y2="376"/><text x="1546" y="290" text-anchor="end" class="net tiny">WS_K2</text><text x="1806" y="304" text-anchor="start" class="pinno">3</text><line x1="1774" y1="324" x2="1800" y2="324"/><line x1="1774" y1="324" x2="1774" y2="332"/><line x1="1766" y1="332" x2="1782" y2="332"/><line x1="1769" y1="335" x2="1779" y2="335"/><line x1="1772" y1="338" x2="1776" y2="338"/><text x="1806" y="328" text-anchor="start" class="pinno">4</text><text x="1848" y="304" text-anchor="start" class="ref small">K2</text><text x="1848" y="318" text-anchor="start" class="tiny muted">至 APM 按键</text><circle cx="1300" cy="450" r="2.6" fill="currentColor"/><line x1="1300" y1="450" x2="1340" y2="450"/><rect x="1340" y="424" width="84" height="52" fill="none" class="part"/><text x="1382" y="419" text-anchor="middle" class="ref tiny">U804  TLP176AM</text><text x="1336" y="446" text-anchor="end" class="pinno">4</text><text x="1428" y="446" text-anchor="start" class="pinno">6</text><line x1="1340" y1="450" x2="1368" y2="450"/><line x1="1368" y1="450" x2="1396" y2="440"/><line x1="1398" y1="450" x2="1424" y2="450"/><polygon points="1352,458 1366,458 1359,468" fill="none"/><line x1="1352" y1="468" x2="1366" y2="468"/><line x1="1370" y1="462" x2="1378" y2="456"/><line x1="1370" y1="467" x2="1378" y2="461"/><polyline points="1359,458 1359,452 1350,452" fill="none"/><line x1="1350" y1="452" x2="1350" y2="476"/><line x1="1359" y1="468" x2="1359" y2="472"/><polyline points="1359,472 1396,472 1396,476" fill="none"/><text x="1346" y="486" text-anchor="end" class="pinno">1</text><text x="1400" y="486" text-anchor="start" class="pinno">3</text><line x1="1350" y1="476" x2="1350" y2="484"/><line x1="1350" y1="484" x2="1350" y2="492.0"/><rect x="1345" y="492.0" width="10" height="30" fill="none"/><line x1="1350" y1="522.0" x2="1350" y2="530"/><text x="1340" y="505.0" text-anchor="end" class="ref tiny">R822</text><text x="1340" y="517.0" text-anchor="end" class="tiny">330</text><line x1="1350" y1="530" x2="1350" y2="536"/><line x1="1342" y1="536" x2="1358" y2="536"/><text x="1350" y="548" text-anchor="middle" class="tiny">+3V3</text><line x1="1396" y1="476" x2="1396" y2="506"/><polygon points="1396,506 1404,499 1451.6,499 1451.6,513 1404,513" fill="none" class="accent"/><text x="1427.8" y="510" text-anchor="middle" class="net tiny accent">SEL3_N</text><line x1="1424" y1="450" x2="1450" y2="450"/><line x1="1450" y1="450" x2="1472.0" y2="450"/><rect x="1472.0" y="443" width="36" height="14" fill="none"/><line x1="1476.0" y1="460" x2="1504.0" y2="440"/><line x1="1508.0" y1="450" x2="1530" y2="450"/><text x="1490.0" y="437" text-anchor="middle" class="ref tiny">F803</text><circle cx="1560" cy="450" r="2.6" fill="currentColor"/><line x1="1530" y1="450" x2="1560" y2="450"/><line x1="1560" y1="450" x2="1560" y2="469.0"/><polygon points="1552,469.0 1568,469.0 1560,485.0" fill="none"/><polygon points="1552,501.0 1568,501.0 1560,485.0" fill="none"/><polyline points="1549,482.0 1552,485.0 1568,485.0 1571,488.0" fill="none"/><line x1="1560" y1="501.0" x2="1560" y2="520"/><line x1="1560" y1="520" x2="1560" y2="528"/><line x1="1552" y1="528" x2="1568" y2="528"/><line x1="1555" y1="531" x2="1565" y2="531"/><line x1="1558" y1="534" x2="1562" y2="534"/><text x="1572" y="480" text-anchor="start" class="ref tiny">D803</text><text x="1572" y="492" text-anchor="start" class="tiny">SMF15CA</text><line x1="1560" y1="450" x2="1800" y2="450"/><circle cx="1630" cy="450" r="2.6" fill="currentColor"/><line x1="1630" y1="450" x2="1630" y2="466.0"/><rect x="1625" y="466.0" width="10" height="30" fill="none"/><line x1="1630" y1="496.0" x2="1630" y2="512"/><text x="1640" y="479.0" text-anchor="start" class="ref tiny">R817</text><text x="1640" y="491.0" text-anchor="start" class="tiny">300k 0.1%</text><line x1="1630" y1="512" x2="1630" y2="520"/><polygon points="1630,528 1638,521 1679.0,521 1679.0,535 1638,535" fill="none" class="accent"/><text x="1658.5" y="532" text-anchor="middle" class="net tiny accent">WS_S3</text><line x1="1630" y1="520" x2="1630" y2="528"/><circle cx="1720" cy="450" r="2.6" fill="currentColor"/><line x1="1720" y1="450" x2="1720" y2="466.0"/><rect x="1715" y="466.0" width="10" height="30" fill="none" class="dashed"/><line x1="1720" y1="496.0" x2="1720" y2="512"/><text x="1730" y="479.0" text-anchor="start" class="ref tiny">R829</text><text x="1730" y="491.0" text-anchor="start" class="tiny">DNP</text><line x1="1720" y1="512" x2="1720" y2="520"/><line x1="1712" y1="520" x2="1728" y2="520"/><line x1="1715" y1="523" x2="1725" y2="523"/><line x1="1718" y1="526" x2="1722" y2="526"/><text x="1546" y="440" text-anchor="end" class="net tiny">WS_K3</text><text x="1806" y="454" text-anchor="start" class="pinno">5</text><line x1="1774" y1="474" x2="1800" y2="474"/><line x1="1774" y1="474" x2="1774" y2="482"/><line x1="1766" y1="482" x2="1782" y2="482"/><line x1="1769" y1="485" x2="1779" y2="485"/><line x1="1772" y1="488" x2="1776" y2="488"/><text x="1806" y="478" text-anchor="start" class="pinno">6</text><text x="1848" y="454" text-anchor="start" class="ref small">K3</text><text x="1848" y="468" text-anchor="start" class="tiny muted">至 APM 按键</text><circle cx="1300" cy="600" r="2.6" fill="currentColor"/><line x1="1300" y1="600" x2="1340" y2="600"/><rect x="1340" y="574" width="84" height="52" fill="none" class="part"/><text x="1382" y="569" text-anchor="middle" class="ref tiny">U805  TLP176AM</text><text x="1336" y="596" text-anchor="end" class="pinno">4</text><text x="1428" y="596" text-anchor="start" class="pinno">6</text><line x1="1340" y1="600" x2="1368" y2="600"/><line x1="1368" y1="600" x2="1396" y2="590"/><line x1="1398" y1="600" x2="1424" y2="600"/><polygon points="1352,608 1366,608 1359,618" fill="none"/><line x1="1352" y1="618" x2="1366" y2="618"/><line x1="1370" y1="612" x2="1378" y2="606"/><line x1="1370" y1="617" x2="1378" y2="611"/><polyline points="1359,608 1359,602 1350,602" fill="none"/><line x1="1350" y1="602" x2="1350" y2="626"/><line x1="1359" y1="618" x2="1359" y2="622"/><polyline points="1359,622 1396,622 1396,626" fill="none"/><text x="1346" y="636" text-anchor="end" class="pinno">1</text><text x="1400" y="636" text-anchor="start" class="pinno">3</text><line x1="1350" y1="626" x2="1350" y2="634"/><line x1="1350" y1="634" x2="1350" y2="642.0"/><rect x="1345" y="642.0" width="10" height="30" fill="none"/><line x1="1350" y1="672.0" x2="1350" y2="680"/><text x="1340" y="655.0" text-anchor="end" class="ref tiny">R823</text><text x="1340" y="667.0" text-anchor="end" class="tiny">330</text><line x1="1350" y1="680" x2="1350" y2="686"/><line x1="1342" y1="686" x2="1358" y2="686"/><text x="1350" y="698" text-anchor="middle" class="tiny">+3V3</text><line x1="1396" y1="626" x2="1396" y2="656"/><polygon points="1396,656 1404,649 1451.6,649 1451.6,663 1404,663" fill="none" class="accent"/><text x="1427.8" y="660" text-anchor="middle" class="net tiny accent">SEL4_N</text><line x1="1424" y1="600" x2="1450" y2="600"/><line x1="1450" y1="600" x2="1472.0" y2="600"/><rect x="1472.0" y="593" width="36" height="14" fill="none"/><line x1="1476.0" y1="610" x2="1504.0" y2="590"/><line x1="1508.0" y1="600" x2="1530" y2="600"/><text x="1490.0" y="587" text-anchor="middle" class="ref tiny">F804</text><circle cx="1560" cy="600" r="2.6" fill="currentColor"/><line x1="1530" y1="600" x2="1560" y2="600"/><line x1="1560" y1="600" x2="1560" y2="619.0"/><polygon points="1552,619.0 1568,619.0 1560,635.0" fill="none"/><polygon points="1552,651.0 1568,651.0 1560,635.0" fill="none"/><polyline points="1549,632.0 1552,635.0 1568,635.0 1571,638.0" fill="none"/><line x1="1560" y1="651.0" x2="1560" y2="670"/><line x1="1560" y1="670" x2="1560" y2="678"/><line x1="1552" y1="678" x2="1568" y2="678"/><line x1="1555" y1="681" x2="1565" y2="681"/><line x1="1558" y1="684" x2="1562" y2="684"/><text x="1572" y="630" text-anchor="start" class="ref tiny">D804</text><text x="1572" y="642" text-anchor="start" class="tiny">SMF15CA</text><line x1="1560" y1="600" x2="1800" y2="600"/><circle cx="1630" cy="600" r="2.6" fill="currentColor"/><line x1="1630" y1="600" x2="1630" y2="616.0"/><rect x="1625" y="616.0" width="10" height="30" fill="none"/><line x1="1630" y1="646.0" x2="1630" y2="662"/><text x="1640" y="629.0" text-anchor="start" class="ref tiny">R818</text><text x="1640" y="641.0" text-anchor="start" class="tiny">300k 0.1%</text><line x1="1630" y1="662" x2="1630" y2="670"/><polygon points="1630,678 1638,671 1679.0,671 1679.0,685 1638,685" fill="none" class="accent"/><text x="1658.5" y="682" text-anchor="middle" class="net tiny accent">WS_S4</text><line x1="1630" y1="670" x2="1630" y2="678"/><circle cx="1720" cy="600" r="2.6" fill="currentColor"/><line x1="1720" y1="600" x2="1720" y2="616.0"/><rect x="1715" y="616.0" width="10" height="30" fill="none" class="dashed"/><line x1="1720" y1="646.0" x2="1720" y2="662"/><text x="1730" y="629.0" text-anchor="start" class="ref tiny">R830</text><text x="1730" y="641.0" text-anchor="start" class="tiny">DNP</text><line x1="1720" y1="662" x2="1720" y2="670"/><line x1="1712" y1="670" x2="1728" y2="670"/><line x1="1715" y1="673" x2="1725" y2="673"/><line x1="1718" y1="676" x2="1722" y2="676"/><text x="1546" y="590" text-anchor="end" class="net tiny">WS_K4</text><text x="1806" y="604" text-anchor="start" class="pinno">7</text><line x1="1774" y1="624" x2="1800" y2="624"/><line x1="1774" y1="624" x2="1774" y2="632"/><line x1="1766" y1="632" x2="1782" y2="632"/><line x1="1769" y1="635" x2="1779" y2="635"/><line x1="1772" y1="638" x2="1776" y2="638"/><text x="1806" y="628" text-anchor="start" class="pinno">8</text><text x="1848" y="604" text-anchor="start" class="ref small">K4</text><text x="1848" y="618" text-anchor="start" class="tiny muted">至 APM 按键</text><text x="20" y="486" text-anchor="start" class="small">通道选择：同一时刻只接通一路（译码器保证）；PG2 为低时 4 路全部断开</text><polygon points="110,640 102,633 41.2,633 41.2,647 102,647" fill="none" class="accent"/><text x="71.6" y="644" text-anchor="middle" class="net tiny accent">WS_RST_N</text><polyline points="200,580 200,628 192,628" fill="none"/><line x1="192" y1="624" x2="192" y2="656"/><line x1="187" y1="626" x2="187" y2="654"/><polyline points="192,652 200,652 200,700" fill="none"/><polygon points="193,652 199,648.5 199,655.5" fill="currentColor"/><line x1="187" y1="640" x2="110" y2="640"/><line x1="200" y1="700" x2="200" y2="708"/><line x1="192" y1="708" x2="208" y2="708"/><line x1="195" y1="711" x2="205" y2="711"/><line x1="198" y1="714" x2="202" y2="714"/><line x1="192" y1="512" x2="208" y2="512"/><text x="200" y="507" text-anchor="middle" class="tiny">+3V3</text><line x1="200" y1="512" x2="200" y2="531.0"/><rect x="195" y="531.0" width="10" height="30" fill="none"/><line x1="200" y1="561.0" x2="200" y2="580"/><text x="210" y="544.0" text-anchor="start" class="ref tiny">R824</text><text x="210" y="556.0" text-anchor="start" class="tiny">10k</text><circle cx="200" cy="580" r="2.6" fill="currentColor"/><line x1="200" y1="580" x2="250" y2="580"/><polygon points="250,580 258,573 312.2,573 312.2,587 258,587" fill="none"/><text x="285.1" y="584" text-anchor="middle" class="net tiny">CH_EN_N</text><text x="212" y="668" text-anchor="start" class="ref tiny">Q808B</text><text x="212" y="680" text-anchor="start" class="tiny muted">BSS138DW</text><text x="40" y="730" text-anchor="start" class="tiny muted">PG2 高 → CH_EN_N 低 → 使能</text><polygon points="360,540 352,533 311.0,533 311.0,547 352,547" fill="none" class="accent2"/><text x="331.5" y="544" text-anchor="middle" class="net tiny accent2">CH_A0</text><line x1="360" y1="540" x2="380" y2="540"/><line x1="380" y1="540" x2="380" y2="565.0"/><rect x="375" y="565.0" width="10" height="30" fill="none"/><line x1="380" y1="595.0" x2="380" y2="620"/><text x="390" y="578.0" text-anchor="start" class="ref tiny">R825</text><text x="390" y="590.0" text-anchor="start" class="tiny">100k</text><line x1="380" y1="620" x2="380" y2="628"/><line x1="372" y1="628" x2="388" y2="628"/><line x1="375" y1="631" x2="385" y2="631"/><line x1="378" y1="634" x2="382" y2="634"/><polygon points="360,660 352,653 311.0,653 311.0,667 352,667" fill="none" class="accent2"/><text x="331.5" y="664" text-anchor="middle" class="net tiny accent2">CH_A1</text><line x1="360" y1="660" x2="380" y2="660"/><line x1="380" y1="660" x2="380" y2="685.0"/><rect x="375" y="685.0" width="10" height="30" fill="none"/><line x1="380" y1="715.0" x2="380" y2="740"/><text x="390" y="698.0" text-anchor="start" class="ref tiny">R826</text><text x="390" y="710.0" text-anchor="start" class="tiny">100k</text><line x1="380" y1="740" x2="380" y2="748"/><line x1="372" y1="748" x2="388" y2="748"/><line x1="375" y1="751" x2="385" y2="751"/><line x1="378" y1="754" x2="382" y2="754"/><rect x="560" y="525" width="120" height="210" fill="none" class="part"/><text x="560" y="517" text-anchor="start" class="ref">U806  SN74LVC139APW</text><text x="566" y="549" text-anchor="start" class="pin">1G</text><text x="556" y="542" text-anchor="end" class="pinno">1</text><text x="566" y="574" text-anchor="start" class="pin">1A</text><text x="556" y="567" text-anchor="end" class="pinno">2</text><text x="566" y="599" text-anchor="start" class="pin">1B</text><text x="556" y="592" text-anchor="end" class="pinno">3</text><text x="566" y="639" text-anchor="start" class="pin">2G</text><text x="556" y="632" text-anchor="end" class="pinno">15</text><text x="566" y="659" text-anchor="start" class="pin">2A</text><text x="556" y="652" text-anchor="end" class="pinno">14</text><text x="566" y="679" text-anchor="start" class="pin">2B</text><text x="556" y="672" text-anchor="end" class="pinno">13</text><text x="566" y="704" text-anchor="start" class="pin">VCC</text><text x="556" y="697" text-anchor="end" class="pinno">16</text><text x="566" y="724" text-anchor="start" class="pin">GND</text><text x="556" y="717" text-anchor="end" class="pinno">8</text><line x1="520" y1="545" x2="560" y2="545"/><polygon points="520,545 512,538 457.8,538 457.8,552 512,552" fill="none"/><text x="484.9" y="549" text-anchor="middle" class="net tiny">CH_EN_N</text><line x1="520" y1="570" x2="560" y2="570"/><polygon points="520,570 512,563 471.0,563 471.0,577 512,577" fill="none" class="accent2"/><text x="491.5" y="574" text-anchor="middle" class="net tiny accent2">CH_A0</text><line x1="520" y1="595" x2="560" y2="595"/><polygon points="520,595 512,588 471.0,588 471.0,602 512,602" fill="none" class="accent2"/><text x="491.5" y="599" text-anchor="middle" class="net tiny accent2">CH_A1</text><line x1="540" y1="635" x2="560" y2="635"/><line x1="540" y1="635" x2="540" y2="625"/><line x1="532" y1="625" x2="548" y2="625"/><text x="540" y="620" text-anchor="middle" class="tiny">+3V3</text><line x1="530" y1="655" x2="560" y2="655"/><line x1="530" y1="675" x2="560" y2="675"/><line x1="530" y1="655" x2="530" y2="675"/><circle cx="530" cy="675" r="2.6" fill="currentColor"/><line x1="530" y1="675" x2="530" y2="683"/><line x1="522" y1="683" x2="538" y2="683"/><line x1="525" y1="686" x2="535" y2="686"/><line x1="528" y1="689" x2="532" y2="689"/><line x1="520" y1="700" x2="560" y2="700"/><text x="516" y="704" text-anchor="end" class="tiny muted">+3V3 · C803</text><line x1="540" y1="720" x2="560" y2="720"/><line x1="540" y1="720" x2="540" y2="728"/><line x1="532" y1="728" x2="548" y2="728"/><line x1="535" y1="731" x2="545" y2="731"/><line x1="538" y1="734" x2="542" y2="734"/><text x="674" y="549" text-anchor="end" class="pin">1Y0</text><text x="684" y="542" text-anchor="start" class="pinno">4</text><line x1="680" y1="545" x2="700" y2="545"/><polygon points="700,545 708,538 755.6,538 755.6,552 708,552" fill="none" class="accent"/><text x="731.8" y="549" text-anchor="middle" class="net tiny accent">SEL1_N</text><text x="674" y="574" text-anchor="end" class="pin">1Y1</text><text x="684" y="567" text-anchor="start" class="pinno">5</text><line x1="680" y1="570" x2="700" y2="570"/><polygon points="700,570 708,563 755.6,563 755.6,577 708,577" fill="none" class="accent"/><text x="731.8" y="574" text-anchor="middle" class="net tiny accent">SEL2_N</text><text x="674" y="599" text-anchor="end" class="pin">1Y2</text><text x="684" y="592" text-anchor="start" class="pinno">6</text><line x1="680" y1="595" x2="700" y2="595"/><polygon points="700,595 708,588 755.6,588 755.6,602 708,602" fill="none" class="accent"/><text x="731.8" y="599" text-anchor="middle" class="net tiny accent">SEL3_N</text><text x="674" y="624" text-anchor="end" class="pin">1Y3</text><text x="684" y="617" text-anchor="start" class="pinno">7</text><line x1="680" y1="620" x2="700" y2="620"/><polygon points="700,620 708,613 755.6,613 755.6,627 708,627" fill="none" class="accent"/><text x="731.8" y="624" text-anchor="middle" class="net tiny accent">SEL4_N</text><text x="674" y="659" text-anchor="end" class="pin">2Y0</text><text x="684" y="652" text-anchor="start" class="pinno">12</text><line x1="680" y1="655" x2="694" y2="655"/><line x1="690" y1="651" x2="698" y2="659"/><line x1="690" y1="659" x2="698" y2="651"/><text x="674" y="679" text-anchor="end" class="pin">2Y1</text><text x="684" y="672" text-anchor="start" class="pinno">11</text><line x1="680" y1="675" x2="694" y2="675"/><line x1="690" y1="671" x2="698" y2="679"/><line x1="690" y1="679" x2="698" y2="671"/><text x="674" y="699" text-anchor="end" class="pin">2Y2</text><text x="684" y="692" text-anchor="start" class="pinno">10</text><line x1="680" y1="695" x2="694" y2="695"/><line x1="690" y1="691" x2="698" y2="699"/><line x1="690" y1="699" x2="698" y2="691"/><text x="674" y="719" text-anchor="end" class="pin">2Y3</text><text x="684" y="712" text-anchor="start" class="pinno">9</text><line x1="680" y1="715" x2="694" y2="715"/><line x1="690" y1="711" x2="698" y2="719"/><line x1="690" y1="719" x2="698" y2="711"/><rect x="900" y="525" width="130" height="210" fill="none" class="part"/><text x="900" y="517" text-anchor="start" class="ref">U807  CD74HC4052PW</text><text x="906" y="549" text-anchor="start" class="pin">A0</text><text x="896" y="542" text-anchor="end" class="pinno">12</text><line x1="884" y1="545" x2="900" y2="545"/><polygon points="884,545 876,538 835.0,538 835.0,552 876,552" fill="none" class="accent"/><text x="855.5" y="549" text-anchor="middle" class="net tiny accent">WS_S1</text><text x="906" y="569" text-anchor="start" class="pin">A1</text><text x="896" y="562" text-anchor="end" class="pinno">14</text><line x1="884" y1="565" x2="900" y2="565"/><polygon points="884,565 876,558 835.0,558 835.0,572 876,572" fill="none" class="accent"/><text x="855.5" y="569" text-anchor="middle" class="net tiny accent">WS_S2</text><text x="906" y="589" text-anchor="start" class="pin">A2</text><text x="896" y="582" text-anchor="end" class="pinno">15</text><line x1="884" y1="585" x2="900" y2="585"/><polygon points="884,585 876,578 835.0,578 835.0,592 876,592" fill="none" class="accent"/><text x="855.5" y="589" text-anchor="middle" class="net tiny accent">WS_S3</text><text x="906" y="609" text-anchor="start" class="pin">A3</text><text x="896" y="602" text-anchor="end" class="pinno">11</text><line x1="884" y1="605" x2="900" y2="605"/><polygon points="884,605 876,598 835.0,598 835.0,612 876,612" fill="none" class="accent"/><text x="855.5" y="609" text-anchor="middle" class="net tiny accent">WS_S4</text><text x="906" y="644" text-anchor="start" class="pin">E</text><text x="896" y="637" text-anchor="end" class="pinno">6</text><line x1="884" y1="640" x2="900" y2="640"/><polygon points="884,640 876,633 821.8,633 821.8,647 876,647" fill="none"/><text x="848.9" y="644" text-anchor="middle" class="net tiny">CH_EN_N</text><text x="906" y="664" text-anchor="start" class="pin">S0</text><text x="896" y="657" text-anchor="end" class="pinno">10</text><line x1="884" y1="660" x2="900" y2="660"/><polygon points="884,660 876,653 835.0,653 835.0,667 876,667" fill="none" class="accent2"/><text x="855.5" y="664" text-anchor="middle" class="net tiny accent2">CH_A0</text><text x="906" y="684" text-anchor="start" class="pin">S1</text><text x="896" y="677" text-anchor="end" class="pinno">9</text><line x1="884" y1="680" x2="900" y2="680"/><polygon points="884,680 876,673 835.0,673 835.0,687 876,687" fill="none" class="accent2"/><text x="855.5" y="684" text-anchor="middle" class="net tiny accent2">CH_A1</text><text x="1024" y="549" text-anchor="end" class="pin">COM A</text><text x="1034" y="542" text-anchor="start" class="pinno">13</text><line x1="1030" y1="545" x2="1050" y2="545"/><text x="1024" y="594" text-anchor="end" class="pin">VCC</text><text x="1034" y="587" text-anchor="start" class="pinno">16</text><line x1="1030" y1="590" x2="1050" y2="590"/><text x="1024" y="624" text-anchor="end" class="pin">VEE</text><text x="1034" y="617" text-anchor="start" class="pinno">7</text><line x1="1030" y1="620" x2="1050" y2="620"/><text x="1024" y="644" text-anchor="end" class="pin">GND</text><text x="1034" y="637" text-anchor="start" class="pinno">8</text><line x1="1030" y1="640" x2="1050" y2="640"/><text x="1024" y="684" text-anchor="end" class="pin">B0–B3、COM B</text><text x="1034" y="677" text-anchor="start" class="pinno">1–5</text><line x1="1030" y1="680" x2="1050" y2="680"/><polyline points="1050,620 1050,680" fill="none"/><circle cx="1050" cy="640" r="2.6" fill="currentColor"/><circle cx="1050" cy="680" r="2.6" fill="currentColor"/><line x1="1050" y1="680" x2="1050" y2="688"/><line x1="1042" y1="688" x2="1058" y2="688"/><line x1="1045" y1="691" x2="1055" y2="691"/><line x1="1048" y1="694" x2="1052" y2="694"/><text x="1054" y="594" text-anchor="start" class="tiny muted">+3V3 · C804</text><line x1="1050" y1="545" x2="1235" y2="545"/><circle cx="1145" cy="545" r="2.6" fill="currentColor"/><line x1="1145" y1="545" x2="1145" y2="577.5"/><rect x="1140" y="577.5" width="10" height="30" fill="none"/><line x1="1145" y1="607.5" x2="1145" y2="640"/><text x="1155" y="590.5" text-anchor="start" class="ref tiny">R819</text><text x="1155" y="602.5" text-anchor="start" class="tiny">100k 0.1%</text><line x1="1145" y1="640" x2="1145" y2="648"/><line x1="1137" y1="648" x2="1153" y2="648"/><line x1="1140" y1="651" x2="1150" y2="651"/><line x1="1143" y1="654" x2="1147" y2="654"/><circle cx="1215" cy="545" r="2.6" fill="currentColor"/><line x1="1215" y1="545" x2="1215" y2="574.5"/><line x1="1206" y1="574.5" x2="1224" y2="574.5"/><line x1="1206" y1="580.5" x2="1224" y2="580.5"/><line x1="1215" y1="580.5" x2="1215" y2="610"/><text x="1227" y="575.5" text-anchor="start" class="ref tiny">C802</text><text x="1227" y="587.5" text-anchor="start" class="tiny">10nF</text><line x1="1215" y1="610" x2="1215" y2="618"/><line x1="1207" y1="618" x2="1223" y2="618"/><line x1="1210" y1="621" x2="1220" y2="621"/><line x1="1213" y1="624" x2="1217" y2="624"/><polygon points="1235,545 1243,538 1290.6,538 1290.6,552 1243,552" fill="none" class="accent"/><text x="1266.8" y="549" text-anchor="middle" class="net tiny accent">WS_ADC</text><text x="900" y="762" text-anchor="start" class="tiny muted">WS_Sk 经 R815–R818（300 kΩ）来自各路接口；选中一路时 WS_ADC = 接口电压 ÷ 4</text><text x="900" y="776" text-anchor="start" class="tiny muted">U806 第 2 组和 U807 的 B 段不用：输入接地或接 +3V3，输出悬空</text></g></svg></div>
+  <figcaption>第 12 页第 2 版的全部连接。上半部分是第 1 版的电阻阵加 1 位；右边是 4 路接口，每路依次是 J801、TVS、PTC、光耦继电器，最后接到公共节点 WS_NODE；左下是通道选择。<span class="key" style="background:var(--accent)"></span>主控和通道信号 <span class="key" style="background:var(--accent2)"></span>本版新增的 U801 引脚。同名网络标签相连。</figcaption>
+</figure>
+
+<section>
+  <h2>4 路怎么切换</h2>
+  <div class="grid2">
+    <div class="table"><table>
+      <thead><tr><th>PG2</th><th>CH_A1</th><th>CH_A0</th><th>接通的通道</th><th>回读</th></tr></thead>
+      <tbody>
+        <tr><td>低</td><td>×</td><td>×</td><td>全部断开</td><td>0</td></tr>
+        <tr><td>高</td><td>0</td><td>0</td><td>K1（U802）</td><td>K1 ÷ 4</td></tr>
+        <tr><td>高</td><td>0</td><td>1</td><td>K2（U803）</td><td>K2 ÷ 4</td></tr>
+        <tr><td>高</td><td>1</td><td>0</td><td>K3（U804）</td><td>K3 ÷ 4</td></tr>
+        <tr><td>高</td><td>1</td><td>1</td><td>K4（U805）</td><td>K4 ÷ 4</td></tr>
+      </tbody>
+    </table></div>
+    <ul class="prose">
+      <li>PG2 经 Q808B 反相成 CH_EN_N，同时控制 U806 的 1G 和 U807 的 E。主控复位、上电或 HardFault 时 PG2 被 R814 拉低：U801 复位，电阻阵全关，4 个继电器全断。</li>
+      <li>运行时总有一路接在公共节点上。电阻阵不下拉时，这一路只多了 400 kΩ 回读负载，对 APM 的影响约 0.5%。</li>
+      <li>换通道时，固件先把电阻阵切到高阻，再改 CH_A0/CH_A1，然后等 5 ms。TLP176AM 断开最长 0.5 ms，接通最长 3 ms，天然先断后通。</li>
+      <li>选中后用 0 Ω 直通档量一次接口电压，算出这一路的 PTC + 继电器串联电阻，之后按这个值求解。没有这一步，最差误差约 38 mV。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>U801 引脚分配</h2>
+  <div class="table"><table>
+    <thead><tr><th>端口 · 引脚</th><th>用途</th><th>说明</th></tr></thead>
+    <tbody><tr><td>P00 · 4</td><td>b0（200 Ω）</td><td>电阻阵</td></tr><tr><td>P01 · 5</td><td>b1（390 Ω）</td><td>电阻阵</td></tr><tr><td>P02 · 6</td><td>b2（820 Ω）</td><td>电阻阵</td></tr><tr><td>P03 · 7</td><td>b3（1.6k Ω）</td><td>电阻阵</td></tr><tr><td>P04 · 8</td><td>b4（3.3k Ω）</td><td>电阻阵</td></tr><tr><td>P05 · 9</td><td>b5（6.2k Ω）</td><td>电阻阵</td></tr><tr><td>P06 · 10</td><td>b6（13k Ω）</td><td>电阻阵</td></tr><tr><td>P07 · 11</td><td>b7（24k Ω）</td><td>电阻阵</td></tr><tr><td>P10 · 13</td><td>b8（47k Ω）</td><td>电阻阵</td></tr><tr><td>P11 · 14</td><td>b9（91k Ω）</td><td>电阻阵</td></tr><tr><td>P12 · 15</td><td>b10（180k Ω）</td><td>电阻阵</td></tr><tr><td>P13 · 16</td><td>b11（360k Ω）</td><td>电阻阵</td></tr><tr><td>P14 · 17</td><td>SHORT</td><td>0 Ω 直通</td></tr><tr class="added"><td>P15 · 18</td><td>b12（100 Ω）</td><td>本版新增</td></tr><tr class="added"><td>P16 · 19</td><td>CH_A0</td><td>通道地址低位，本版新增</td></tr><tr class="added"><td>P17 · 20</td><td>CH_A1</td><td>通道地址高位，本版新增</td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>电阻阵</h2>
+  <p class="prose">每路串联了 PTC 和继电器，约 5–17 Ω。12 位电阻阵全开时最小约 100 Ω，加上串联电阻后到不了 200 mV 这一档，所以在低阻端加了 b12 = 100 Ω，全开最小约 52 Ω。</p>
+  <div class="table"><table>
+    <thead><tr><th>位</th><th>电阻</th><th>阻值</th><th>电导 µS</th><th>开关管</th><th>U801 引脚</th><th>来源</th></tr></thead>
+    <tbody><tr><td>b0</td><td>R801</td><td class=num>200 Ω</td><td class=num>5,000.0</td><td>Q801A</td><td>P00 · 4</td><td>apm.md 原值</td></tr><tr><td>b1</td><td>R802</td><td class=num>390 Ω</td><td class=num>2,564.1</td><td>Q801B</td><td>P01 · 5</td><td>apm.md 原值</td></tr><tr><td>b2</td><td>R803</td><td class=num>820 Ω</td><td class=num>1,219.5</td><td>Q802A</td><td>P02 · 6</td><td>apm.md 原值</td></tr><tr><td>b3</td><td>R804</td><td class=num>1.6k Ω</td><td class=num>625.0</td><td>Q802B</td><td>P03 · 7</td><td>apm.md 原值</td></tr><tr><td>b4</td><td>R805</td><td class=num>3.3k Ω</td><td class=num>303.0</td><td>Q803A</td><td>P04 · 8</td><td>apm.md 原值</td></tr><tr><td>b5</td><td>R806</td><td class=num>6.2k Ω</td><td class=num>161.3</td><td>Q803B</td><td>P05 · 9</td><td>apm.md 原值</td></tr><tr><td>b6</td><td>R807</td><td class=num>13k Ω</td><td class=num>76.9</td><td>Q804A</td><td>P06 · 10</td><td>apm.md 原值</td></tr><tr><td>b7</td><td>R808</td><td class=num>24k Ω</td><td class=num>41.7</td><td>Q804B</td><td>P07 · 11</td><td>apm.md 原值</td></tr><tr><td>b8</td><td>R809</td><td class=num>47k Ω</td><td class=num>21.3</td><td>Q805A</td><td>P10 · 13</td><td>第 1 版新增</td></tr><tr><td>b9</td><td>R810</td><td class=num>91k Ω</td><td class=num>11.0</td><td>Q805B</td><td>P11 · 14</td><td>第 1 版新增</td></tr><tr><td>b10</td><td>R811</td><td class=num>180k Ω</td><td class=num>5.6</td><td>Q806A</td><td>P12 · 15</td><td>第 1 版新增</td></tr><tr><td>b11</td><td>R812</td><td class=num>360k Ω</td><td class=num>2.8</td><td>Q806B</td><td>P13 · 16</td><td>第 1 版新增</td></tr><tr class="added"><td>b12</td><td>R831</td><td class=num>100 Ω</td><td class=num>10,000.0</td><td>Q808A</td><td>P15 · 18</td><td>本版新增</td></tr><tr><td>SHORT</td><td>—</td><td class=num>0 Ω</td><td class=num>—</td><td>Q807</td><td>P14 · 17</td><td>AO3400A 直通</td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>和第 1 版相比改了什么</h2>
+  <ol class="prose">
+    <li><b>1 路扩到 4 路。</b>J801 从 2 脚换成 8 脚。原来接口侧的 F801、D801 和 300 kΩ 分压电阻，变成每路一套（F801–F804、D801–D804、R815–R818）。</li>
+    <li><b>每路加一个光耦继电器 TLP176AM。</b>关断耐压 60 V，导通电阻最大 2 Ω，LED 由 U806 直接驱动。</li>
+    <li><b>回读改由 4 选 1 模拟开关选通。</b>分压上臂留在各路接口侧，下臂 R819 和 C802 共用，所以选中哪一路，PC2_C 就读到哪一路接口的真实电压，包括原车开关接着时的电压。</li>
+    <li><b>电阻阵 12 位加到 13 位</b>（b12 = 100 Ω），用掉 U801 的 P15。P16、P17 做通道地址。</li>
+    <li><b>使能改由 PG2 反相得到</b>（Q808B + R824），不再占用 U801 的引脚。</li>
+    <li><b>每路预留一个空闲电阻位</b>（R827–R830，默认不贴）。如果某车型的 APM 把开路判成故障，可以在这里贴上原车开关空闲时的阻值。贴了之后，这一路的被动学习读数会偏。</li>
+  </ol>
+</section>
+
+<div class="grid2">
+<section>
+  <h2>固件对接</h2>
+<pre>// U801 TCA9539 @ 0x74，I2C4 (PD12/PD13)
+// 输出寄存器 0x02：P00–P07 = b0–b7
+// 输出寄存器 0x03：P10–P13 = b8–b11
+//   P14 = SHORT，P15 = b12，P16 = CH_A0，P17 = CH_A1
+// 初始化顺序不变：先写输出 0，再设方向
+
+// 选通道 k (0–3)
+winsim_set_hiz();                 // 先断开电阻阵
+out1 = (out1 &amp; 0x3F) | (k &lt;&lt; 6);
+i2c_write(0x74, 0x03, out1);
+delay_ms(5);                      // 继电器接通 ≤ 3 ms
+// 标定串联电阻
+v_open  = adc();                  // 高阻
+set_short(1); v_s = adc(); set_short(0);
+r_series = 2200 * v_s / (v_open - v_s);
+
+// 被动学习：不下拉，只读 WS_ADC
+// 控制字 13 位，查找表 8192 项（32 KB）</pre>
+</section>
+<section>
+  <h2>PCB 摆放</h2>
+  <ul>
+    <li>J801 放在 J401/J402 同一侧板边，D801–D804、F801–F804 紧挨 J801。</li>
+    <li>R815–R818 尽量靠近各自的 PTC 前端，WS_S1–WS_S4 到 U807 的走线远离电阻阵和继电器的输出线。</li>
+    <li>U802–U805 排成一列，4 个输出端汇到一条短的 WS_NODE。继电器输入、输出两侧按 5 mm 爬电距离留空。</li>
+    <li>R819、C802 贴近 U301 第 28 脚；C803、C804 贴近各自芯片的 VCC 脚。</li>
+    <li>J801 的 4 个 GND 用短而宽的线就近接地平面，整块电路远离 U202、U201 的开关节点。</li>
+  </ul>
+</section>
+</div>
+
+<section>
+  <h2>主控引脚改动</h2>
+  <div class="table"><table>
+    <thead><tr><th>U301 引脚</th><th>原状态</th><th>新网络</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td>87 · PG2</td><td>未连接</td><td><span class="pill">WS_RST_N</span></td><td>推挽输出。高电平时 U801 工作、4 路中的一路接通；复位或高阻时 R814 拉低，全部关断。</td></tr>
+      <tr><td>28 · PC2_C</td><td>未连接</td><td><span class="pill">WS_ADC</span></td><td>模拟输入 ADC3_INP0。所选通道的接口电压 ÷ 4，满量程约 13.2 V。</td></tr>
+      <tr><td>81/82 · PD12/PD13</td><td>EXP_SCL/SDA</td><td><span class="pill keep">不变</span></td><td>I²C4，已有 TUSB320（0x47/0x67）和 J302。U801 地址 0x74，不冲突。</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>元件清单</h2>
+  <div class="table"><table>
+    <thead><tr><th>位号</th><th>型号 / 值</th><th>厂商</th><th>封装</th><th>数量</th><th>说明</th></tr></thead>
+    <tbody><tr><td>U801</td><td>TCA9539PWR</td><td>TI</td><td>TSSOP-24</td><td class=num>1</td><td>16 位 I²C IO 扩展；P15–P17 本版用上</td></tr><tr><td>Q801–Q806、Q808</td><td>BSS138DW</td><td>Diodes</td><td>SOT-363</td><td class=num>7</td><td>双 N-MOS：13 路电阻开关 + 1 个使能反相</td></tr><tr><td>Q807</td><td>AO3400A</td><td>AOS</td><td>SOT-23</td><td class=num>1</td><td>0 Ω 直通</td></tr><tr><td>R801–R812、R831</td><td>100 Ω … 360 kΩ，1%</td><td></td><td>0603</td><td class=num>13</td><td>电阻阵，取值见下表</td></tr><tr><td>RN801–RN803</td><td>100 kΩ ×4 排阻</td><td></td><td>4×0603</td><td class=num>3</td><td>G0–G11 栅极下拉</td></tr><tr><td>R813、R832</td><td>100 kΩ 1%</td><td></td><td>0603</td><td class=num>2</td><td>SHORT、G12 栅极下拉</td></tr><tr><td>R814</td><td>10 kΩ 1%</td><td></td><td>0603</td><td class=num>1</td><td>WS_RST_N 下拉</td></tr><tr><td>U802–U805</td><td>TLP176AM</td><td>Toshiba</td><td>4-pin SO6</td><td class=num>4</td><td>光耦继电器，60 V，导通 ≤ 2 Ω，每路一个</td></tr><tr><td>R820–R823</td><td>330 Ω 1%</td><td></td><td>0603</td><td class=num>4</td><td>继电器 LED 限流，约 5.5–6 mA</td></tr><tr><td>U806</td><td>SN74LVC139APWR</td><td>TI</td><td>TSSOP-16</td><td class=num>1</td><td>2-4 译码，输出低有效，只用第 1 组</td></tr><tr><td>U807</td><td>CD74HC4052PWR</td><td>TI</td><td>TSSOP-16</td><td class=num>1</td><td>双 4 选 1 模拟开关，只用 A 段做回读</td></tr><tr><td>R824</td><td>10 kΩ 1%</td><td></td><td>0603</td><td class=num>1</td><td>CH_EN_N 上拉：复位时 4 路全断</td></tr><tr><td>R825、R826</td><td>100 kΩ 1%</td><td></td><td>0603</td><td class=num>2</td><td>CH_A0、CH_A1 下拉，复位时输入不悬空</td></tr><tr><td>R815–R818</td><td>300 kΩ 0.1%</td><td></td><td>0603</td><td class=num>4</td><td>每路回读分压上臂，取在接口侧</td></tr><tr><td>R819</td><td>100 kΩ 0.1%</td><td></td><td>0603</td><td class=num>1</td><td>回读分压下臂（4 路共用）</td></tr><tr><td>C801、C803、C804</td><td>100 nF X7R</td><td></td><td>0603</td><td class=num>3</td><td>U801、U806、U807 去耦</td></tr><tr><td>C802</td><td>10 nF X7R</td><td></td><td>0603</td><td class=num>1</td><td>回读滤波，靠近 U301.28</td></tr><tr><td>F801–F804</td><td>PTC 自恢复保险丝</td><td></td><td>0805/1206</td><td class=num>4</td><td>保持电流 50 mA，耐压 ≥ 15 V，每路一个</td></tr><tr><td>D801–D804</td><td>SMF15CA</td><td></td><td>SOD-123FL</td><td class=num>4</td><td>15 V 双向 TVS，每路一个</td></tr><tr><td>R827–R830</td><td>DNP</td><td></td><td>0603</td><td class=num>4</td><td>空闲电阻预留位，默认不贴</td></tr><tr><td>J801</td><td>KF2EDGR-3.81-8P</td><td></td><td>3.81 mm</td><td class=num>1</td><td>奇数脚 K1–K4，偶数脚 GND</td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>逐脚网表</h2>
+  <p class="note prose">格式和仓库里的 schematic-pins.json 相同。在嘉立创EDA画完后导出网表，可以和这份逐脚对照。</p>
+  <details>
+    <summary>new_parts + changed_pins（63 个器件，237 个引脚）</summary>
+    <div class="row"><button type="button" id="copy-netlist">复制 JSON</button><span class="note" id="copy-status" aria-live="polite"></span></div>
+    <pre id="netlist">{
+ &quot;revision&quot;: 2,
+ &quot;new_parts&quot;: {
+  &quot;U801&quot;: {
+   &quot;part&quot;: &quot;TCA9539PWR&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;INT&quot;,
+     &quot;net&quot;: null
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;A1&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;RESET&quot;,
+     &quot;net&quot;: &quot;WS_RST_N&quot;
+    },
+    &quot;12&quot;: {
+     &quot;pin_name&quot;: &quot;GND&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;21&quot;: {
+     &quot;pin_name&quot;: &quot;A0&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;22&quot;: {
+     &quot;pin_name&quot;: &quot;SCL&quot;,
+     &quot;net&quot;: &quot;EXP_SCL&quot;
+    },
+    &quot;23&quot;: {
+     &quot;pin_name&quot;: &quot;SDA&quot;,
+     &quot;net&quot;: &quot;EXP_SDA&quot;
+    },
+    &quot;24&quot;: {
+     &quot;pin_name&quot;: &quot;VCC&quot;,
+     &quot;net&quot;: &quot;+3V3&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;P00&quot;,
+     &quot;net&quot;: &quot;WS_G0&quot;
+    },
+    &quot;13&quot;: {
+     &quot;pin_name&quot;: &quot;P10&quot;,
+     &quot;net&quot;: &quot;WS_G8&quot;
+    },
+    &quot;5&quot;: {
+     &quot;pin_name&quot;: &quot;P01&quot;,
+     &quot;net&quot;: &quot;WS_G1&quot;
+    },
+    &quot;14&quot;: {
+     &quot;pin_name&quot;: &quot;P11&quot;,
+     &quot;net&quot;: &quot;WS_G9&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;P02&quot;,
+     &quot;net&quot;: &quot;WS_G2&quot;
+    },
+    &quot;15&quot;: {
+     &quot;pin_name&quot;: &quot;P12&quot;,
+     &quot;net&quot;: &quot;WS_G10&quot;
+    },
+    &quot;7&quot;: {
+     &quot;pin_name&quot;: &quot;P03&quot;,
+     &quot;net&quot;: &quot;WS_G3&quot;
+    },
+    &quot;16&quot;: {
+     &quot;pin_name&quot;: &quot;P13&quot;,
+     &quot;net&quot;: &quot;WS_G11&quot;
+    },
+    &quot;8&quot;: {
+     &quot;pin_name&quot;: &quot;P04&quot;,
+     &quot;net&quot;: &quot;WS_G4&quot;
+    },
+    &quot;17&quot;: {
+     &quot;pin_name&quot;: &quot;P14&quot;,
+     &quot;net&quot;: &quot;WS_SHORT_G&quot;
+    },
+    &quot;9&quot;: {
+     &quot;pin_name&quot;: &quot;P05&quot;,
+     &quot;net&quot;: &quot;WS_G5&quot;
+    },
+    &quot;18&quot;: {
+     &quot;pin_name&quot;: &quot;P15&quot;,
+     &quot;net&quot;: &quot;WS_G12&quot;
+    },
+    &quot;10&quot;: {
+     &quot;pin_name&quot;: &quot;P06&quot;,
+     &quot;net&quot;: &quot;WS_G6&quot;
+    },
+    &quot;19&quot;: {
+     &quot;pin_name&quot;: &quot;P16&quot;,
+     &quot;net&quot;: &quot;CH_A0&quot;
+    },
+    &quot;11&quot;: {
+     &quot;pin_name&quot;: &quot;P07&quot;,
+     &quot;net&quot;: &quot;WS_G7&quot;
+    },
+    &quot;20&quot;: {
+     &quot;pin_name&quot;: &quot;P17&quot;,
+     &quot;net&quot;: &quot;CH_A1&quot;
+    }
+   }
+  },
+  &quot;C801&quot;: {
+   &quot;part&quot;: &quot;100nF&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;+3V3&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;R814&quot;: {
+   &quot;part&quot;: &quot;10kΩ&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_RST_N&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;R801&quot;: {
+   &quot;part&quot;: &quot;200Ω 1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_D0&quot;
+    }
+   }
+  },
+  &quot;R802&quot;: {
+   &quot;part&quot;: &quot;390Ω 1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_D1&quot;
+    }
+   }
+  },
+  &quot;R803&quot;: {
+   &quot;part&quot;: &quot;820Ω 1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_D2&quot;
+    }
+   }
+  },
+  &quot;R804&quot;: {
+   &quot;part&quot;: &quot;1.6kΩ 1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_D3&quot;
+    }
+   }
+  },
+  &quot;R805&quot;: {
+   &quot;part&quot;: &quot;3.3kΩ 1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_D4&quot;
+    }
+   }
+  },
+  &quot;R806&quot;: {
+   &quot;part&quot;: &quot;6.2kΩ 1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_D5&quot;
+    }
+   }
+  },
+  &quot;R807&quot;: {
+   &quot;part&quot;: &quot;13kΩ 1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_D6&quot;
+    }
+   }
+  },
+  &quot;R808&quot;: {
+   &quot;part&quot;: &quot;24kΩ 1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_D7&quot;
+    }
+   }
+  },
+  &quot;R809&quot;: {
+   &quot;part&quot;: &quot;47kΩ 1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_D8&quot;
+    }
+   }
+  },
+  &quot;R810&quot;: {
+   &quot;part&quot;: &quot;91kΩ 1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_D9&quot;
+    }
+   }
+  },
+  &quot;R811&quot;: {
+   &quot;part&quot;: &quot;180kΩ 1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_D10&quot;
+    }
+   }
+  },
+  &quot;R812&quot;: {
+   &quot;part&quot;: &quot;360kΩ 1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_D11&quot;
+    }
+   }
+  },
+  &quot;R831&quot;: {
+   &quot;part&quot;: &quot;100Ω 1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_D12&quot;
+    }
+   }
+  },
+  &quot;Q801&quot;: {
+   &quot;part&quot;: &quot;BSS138DW&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;S1&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;G1&quot;,
+     &quot;net&quot;: &quot;WS_G0&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;D2&quot;,
+     &quot;net&quot;: &quot;WS_D1&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;S2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;5&quot;: {
+     &quot;pin_name&quot;: &quot;G2&quot;,
+     &quot;net&quot;: &quot;WS_G1&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;D1&quot;,
+     &quot;net&quot;: &quot;WS_D0&quot;
+    }
+   }
+  },
+  &quot;Q802&quot;: {
+   &quot;part&quot;: &quot;BSS138DW&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;S1&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;G1&quot;,
+     &quot;net&quot;: &quot;WS_G2&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;D2&quot;,
+     &quot;net&quot;: &quot;WS_D3&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;S2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;5&quot;: {
+     &quot;pin_name&quot;: &quot;G2&quot;,
+     &quot;net&quot;: &quot;WS_G3&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;D1&quot;,
+     &quot;net&quot;: &quot;WS_D2&quot;
+    }
+   }
+  },
+  &quot;Q803&quot;: {
+   &quot;part&quot;: &quot;BSS138DW&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;S1&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;G1&quot;,
+     &quot;net&quot;: &quot;WS_G4&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;D2&quot;,
+     &quot;net&quot;: &quot;WS_D5&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;S2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;5&quot;: {
+     &quot;pin_name&quot;: &quot;G2&quot;,
+     &quot;net&quot;: &quot;WS_G5&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;D1&quot;,
+     &quot;net&quot;: &quot;WS_D4&quot;
+    }
+   }
+  },
+  &quot;Q804&quot;: {
+   &quot;part&quot;: &quot;BSS138DW&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;S1&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;G1&quot;,
+     &quot;net&quot;: &quot;WS_G6&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;D2&quot;,
+     &quot;net&quot;: &quot;WS_D7&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;S2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;5&quot;: {
+     &quot;pin_name&quot;: &quot;G2&quot;,
+     &quot;net&quot;: &quot;WS_G7&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;D1&quot;,
+     &quot;net&quot;: &quot;WS_D6&quot;
+    }
+   }
+  },
+  &quot;Q805&quot;: {
+   &quot;part&quot;: &quot;BSS138DW&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;S1&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;G1&quot;,
+     &quot;net&quot;: &quot;WS_G8&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;D2&quot;,
+     &quot;net&quot;: &quot;WS_D9&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;S2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;5&quot;: {
+     &quot;pin_name&quot;: &quot;G2&quot;,
+     &quot;net&quot;: &quot;WS_G9&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;D1&quot;,
+     &quot;net&quot;: &quot;WS_D8&quot;
+    }
+   }
+  },
+  &quot;Q806&quot;: {
+   &quot;part&quot;: &quot;BSS138DW&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;S1&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;G1&quot;,
+     &quot;net&quot;: &quot;WS_G10&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;D2&quot;,
+     &quot;net&quot;: &quot;WS_D11&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;S2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;5&quot;: {
+     &quot;pin_name&quot;: &quot;G2&quot;,
+     &quot;net&quot;: &quot;WS_G11&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;D1&quot;,
+     &quot;net&quot;: &quot;WS_D10&quot;
+    }
+   }
+  },
+  &quot;Q808&quot;: {
+   &quot;part&quot;: &quot;BSS138DW&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;S1&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;G1&quot;,
+     &quot;net&quot;: &quot;WS_G12&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;D2&quot;,
+     &quot;net&quot;: &quot;CH_EN_N&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;S2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;5&quot;: {
+     &quot;pin_name&quot;: &quot;G2&quot;,
+     &quot;net&quot;: &quot;WS_RST_N&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;D1&quot;,
+     &quot;net&quot;: &quot;WS_D12&quot;
+    }
+   }
+  },
+  &quot;Q807&quot;: {
+   &quot;part&quot;: &quot;AO3400A&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;G&quot;,
+     &quot;net&quot;: &quot;WS_SHORT_G&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;S&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;D&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    }
+   }
+  },
+  &quot;RN801&quot;: {
+   &quot;part&quot;: &quot;100kΩ ×4&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_G0&quot;
+    },
+    &quot;8&quot;: {
+     &quot;pin_name&quot;: &quot;8&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_G1&quot;
+    },
+    &quot;7&quot;: {
+     &quot;pin_name&quot;: &quot;7&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;3&quot;,
+     &quot;net&quot;: &quot;WS_G2&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;6&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;4&quot;,
+     &quot;net&quot;: &quot;WS_G3&quot;
+    },
+    &quot;5&quot;: {
+     &quot;pin_name&quot;: &quot;5&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;RN802&quot;: {
+   &quot;part&quot;: &quot;100kΩ ×4&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_G4&quot;
+    },
+    &quot;8&quot;: {
+     &quot;pin_name&quot;: &quot;8&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_G5&quot;
+    },
+    &quot;7&quot;: {
+     &quot;pin_name&quot;: &quot;7&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;3&quot;,
+     &quot;net&quot;: &quot;WS_G6&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;6&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;4&quot;,
+     &quot;net&quot;: &quot;WS_G7&quot;
+    },
+    &quot;5&quot;: {
+     &quot;pin_name&quot;: &quot;5&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;RN803&quot;: {
+   &quot;part&quot;: &quot;100kΩ ×4&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_G8&quot;
+    },
+    &quot;8&quot;: {
+     &quot;pin_name&quot;: &quot;8&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_G9&quot;
+    },
+    &quot;7&quot;: {
+     &quot;pin_name&quot;: &quot;7&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;3&quot;,
+     &quot;net&quot;: &quot;WS_G10&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;6&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;4&quot;,
+     &quot;net&quot;: &quot;WS_G11&quot;
+    },
+    &quot;5&quot;: {
+     &quot;pin_name&quot;: &quot;5&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;R813&quot;: {
+   &quot;part&quot;: &quot;100kΩ&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_SHORT_G&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;R832&quot;: {
+   &quot;part&quot;: &quot;100kΩ&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_G12&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;D801&quot;: {
+   &quot;part&quot;: &quot;SMF15CA&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_K1&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;F801&quot;: {
+   &quot;part&quot;: &quot;PTC 50mA&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_K1&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_KF1&quot;
+    }
+   }
+  },
+  &quot;U802&quot;: {
+   &quot;part&quot;: &quot;TLP176AM&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;Anode&quot;,
+     &quot;net&quot;: &quot;WS_LA1&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;Cathode&quot;,
+     &quot;net&quot;: &quot;SEL1_N&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;Drain&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;Drain&quot;,
+     &quot;net&quot;: &quot;WS_KF1&quot;
+    }
+   }
+  },
+  &quot;R820&quot;: {
+   &quot;part&quot;: &quot;330Ω 1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;+3V3&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_LA1&quot;
+    }
+   }
+  },
+  &quot;R815&quot;: {
+   &quot;part&quot;: &quot;300kΩ 0.1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_K1&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_S1&quot;
+    }
+   }
+  },
+  &quot;R827&quot;: {
+   &quot;part&quot;: &quot;DNP&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_K1&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;D802&quot;: {
+   &quot;part&quot;: &quot;SMF15CA&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_K2&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;F802&quot;: {
+   &quot;part&quot;: &quot;PTC 50mA&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_K2&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_KF2&quot;
+    }
+   }
+  },
+  &quot;U803&quot;: {
+   &quot;part&quot;: &quot;TLP176AM&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;Anode&quot;,
+     &quot;net&quot;: &quot;WS_LA2&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;Cathode&quot;,
+     &quot;net&quot;: &quot;SEL2_N&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;Drain&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;Drain&quot;,
+     &quot;net&quot;: &quot;WS_KF2&quot;
+    }
+   }
+  },
+  &quot;R821&quot;: {
+   &quot;part&quot;: &quot;330Ω 1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;+3V3&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_LA2&quot;
+    }
+   }
+  },
+  &quot;R816&quot;: {
+   &quot;part&quot;: &quot;300kΩ 0.1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_K2&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_S2&quot;
+    }
+   }
+  },
+  &quot;R828&quot;: {
+   &quot;part&quot;: &quot;DNP&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_K2&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;D803&quot;: {
+   &quot;part&quot;: &quot;SMF15CA&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_K3&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;F803&quot;: {
+   &quot;part&quot;: &quot;PTC 50mA&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_K3&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_KF3&quot;
+    }
+   }
+  },
+  &quot;U804&quot;: {
+   &quot;part&quot;: &quot;TLP176AM&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;Anode&quot;,
+     &quot;net&quot;: &quot;WS_LA3&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;Cathode&quot;,
+     &quot;net&quot;: &quot;SEL3_N&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;Drain&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;Drain&quot;,
+     &quot;net&quot;: &quot;WS_KF3&quot;
+    }
+   }
+  },
+  &quot;R822&quot;: {
+   &quot;part&quot;: &quot;330Ω 1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;+3V3&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_LA3&quot;
+    }
+   }
+  },
+  &quot;R817&quot;: {
+   &quot;part&quot;: &quot;300kΩ 0.1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_K3&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_S3&quot;
+    }
+   }
+  },
+  &quot;R829&quot;: {
+   &quot;part&quot;: &quot;DNP&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_K3&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;D804&quot;: {
+   &quot;part&quot;: &quot;SMF15CA&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_K4&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;F804&quot;: {
+   &quot;part&quot;: &quot;PTC 50mA&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_K4&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_KF4&quot;
+    }
+   }
+  },
+  &quot;U805&quot;: {
+   &quot;part&quot;: &quot;TLP176AM&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;Anode&quot;,
+     &quot;net&quot;: &quot;WS_LA4&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;Cathode&quot;,
+     &quot;net&quot;: &quot;SEL4_N&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;Drain&quot;,
+     &quot;net&quot;: &quot;WS_NODE&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;Drain&quot;,
+     &quot;net&quot;: &quot;WS_KF4&quot;
+    }
+   }
+  },
+  &quot;R823&quot;: {
+   &quot;part&quot;: &quot;330Ω 1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;+3V3&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_LA4&quot;
+    }
+   }
+  },
+  &quot;R818&quot;: {
+   &quot;part&quot;: &quot;300kΩ 0.1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_K4&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;WS_S4&quot;
+    }
+   }
+  },
+  &quot;R830&quot;: {
+   &quot;part&quot;: &quot;DNP&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_K4&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;R819&quot;: {
+   &quot;part&quot;: &quot;100kΩ 0.1%&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_ADC&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;C802&quot;: {
+   &quot;part&quot;: &quot;10nF&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_ADC&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;R824&quot;: {
+   &quot;part&quot;: &quot;10kΩ&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;+3V3&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;CH_EN_N&quot;
+    }
+   }
+  },
+  &quot;R825&quot;: {
+   &quot;part&quot;: &quot;100kΩ&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;CH_A0&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;R826&quot;: {
+   &quot;part&quot;: &quot;100kΩ&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;CH_A1&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;U806&quot;: {
+   &quot;part&quot;: &quot;SN74LVC139APWR&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1G&quot;,
+     &quot;net&quot;: &quot;CH_EN_N&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;1A&quot;,
+     &quot;net&quot;: &quot;CH_A0&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;1B&quot;,
+     &quot;net&quot;: &quot;CH_A1&quot;
+    },
+    &quot;8&quot;: {
+     &quot;pin_name&quot;: &quot;GND&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;9&quot;: {
+     &quot;pin_name&quot;: &quot;2Y3&quot;,
+     &quot;net&quot;: null
+    },
+    &quot;10&quot;: {
+     &quot;pin_name&quot;: &quot;2Y2&quot;,
+     &quot;net&quot;: null
+    },
+    &quot;11&quot;: {
+     &quot;pin_name&quot;: &quot;2Y1&quot;,
+     &quot;net&quot;: null
+    },
+    &quot;12&quot;: {
+     &quot;pin_name&quot;: &quot;2Y0&quot;,
+     &quot;net&quot;: null
+    },
+    &quot;13&quot;: {
+     &quot;pin_name&quot;: &quot;2B&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;14&quot;: {
+     &quot;pin_name&quot;: &quot;2A&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;15&quot;: {
+     &quot;pin_name&quot;: &quot;2G&quot;,
+     &quot;net&quot;: &quot;+3V3&quot;
+    },
+    &quot;16&quot;: {
+     &quot;pin_name&quot;: &quot;VCC&quot;,
+     &quot;net&quot;: &quot;+3V3&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;1Y0&quot;,
+     &quot;net&quot;: &quot;SEL1_N&quot;
+    },
+    &quot;5&quot;: {
+     &quot;pin_name&quot;: &quot;1Y1&quot;,
+     &quot;net&quot;: &quot;SEL2_N&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;1Y2&quot;,
+     &quot;net&quot;: &quot;SEL3_N&quot;
+    },
+    &quot;7&quot;: {
+     &quot;pin_name&quot;: &quot;1Y3&quot;,
+     &quot;net&quot;: &quot;SEL4_N&quot;
+    }
+   }
+  },
+  &quot;U807&quot;: {
+   &quot;part&quot;: &quot;CD74HC4052PWR&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;B0&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;B2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;COM B&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;B3&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;5&quot;: {
+     &quot;pin_name&quot;: &quot;B1&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;E&quot;,
+     &quot;net&quot;: &quot;CH_EN_N&quot;
+    },
+    &quot;7&quot;: {
+     &quot;pin_name&quot;: &quot;VEE&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;8&quot;: {
+     &quot;pin_name&quot;: &quot;GND&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;9&quot;: {
+     &quot;pin_name&quot;: &quot;S1&quot;,
+     &quot;net&quot;: &quot;CH_A1&quot;
+    },
+    &quot;10&quot;: {
+     &quot;pin_name&quot;: &quot;S0&quot;,
+     &quot;net&quot;: &quot;CH_A0&quot;
+    },
+    &quot;13&quot;: {
+     &quot;pin_name&quot;: &quot;COM A&quot;,
+     &quot;net&quot;: &quot;WS_ADC&quot;
+    },
+    &quot;16&quot;: {
+     &quot;pin_name&quot;: &quot;VCC&quot;,
+     &quot;net&quot;: &quot;+3V3&quot;
+    },
+    &quot;12&quot;: {
+     &quot;pin_name&quot;: &quot;A0&quot;,
+     &quot;net&quot;: &quot;WS_S1&quot;
+    },
+    &quot;14&quot;: {
+     &quot;pin_name&quot;: &quot;A1&quot;,
+     &quot;net&quot;: &quot;WS_S2&quot;
+    },
+    &quot;15&quot;: {
+     &quot;pin_name&quot;: &quot;A2&quot;,
+     &quot;net&quot;: &quot;WS_S3&quot;
+    },
+    &quot;11&quot;: {
+     &quot;pin_name&quot;: &quot;A3&quot;,
+     &quot;net&quot;: &quot;WS_S4&quot;
+    }
+   }
+  },
+  &quot;C803&quot;: {
+   &quot;part&quot;: &quot;100nF&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;+3V3&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;C804&quot;: {
+   &quot;part&quot;: &quot;100nF&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;+3V3&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  },
+  &quot;J801&quot;: {
+   &quot;part&quot;: &quot;KF2EDGR-3.81-8P&quot;,
+   &quot;pins&quot;: {
+    &quot;1&quot;: {
+     &quot;pin_name&quot;: &quot;1&quot;,
+     &quot;net&quot;: &quot;WS_K1&quot;
+    },
+    &quot;2&quot;: {
+     &quot;pin_name&quot;: &quot;2&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;3&quot;: {
+     &quot;pin_name&quot;: &quot;3&quot;,
+     &quot;net&quot;: &quot;WS_K2&quot;
+    },
+    &quot;4&quot;: {
+     &quot;pin_name&quot;: &quot;4&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;5&quot;: {
+     &quot;pin_name&quot;: &quot;5&quot;,
+     &quot;net&quot;: &quot;WS_K3&quot;
+    },
+    &quot;6&quot;: {
+     &quot;pin_name&quot;: &quot;6&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    },
+    &quot;7&quot;: {
+     &quot;pin_name&quot;: &quot;7&quot;,
+     &quot;net&quot;: &quot;WS_K4&quot;
+    },
+    &quot;8&quot;: {
+     &quot;pin_name&quot;: &quot;8&quot;,
+     &quot;net&quot;: &quot;GND&quot;
+    }
+   }
+  }
+ },
+ &quot;changed_pins&quot;: {
+  &quot;U301&quot;: {
+   &quot;87&quot;: {
+    &quot;pin_name&quot;: &quot;PG2&quot;,
+    &quot;net&quot;: &quot;WS_RST_N&quot;
+   },
+   &quot;28&quot;: {
+    &quot;pin_name&quot;: &quot;PC2_C&quot;,
+    &quot;net&quot;: &quot;WS_ADC&quot;
+   }
+  }
+ }
+}</pre>
+  </details>
+</section>
+
+<section class="prose">
+  <h2>依据和还没验证的</h2>
+  <ul>
+    <li>已按数据手册核对：TLP176AM（引脚 1 阳极、3 阴极、4/6 输出；60 V，导通 ≤ 2 Ω，触发电流 ≤ 3 mA，接通 ≤ 3 ms，断开 ≤ 0.5 ms）；SN74LVC139A（引脚表、G 和输出都是低有效，3 V 时灌电流 24 mA）；CD74HC4052（引脚表、E 低有效、HC 型 2–6 V 供电，开关钳位电流 ±20 mA）。PC2_C = ADC3_INP0 来自社区引用的数据手册引脚表。</li>
+    <li>PTC 的具体料号和阻值还没定，误差计算按 5–17 Ω 估算；选定料号后用实际阻值重算。</li>
+    <li>15 V 的 TVS 只按 12 V 系统设计。误接 24 V 时 TVS 会先于 PTC 导通而过热；要支持 24 V 车，TVS 换 SMF33CA，并复核电阻阵的耐压。</li>
+    <li>0 mV 这一点受串联电阻限制，直通时约 11–39 mV，仍远低于 APM 的对地短路门限。</li>
+    <li>这页还没画进嘉立创EDA，PCB 没更新，没跑 DRC，也没有实板测试。驱动要相应改成 13 位并加上通道选择，这次还没改。</li>
+  </ul>
+</section>
+</main>
+
+<script>
+document.getElementById('copy-netlist').addEventListener('click', function () {
+  var pre = document.getElementById('netlist'), status = document.getElementById('copy-status');
+  function selectIt() { var r = document.createRange(); r.selectNodeContents(pre); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); status.textContent = '已选中，按 ⌘C 复制'; }
+  try {
+    navigator.clipboard.writeText(pre.textContent).then(function () { status.textContent = '已复制'; }, selectIt);
+  } catch (e) { selectIt(); }
+});
+</script>

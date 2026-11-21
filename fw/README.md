@@ -24,7 +24,7 @@ make -C fw -j4 release-check-reve
 make -C fw sim
 ```
 
-`app/` 和 `services/` 存放状态机、采集、录制、回放与发送逻辑。`platform/stm32h743_revd/` 是 Rev D/E 共用板级代码，其中的宏选择 Rev E。主循环轮询 CAN、SD、USB 和显示。`sim/` 复用业务代码和虚拟端口，`tests/` 提供主机模型，`tools/` 包含镜像校验和台架工具。模拟器附带的是通用测试数据库。
+`app/` 和 `services/` 存放状态机、采集、录制、回放与发送逻辑。`platform/stm32h743_revd/` 是 Rev D/E 共用板级代码，其中的宏选择 Rev E。主循环轮询 CAN、SD、USB 和显示。`sim/` 复用业务代码和虚拟端口，`tests/` 提供主机模型，`tools/` 包含镜像校验和台架工具。模拟器附带的是通用测试数据库。`services/winsim/` 是 Hardware-C 车窗开关模拟器的驱动，`services/keysim/` 和主页的“按键模拟”页面在它上面实现学习、扫描和模拟发送；对应的硬件还是提案，Rev D/E 目标上不显示这个入口，详见[该目录说明](services/winsim/README.md)。
 
 ## 已知限制
 

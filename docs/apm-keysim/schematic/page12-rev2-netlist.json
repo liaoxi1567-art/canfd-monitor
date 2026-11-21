@@ -1,0 +1,1280 @@
+{
+ "revision": 2,
+ "new_parts": {
+  "U801": {
+   "part": "TCA9539PWR",
+   "pins": {
+    "1": {
+     "pin_name": "INT",
+     "net": null
+    },
+    "2": {
+     "pin_name": "A1",
+     "net": "GND"
+    },
+    "3": {
+     "pin_name": "RESET",
+     "net": "WS_RST_N"
+    },
+    "12": {
+     "pin_name": "GND",
+     "net": "GND"
+    },
+    "21": {
+     "pin_name": "A0",
+     "net": "GND"
+    },
+    "22": {
+     "pin_name": "SCL",
+     "net": "EXP_SCL"
+    },
+    "23": {
+     "pin_name": "SDA",
+     "net": "EXP_SDA"
+    },
+    "24": {
+     "pin_name": "VCC",
+     "net": "+3V3"
+    },
+    "4": {
+     "pin_name": "P00",
+     "net": "WS_G0"
+    },
+    "13": {
+     "pin_name": "P10",
+     "net": "WS_G8"
+    },
+    "5": {
+     "pin_name": "P01",
+     "net": "WS_G1"
+    },
+    "14": {
+     "pin_name": "P11",
+     "net": "WS_G9"
+    },
+    "6": {
+     "pin_name": "P02",
+     "net": "WS_G2"
+    },
+    "15": {
+     "pin_name": "P12",
+     "net": "WS_G10"
+    },
+    "7": {
+     "pin_name": "P03",
+     "net": "WS_G3"
+    },
+    "16": {
+     "pin_name": "P13",
+     "net": "WS_G11"
+    },
+    "8": {
+     "pin_name": "P04",
+     "net": "WS_G4"
+    },
+    "17": {
+     "pin_name": "P14",
+     "net": "WS_SHORT_G"
+    },
+    "9": {
+     "pin_name": "P05",
+     "net": "WS_G5"
+    },
+    "18": {
+     "pin_name": "P15",
+     "net": "WS_G12"
+    },
+    "10": {
+     "pin_name": "P06",
+     "net": "WS_G6"
+    },
+    "19": {
+     "pin_name": "P16",
+     "net": "CH_A0"
+    },
+    "11": {
+     "pin_name": "P07",
+     "net": "WS_G7"
+    },
+    "20": {
+     "pin_name": "P17",
+     "net": "CH_A1"
+    }
+   }
+  },
+  "C801": {
+   "part": "100nF",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "+3V3"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "R814": {
+   "part": "10kΩ",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_RST_N"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "R801": {
+   "part": "200Ω 1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_NODE"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_D0"
+    }
+   }
+  },
+  "R802": {
+   "part": "390Ω 1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_NODE"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_D1"
+    }
+   }
+  },
+  "R803": {
+   "part": "820Ω 1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_NODE"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_D2"
+    }
+   }
+  },
+  "R804": {
+   "part": "1.6kΩ 1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_NODE"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_D3"
+    }
+   }
+  },
+  "R805": {
+   "part": "3.3kΩ 1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_NODE"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_D4"
+    }
+   }
+  },
+  "R806": {
+   "part": "6.2kΩ 1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_NODE"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_D5"
+    }
+   }
+  },
+  "R807": {
+   "part": "13kΩ 1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_NODE"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_D6"
+    }
+   }
+  },
+  "R808": {
+   "part": "24kΩ 1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_NODE"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_D7"
+    }
+   }
+  },
+  "R809": {
+   "part": "47kΩ 1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_NODE"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_D8"
+    }
+   }
+  },
+  "R810": {
+   "part": "91kΩ 1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_NODE"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_D9"
+    }
+   }
+  },
+  "R811": {
+   "part": "180kΩ 1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_NODE"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_D10"
+    }
+   }
+  },
+  "R812": {
+   "part": "360kΩ 1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_NODE"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_D11"
+    }
+   }
+  },
+  "R831": {
+   "part": "100Ω 1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_NODE"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_D12"
+    }
+   }
+  },
+  "Q801": {
+   "part": "BSS138DW",
+   "pins": {
+    "1": {
+     "pin_name": "S1",
+     "net": "GND"
+    },
+    "2": {
+     "pin_name": "G1",
+     "net": "WS_G0"
+    },
+    "3": {
+     "pin_name": "D2",
+     "net": "WS_D1"
+    },
+    "4": {
+     "pin_name": "S2",
+     "net": "GND"
+    },
+    "5": {
+     "pin_name": "G2",
+     "net": "WS_G1"
+    },
+    "6": {
+     "pin_name": "D1",
+     "net": "WS_D0"
+    }
+   }
+  },
+  "Q802": {
+   "part": "BSS138DW",
+   "pins": {
+    "1": {
+     "pin_name": "S1",
+     "net": "GND"
+    },
+    "2": {
+     "pin_name": "G1",
+     "net": "WS_G2"
+    },
+    "3": {
+     "pin_name": "D2",
+     "net": "WS_D3"
+    },
+    "4": {
+     "pin_name": "S2",
+     "net": "GND"
+    },
+    "5": {
+     "pin_name": "G2",
+     "net": "WS_G3"
+    },
+    "6": {
+     "pin_name": "D1",
+     "net": "WS_D2"
+    }
+   }
+  },
+  "Q803": {
+   "part": "BSS138DW",
+   "pins": {
+    "1": {
+     "pin_name": "S1",
+     "net": "GND"
+    },
+    "2": {
+     "pin_name": "G1",
+     "net": "WS_G4"
+    },
+    "3": {
+     "pin_name": "D2",
+     "net": "WS_D5"
+    },
+    "4": {
+     "pin_name": "S2",
+     "net": "GND"
+    },
+    "5": {
+     "pin_name": "G2",
+     "net": "WS_G5"
+    },
+    "6": {
+     "pin_name": "D1",
+     "net": "WS_D4"
+    }
+   }
+  },
+  "Q804": {
+   "part": "BSS138DW",
+   "pins": {
+    "1": {
+     "pin_name": "S1",
+     "net": "GND"
+    },
+    "2": {
+     "pin_name": "G1",
+     "net": "WS_G6"
+    },
+    "3": {
+     "pin_name": "D2",
+     "net": "WS_D7"
+    },
+    "4": {
+     "pin_name": "S2",
+     "net": "GND"
+    },
+    "5": {
+     "pin_name": "G2",
+     "net": "WS_G7"
+    },
+    "6": {
+     "pin_name": "D1",
+     "net": "WS_D6"
+    }
+   }
+  },
+  "Q805": {
+   "part": "BSS138DW",
+   "pins": {
+    "1": {
+     "pin_name": "S1",
+     "net": "GND"
+    },
+    "2": {
+     "pin_name": "G1",
+     "net": "WS_G8"
+    },
+    "3": {
+     "pin_name": "D2",
+     "net": "WS_D9"
+    },
+    "4": {
+     "pin_name": "S2",
+     "net": "GND"
+    },
+    "5": {
+     "pin_name": "G2",
+     "net": "WS_G9"
+    },
+    "6": {
+     "pin_name": "D1",
+     "net": "WS_D8"
+    }
+   }
+  },
+  "Q806": {
+   "part": "BSS138DW",
+   "pins": {
+    "1": {
+     "pin_name": "S1",
+     "net": "GND"
+    },
+    "2": {
+     "pin_name": "G1",
+     "net": "WS_G10"
+    },
+    "3": {
+     "pin_name": "D2",
+     "net": "WS_D11"
+    },
+    "4": {
+     "pin_name": "S2",
+     "net": "GND"
+    },
+    "5": {
+     "pin_name": "G2",
+     "net": "WS_G11"
+    },
+    "6": {
+     "pin_name": "D1",
+     "net": "WS_D10"
+    }
+   }
+  },
+  "Q808": {
+   "part": "BSS138DW",
+   "pins": {
+    "1": {
+     "pin_name": "S1",
+     "net": "GND"
+    },
+    "2": {
+     "pin_name": "G1",
+     "net": "WS_G12"
+    },
+    "3": {
+     "pin_name": "D2",
+     "net": "CH_EN_N"
+    },
+    "4": {
+     "pin_name": "S2",
+     "net": "GND"
+    },
+    "5": {
+     "pin_name": "G2",
+     "net": "WS_RST_N"
+    },
+    "6": {
+     "pin_name": "D1",
+     "net": "WS_D12"
+    }
+   }
+  },
+  "Q807": {
+   "part": "AO3400A",
+   "pins": {
+    "1": {
+     "pin_name": "G",
+     "net": "WS_SHORT_G"
+    },
+    "2": {
+     "pin_name": "S",
+     "net": "GND"
+    },
+    "3": {
+     "pin_name": "D",
+     "net": "WS_NODE"
+    }
+   }
+  },
+  "RN801": {
+   "part": "100kΩ ×4",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_G0"
+    },
+    "8": {
+     "pin_name": "8",
+     "net": "GND"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_G1"
+    },
+    "7": {
+     "pin_name": "7",
+     "net": "GND"
+    },
+    "3": {
+     "pin_name": "3",
+     "net": "WS_G2"
+    },
+    "6": {
+     "pin_name": "6",
+     "net": "GND"
+    },
+    "4": {
+     "pin_name": "4",
+     "net": "WS_G3"
+    },
+    "5": {
+     "pin_name": "5",
+     "net": "GND"
+    }
+   }
+  },
+  "RN802": {
+   "part": "100kΩ ×4",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_G4"
+    },
+    "8": {
+     "pin_name": "8",
+     "net": "GND"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_G5"
+    },
+    "7": {
+     "pin_name": "7",
+     "net": "GND"
+    },
+    "3": {
+     "pin_name": "3",
+     "net": "WS_G6"
+    },
+    "6": {
+     "pin_name": "6",
+     "net": "GND"
+    },
+    "4": {
+     "pin_name": "4",
+     "net": "WS_G7"
+    },
+    "5": {
+     "pin_name": "5",
+     "net": "GND"
+    }
+   }
+  },
+  "RN803": {
+   "part": "100kΩ ×4",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_G8"
+    },
+    "8": {
+     "pin_name": "8",
+     "net": "GND"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_G9"
+    },
+    "7": {
+     "pin_name": "7",
+     "net": "GND"
+    },
+    "3": {
+     "pin_name": "3",
+     "net": "WS_G10"
+    },
+    "6": {
+     "pin_name": "6",
+     "net": "GND"
+    },
+    "4": {
+     "pin_name": "4",
+     "net": "WS_G11"
+    },
+    "5": {
+     "pin_name": "5",
+     "net": "GND"
+    }
+   }
+  },
+  "R813": {
+   "part": "100kΩ",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_SHORT_G"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "R832": {
+   "part": "100kΩ",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_G12"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "D801": {
+   "part": "SMF15CA",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_K1"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "F801": {
+   "part": "PTC 50mA",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_K1"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_KF1"
+    }
+   }
+  },
+  "U802": {
+   "part": "TLP176AM",
+   "pins": {
+    "1": {
+     "pin_name": "Anode",
+     "net": "WS_LA1"
+    },
+    "3": {
+     "pin_name": "Cathode",
+     "net": "SEL1_N"
+    },
+    "4": {
+     "pin_name": "Drain",
+     "net": "WS_NODE"
+    },
+    "6": {
+     "pin_name": "Drain",
+     "net": "WS_KF1"
+    }
+   }
+  },
+  "R820": {
+   "part": "330Ω 1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "+3V3"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_LA1"
+    }
+   }
+  },
+  "R815": {
+   "part": "300kΩ 0.1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_K1"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_S1"
+    }
+   }
+  },
+  "R827": {
+   "part": "DNP",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_K1"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "D802": {
+   "part": "SMF15CA",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_K2"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "F802": {
+   "part": "PTC 50mA",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_K2"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_KF2"
+    }
+   }
+  },
+  "U803": {
+   "part": "TLP176AM",
+   "pins": {
+    "1": {
+     "pin_name": "Anode",
+     "net": "WS_LA2"
+    },
+    "3": {
+     "pin_name": "Cathode",
+     "net": "SEL2_N"
+    },
+    "4": {
+     "pin_name": "Drain",
+     "net": "WS_NODE"
+    },
+    "6": {
+     "pin_name": "Drain",
+     "net": "WS_KF2"
+    }
+   }
+  },
+  "R821": {
+   "part": "330Ω 1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "+3V3"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_LA2"
+    }
+   }
+  },
+  "R816": {
+   "part": "300kΩ 0.1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_K2"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_S2"
+    }
+   }
+  },
+  "R828": {
+   "part": "DNP",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_K2"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "D803": {
+   "part": "SMF15CA",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_K3"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "F803": {
+   "part": "PTC 50mA",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_K3"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_KF3"
+    }
+   }
+  },
+  "U804": {
+   "part": "TLP176AM",
+   "pins": {
+    "1": {
+     "pin_name": "Anode",
+     "net": "WS_LA3"
+    },
+    "3": {
+     "pin_name": "Cathode",
+     "net": "SEL3_N"
+    },
+    "4": {
+     "pin_name": "Drain",
+     "net": "WS_NODE"
+    },
+    "6": {
+     "pin_name": "Drain",
+     "net": "WS_KF3"
+    }
+   }
+  },
+  "R822": {
+   "part": "330Ω 1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "+3V3"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_LA3"
+    }
+   }
+  },
+  "R817": {
+   "part": "300kΩ 0.1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_K3"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_S3"
+    }
+   }
+  },
+  "R829": {
+   "part": "DNP",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_K3"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "D804": {
+   "part": "SMF15CA",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_K4"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "F804": {
+   "part": "PTC 50mA",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_K4"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_KF4"
+    }
+   }
+  },
+  "U805": {
+   "part": "TLP176AM",
+   "pins": {
+    "1": {
+     "pin_name": "Anode",
+     "net": "WS_LA4"
+    },
+    "3": {
+     "pin_name": "Cathode",
+     "net": "SEL4_N"
+    },
+    "4": {
+     "pin_name": "Drain",
+     "net": "WS_NODE"
+    },
+    "6": {
+     "pin_name": "Drain",
+     "net": "WS_KF4"
+    }
+   }
+  },
+  "R823": {
+   "part": "330Ω 1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "+3V3"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_LA4"
+    }
+   }
+  },
+  "R818": {
+   "part": "300kΩ 0.1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_K4"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "WS_S4"
+    }
+   }
+  },
+  "R830": {
+   "part": "DNP",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_K4"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "R819": {
+   "part": "100kΩ 0.1%",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_ADC"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "C802": {
+   "part": "10nF",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_ADC"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "R824": {
+   "part": "10kΩ",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "+3V3"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "CH_EN_N"
+    }
+   }
+  },
+  "R825": {
+   "part": "100kΩ",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "CH_A0"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "R826": {
+   "part": "100kΩ",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "CH_A1"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "U806": {
+   "part": "SN74LVC139APWR",
+   "pins": {
+    "1": {
+     "pin_name": "1G",
+     "net": "CH_EN_N"
+    },
+    "2": {
+     "pin_name": "1A",
+     "net": "CH_A0"
+    },
+    "3": {
+     "pin_name": "1B",
+     "net": "CH_A1"
+    },
+    "8": {
+     "pin_name": "GND",
+     "net": "GND"
+    },
+    "9": {
+     "pin_name": "2Y3",
+     "net": null
+    },
+    "10": {
+     "pin_name": "2Y2",
+     "net": null
+    },
+    "11": {
+     "pin_name": "2Y1",
+     "net": null
+    },
+    "12": {
+     "pin_name": "2Y0",
+     "net": null
+    },
+    "13": {
+     "pin_name": "2B",
+     "net": "GND"
+    },
+    "14": {
+     "pin_name": "2A",
+     "net": "GND"
+    },
+    "15": {
+     "pin_name": "2G",
+     "net": "+3V3"
+    },
+    "16": {
+     "pin_name": "VCC",
+     "net": "+3V3"
+    },
+    "4": {
+     "pin_name": "1Y0",
+     "net": "SEL1_N"
+    },
+    "5": {
+     "pin_name": "1Y1",
+     "net": "SEL2_N"
+    },
+    "6": {
+     "pin_name": "1Y2",
+     "net": "SEL3_N"
+    },
+    "7": {
+     "pin_name": "1Y3",
+     "net": "SEL4_N"
+    }
+   }
+  },
+  "U807": {
+   "part": "CD74HC4052PWR",
+   "pins": {
+    "1": {
+     "pin_name": "B0",
+     "net": "GND"
+    },
+    "2": {
+     "pin_name": "B2",
+     "net": "GND"
+    },
+    "3": {
+     "pin_name": "COM B",
+     "net": "GND"
+    },
+    "4": {
+     "pin_name": "B3",
+     "net": "GND"
+    },
+    "5": {
+     "pin_name": "B1",
+     "net": "GND"
+    },
+    "6": {
+     "pin_name": "E",
+     "net": "CH_EN_N"
+    },
+    "7": {
+     "pin_name": "VEE",
+     "net": "GND"
+    },
+    "8": {
+     "pin_name": "GND",
+     "net": "GND"
+    },
+    "9": {
+     "pin_name": "S1",
+     "net": "CH_A1"
+    },
+    "10": {
+     "pin_name": "S0",
+     "net": "CH_A0"
+    },
+    "13": {
+     "pin_name": "COM A",
+     "net": "WS_ADC"
+    },
+    "16": {
+     "pin_name": "VCC",
+     "net": "+3V3"
+    },
+    "12": {
+     "pin_name": "A0",
+     "net": "WS_S1"
+    },
+    "14": {
+     "pin_name": "A1",
+     "net": "WS_S2"
+    },
+    "15": {
+     "pin_name": "A2",
+     "net": "WS_S3"
+    },
+    "11": {
+     "pin_name": "A3",
+     "net": "WS_S4"
+    }
+   }
+  },
+  "C803": {
+   "part": "100nF",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "+3V3"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "C804": {
+   "part": "100nF",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "+3V3"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    }
+   }
+  },
+  "J801": {
+   "part": "KF2EDGR-3.81-8P",
+   "pins": {
+    "1": {
+     "pin_name": "1",
+     "net": "WS_K1"
+    },
+    "2": {
+     "pin_name": "2",
+     "net": "GND"
+    },
+    "3": {
+     "pin_name": "3",
+     "net": "WS_K2"
+    },
+    "4": {
+     "pin_name": "4",
+     "net": "GND"
+    },
+    "5": {
+     "pin_name": "5",
+     "net": "WS_K3"
+    },
+    "6": {
+     "pin_name": "6",
+     "net": "GND"
+    },
+    "7": {
+     "pin_name": "7",
+     "net": "WS_K4"
+    },
+    "8": {
+     "pin_name": "8",
+     "net": "GND"
+    }
+   }
+  }
+ },
+ "changed_pins": {
+  "U301": {
+   "87": {
+    "pin_name": "PG2",
+    "net": "WS_RST_N"
+   },
+   "28": {
+    "pin_name": "PC2_C",
+    "net": "WS_ADC"
+   }
+  }
+ }
+}

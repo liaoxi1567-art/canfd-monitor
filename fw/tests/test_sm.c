@@ -19,6 +19,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "services/keysim/keysim.h"
 
 static int checks, fails;
 #define CHECK(c)                                                                 \
@@ -50,19 +51,19 @@ static void boot(void)
     run(500);                         /* 挂载 SD */
 }
 
-/* Original logical destinations now use the six-tile home and send submenu. */
+/* Original logical destinations now use the home tiles and send submenu.
+ * Home is 3 columns with six tiles, 4 columns once key simulation adds a seventh. */
 static void open_page(int n)
 {
     static const int tile_for_destination[]={0,1,0,1,2,3,4,5};
+    const int columns = keysim_available() ? 4 : 3;
     n=tile_for_destination[n];
     hold(BACK, 1100);                 /* 长按回主页 */
     for (int i = 0; i < 8; i++)
         tap(LEFT);
-    if (n >= 3) {
+    for (int r = 0; r < n / columns; r++)
         tap(DOWN);
-        n -= 3;
-    }
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n % columns; i++)
         tap(RIGHT);
     tap(OK);
 }

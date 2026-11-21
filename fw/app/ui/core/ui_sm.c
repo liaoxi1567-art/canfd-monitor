@@ -17,6 +17,7 @@
 #include "sim/send_plan.h"
 #include "sim/tx_scope.h"
 #include "services/device/file_port.h"
+#include "services/keysim/keysim.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -118,13 +119,17 @@ static int8_t   host_edit_ch = -1;  /* 上位机刚改了正在编辑的这一�
 
 #define PLAN_PAGE_TITLE "发送方案"
 static const char *const page_title[PG_NUM] = {
-    "主页", "实时显示", "发送报文", "录制设置", PLAN_PAGE_TITLE, "总线诊断", "文件管理", "通道设置", "系统设置", "工程菜单", "编辑发送报文", "显示筛选", "报文详情", "本地循环设置", "本地单 ID 时序", "已移除", "发送方案预览", "方案报文预览", "发送报文", "已移除", "现有报文文件", "文件详情"
+    "主页", "实时显示", "发送报文", "录制设置", PLAN_PAGE_TITLE, "总线诊断", "文件管理", "通道设置", "系统设置", "工程菜单", "编辑发送报文", "显示筛选", "报文详情", "本地循环设置", "本地单 ID 时序", "已移除", "发送方案预览", "方案报文预览", "发送报文", "已移除", "现有报文文件", "文件详情",
+    "按键模拟", "按键模拟", "学习键值", "门限扫描"
 };
 static const char *const page_id[PG_NUM] = {
-    "home", "live", "tx", "rec", "play", "diag", "files", "chset", "sysset", "eng", "txedit", "filter", "detail", "txset", "txtiming", "removed_logplay", "plan_detail", "plan_entry", "send", "removed_projects", "send_files", "file_detail"
+    "home", "live", "tx", "rec", "play", "diag", "files", "chset", "sysset", "eng", "txedit", "filter", "detail", "txset", "txtiming", "removed_logplay", "plan_detail", "plan_entry", "send", "removed_projects", "send_files", "file_detail",
+    "keysim", "keych", "keylearn", "keyscan"
 };
-static const page_t home_tiles[6] = { PG_LIVE, PG_TX, PG_DIAG, PG_FILES, PG_CHSET, PG_SYSSET };
-#define HOME_COUNT ((int)(sizeof home_tiles/sizeof home_tiles[0]))
+/* 第 7 格“按键模拟”只在板上有这部分硬件时出现；当前 Rev D/E 目标仍是 6 格。 */
+static const page_t home_tiles[7] = { PG_LIVE, PG_TX, PG_DIAG, PG_FILES, PG_CHSET, PG_SYSSET, PG_KEYSIM };
+static int home_count(void) { return keysim_available() ? 7 : 6; }
+#define HOME_COUNT home_count()
 #define HOME_COLUMNS (HOME_COUNT==6?3:4)
 
 static const uint32_t nbr_presets[] = { 10000, 20000, 33333, 50000, 83333, 100000, 125000, 250000, 500000, 800000, 1000000 };
@@ -501,11 +506,19 @@ static void dlg_answer(bool ok, int opt)
 }
 
 /* ---------- 页面切换 ---------- */
+static bool is_keysim_page(page_t p)
+{
+    return p == PG_KEYSIM || p == PG_KEYCH || p == PG_KEYLEARN || p == PG_KEYSCAN;
+}
+
 static void go(page_t p)
 {
     /* Normal page navigation supersedes a non-editing catalogue overlay.
      * Keyboard drafts are guarded before their callers reach this function. */
     local_files_close();
+    /* 进出按键模拟的任一页都先停学习 / 扫描并松开，接口回到高阻。 */
+    if (p != page && (is_keysim_page(page) || is_keysim_page(p)))
+        keysim_leave();
     page = p;
     numeric = false;
     if (p == PG_LIVE)
@@ -514,6 +527,8 @@ static void go(page_t p)
 
 static void go_home(void)
 {
+    if (is_keysim_page(page))
+        keysim_leave();
     disp_pause(false);
     editor.open = false;
     local_tx.open = false;
@@ -525,6 +540,25 @@ static void go_home(void)
 
 /* 每页条目数（给光标限幅） */
 static int file_count(void) { return port_sd_file_count(); }
+
+/* 按键模拟通道页的行布局：接口、按法、各键（没有键值表时一行提示）、手动、松开、学习、扫描、串联电阻。 */
+typedef struct { int keys0, nkeys, manual, release, learn, scan, series, table, total; } keych_rows_t;
+static keych_rows_t keych_rows(void)
+{
+    const keysim_t *k = keysim_get();
+    const ks_table_t *t = &k->tables[k->ch];
+    keych_rows_t r;
+    r.keys0 = 2;
+    r.nkeys = t->valid ? t->n : 0;
+    r.manual = r.keys0 + (r.nkeys ? r.nkeys : 1);
+    r.release = r.manual + 1;
+    r.learn = r.release + 1;
+    r.scan = r.learn + 1;
+    r.series = r.scan + 1;
+    r.table = r.series + 1;
+    r.total = r.table + 1;
+    return r;
+}
 static bool live_row_at(unsigned channel,unsigned ordinal,disp_row_t *out,uint32_t *source_back)
 {
     if(!channel){if(source_back)*source_back=ordinal;return disp_row(ordinal,out);}
@@ -605,6 +639,10 @@ static int item_count(page_t p)
     case PG_ENG:    return 6;
     case PG_LIVE:
         return live_count(live_channel,live_view);
+    case PG_KEYSIM: return keysim_available() ? keysim_get()->channels + 2 : 1;
+    case PG_KEYCH:  return keych_rows().total;
+    case PG_KEYLEARN: return 4 + keysim_get()->learn_n;
+    case PG_KEYSCAN:  return 3 + keysim_get()->scan_n;
     default:        return 1;
     }
 }
@@ -860,8 +898,9 @@ int ui_review_navigate(page_t target)
     int result = review_guard(); if (result) return result;
     if(target==PG_SENDMODE)target=PG_TX;
     if ((unsigned)target >= PG_NUM || (target > PG_SYSSET
-        && target!=PG_SENDMODE && target!=PG_PROJECTFILES
+        && target!=PG_SENDMODE && target!=PG_PROJECTFILES && target!=PG_KEYSIM
         )) return UI_REVIEW_RANGE;
+    if (target == PG_KEYSIM && !keysim_available()) return UI_REVIEW_RANGE;
     if (ui_draft_open()) {
         show_toast("请先保存或取消当前草稿"); return UI_REVIEW_DRAFT;
     }
@@ -1727,6 +1766,182 @@ static void key_eng(key_id_t k, gesture_t g)
         go_home();
 }
 
+/* ---------- 按键模拟 ---------- */
+static void fmt_volt(char *o, size_t n, uint16_t mv)
+{
+    snprintf(o, n, "%u.%02u V", (unsigned)(mv / 1000u), (unsigned)(mv % 1000u / 10u));
+}
+
+/* 设备字库没有 Ω，阻值写成“欧 / 千欧”。 */
+static void fmt_ohm_cn(char *o, size_t n, float ohm)
+{
+    if (ohm != ohm)
+        snprintf(o, n, "—");
+    else if (ohm > 1e7f)
+        snprintf(o, n, "开路");
+    else if (ohm >= 1000.0f)
+        snprintf(o, n, "%.2f 千欧", (double)(ohm / 1000.0f));
+    else
+        snprintf(o, n, "%.0f 欧", (double)ohm);
+}
+
+static void ks_report(winsim_status_t rc, const char *ok_text)
+{
+    switch (rc) {
+    case WINSIM_OK:              if (ok_text) show_toast(ok_text); break;
+    case WINSIM_ERR_OVERVOLTAGE: show_toast("接口过压，已断开电阻阵；排除后在总览里重新检测"); break;
+    case WINSIM_ERR_NO_SUPPLY:   show_toast("APM 未上电：先在发送报文页发唤醒报文"); break;
+    case WINSIM_ERR_VERIFY_FAIL: show_toast("回读和目标相差超过 80 mV，检查接线"); break;
+    case WINSIM_ERR_CALIBRATION: show_toast("串联电阻标定失败，检查保险丝和接线"); break;
+    default:                     show_toast("现在不能执行这一步"); break;
+    }
+}
+
+static void key_keysim(key_id_t k, gesture_t g)
+{
+    const keysim_t *ks = keysim_get();
+    int c = cursor[PG_KEYSIM];
+    char t[96];
+    if (k != KEY_OK || g != GEST_SHORT || !ks->available)
+        return;
+    if (c < ks->channels) {
+        winsim_status_t rc = keysim_select((uint8_t)c);
+        if (rc == WINSIM_OK) {
+            snprintf(t, sizeof t, "已接通 K%d，串联电阻 %.1f 欧", c + 1, (double)ks->r_series[c]);
+            show_toast(t);
+        } else if (rc == WINSIM_ERR_NO_SUPPLY) {
+            snprintf(t, sizeof t, "已接通 K%d；APM 未上电，串联电阻没有标定", c + 1);
+            show_toast(t);
+        } else {
+            ks_report(rc, NULL);
+        }
+        if (rc != WINSIM_ERR_OVERVOLTAGE && rc != WINSIM_ERR_PARAM) {
+            cursor[PG_KEYCH] = 2;
+            go(PG_KEYCH);
+        }
+    } else if (c == ks->channels) {
+        if (ks->ovp)
+            ks_report(keysim_clear_ovp(), "电压正常，已解除过压锁定");
+    } else {
+        keysim_release();
+        show_toast("已全部松开，接口回到高阻");
+    }
+}
+
+static void key_keych(key_id_t k, gesture_t g)
+{
+    const keysim_t *ks = keysim_get();
+    keych_rows_t r = keych_rows();
+    int c = cursor[PG_KEYCH];
+    char t[96];
+    if (!ks->available)
+        return;
+    if (k == KEY_LEFT || k == KEY_RIGHT) {
+        if (g == GEST_LONG)
+            return;
+        if (c == 1)
+            keysim_set_press_mode(ks->press_mode == KS_TAP ? KS_LATCH : KS_TAP);
+        else if (c == r.manual)
+            keysim_manual_adjust(k == KEY_RIGHT ? 100 : -100);
+        return;
+    }
+    if (k != KEY_OK || g != GEST_SHORT)
+        return;
+    if (c == 1) {
+        keysim_set_press_mode(ks->press_mode == KS_TAP ? KS_LATCH : KS_TAP);
+    } else if (c >= r.keys0 && c < r.keys0 + r.nkeys) {
+        ks_report(keysim_press(c - r.keys0), NULL);
+    } else if (c == r.keys0 && r.nkeys == 0) {
+        show_toast("先学习或扫描，得到这一路的键值表");
+    } else if (c == r.manual) {
+        ks_report(keysim_manual_toggle(), NULL);
+    } else if (c == r.release) {
+        keysim_release();
+        show_toast("已全部松开，接口回到高阻");
+    } else if (c == r.learn) {
+        cursor[PG_KEYLEARN] = 0;
+        go(PG_KEYLEARN);
+    } else if (c == r.scan) {
+        cursor[PG_KEYSCAN] = 0;
+        go(PG_KEYSCAN);
+    } else if (c == r.table) {
+        if (keysim_resave())
+            show_toast("正在重新写入 SD 卡");
+        else if (ks->tables[ks->ch].valid && ks->sd_saved[ks->ch])
+            show_toast("这张键值表已经在 SD 卡上");
+    } else if (c == r.series) {
+        winsim_status_t rc = keysim_recalibrate();
+        if (rc == WINSIM_OK) {
+            snprintf(t, sizeof t, "K%u 串联电阻 %.1f 欧", (unsigned)ks->ch + 1u, (double)ks->r_series[ks->ch]);
+            show_toast(t);
+        } else {
+            ks_report(rc, NULL);
+        }
+    }
+}
+
+static void key_keylearn(key_id_t k, gesture_t g)
+{
+    const keysim_t *ks = keysim_get();
+    int c = cursor[PG_KEYLEARN], n = ks->learn_n;
+    char t[96];
+    if (k != KEY_OK || g != GEST_SHORT || !ks->available)
+        return;
+    if (c == 0) {
+        if (ks->activity == KS_LEARNING) {
+            keysim_learn_stop();
+            show_toast("已暂停学习，记录保留");
+        } else {
+            ks_report(keysim_learn_start(), "开始学习：按住原车开关的一个档位");
+        }
+    } else if (c >= 2 && c < 2 + n) {
+        keysim_learn_rename(c - 2);
+    } else if (c == 2 + n) {
+        keysim_learn_clear();
+        show_toast("已清空，重新学习");
+    } else if (c == 3 + n) {
+        if (keysim_learn_save()) {
+            snprintf(t, sizeof t, "已保存 %d 个键值到 K%u，正在写入 SD 卡", n, (unsigned)ks->ch + 1u);
+            show_toast(t);
+            cursor[PG_KEYCH] = 2;
+            go(PG_KEYCH);
+        } else {
+            show_toast("还没有记录到键值");
+        }
+    }
+}
+
+static void key_keyscan(key_id_t k, gesture_t g)
+{
+    const keysim_t *ks = keysim_get();
+    int c = cursor[PG_KEYSCAN], n = ks->scan_n;
+    char t[96];
+    if (k != KEY_OK || g != GEST_SHORT || !ks->available)
+        return;
+    if (c == 0) {
+        if (ks->activity == KS_SCANNING) {
+            keysim_scan_stop();
+            show_toast("已中止扫描，接口回到高阻");
+        } else {
+            winsim_status_t rc = keysim_scan_start();
+            if (rc == WINSIM_ERR_PARAM && !keysim_state_known())
+                show_toast("读不到 APM 开关状态：先配置 CAN 开关状态信号");
+            else
+                ks_report(rc, "开始扫描，约 4 秒");
+        }
+    } else if (c == 2 + n) {
+        if (keysim_scan_save()) {
+            snprintf(t, sizeof t, "已保存 %u 个键值到 K%u（每档取中点），正在写入 SD 卡",
+                     (unsigned)ks->tables[ks->ch].n, (unsigned)ks->ch + 1u);
+            show_toast(t);
+            cursor[PG_KEYCH] = 2;
+            go(PG_KEYCH);
+        } else {
+            show_toast(ks->activity == KS_SCANNING ? "扫描还没完成" : "还没有扫描结果");
+        }
+    }
+}
+
 static void activate_home(void)
 {
     go(home_tiles[clampi(cursor[PG_HOME],0,HOME_COUNT-1)]);
@@ -1762,6 +1977,8 @@ static void page_key(key_id_t k, gesture_t g)
             if(page==PG_PLANENTRY){go(PG_PLANDETAIL);return;}
             if(page==PG_PLANDETAIL){go(plan_detail_return);return;}
             if(page==PG_FILEDETAIL){go(PG_FILES);return;}
+            if(page==PG_KEYCH){go(PG_KEYSIM);return;}
+            if(page==PG_KEYLEARN||page==PG_KEYSCAN){go(PG_KEYCH);return;}
             if(page==PG_PROJECTFILES){go(send_files_return);return;}
             if(page==PG_TX){go_home();return;}
             if(page==PG_REC){if(rec_origin_valid)restore_live(rec_origin);else go(PG_LIVE);rec_origin_valid=false;return;}
@@ -1809,6 +2026,10 @@ static void page_key(key_id_t k, gesture_t g)
     case PG_CHSET:  key_chset(k, g); break;
     case PG_SYSSET: key_sysset(k, g); break;
     case PG_ENG:    key_eng(k, g); break;
+    case PG_KEYSIM: key_keysim(k, g); break;
+    case PG_KEYCH:  key_keych(k, g); break;
+    case PG_KEYLEARN: key_keylearn(k, g); break;
+    case PG_KEYSCAN:  key_keyscan(k, g); break;
     default: break;
     }
 }
@@ -2719,6 +2940,168 @@ static void record_controls_json(jw_t *j)
     jw_end_obj(j);
 }
 
+/* ---------- 按键模拟：视图 ---------- */
+static void items_keysim(jw_t *j)
+{
+    const keysim_t *ks = keysim_get();
+    char l[16], v[TXT], a[24];
+    if (!ks->available) {
+        item(j, "本板没有按键模拟硬件", "需要 Hardware-C 原理图第 12 页", IF_DISABLED);
+        return;
+    }
+    for (int c = 0; c < ks->channels; c++) {
+        const ks_table_t *t = &ks->tables[c];
+        bool on = c == ks->ch;
+        const char *state = on ? (ks->pressed != -1 ? "按下中" : "已接通") : "断开";
+        snprintf(l, sizeof l, "K%d", c + 1);
+        if (t->valid)
+            snprintf(v, sizeof v, "%s · %s · %u 个键值 · %s", state, t->name, (unsigned)t->n,
+                     ks->sd_saved[c] ? "已存 SD" : "未存 SD");
+        else
+            snprintf(v, sizeof v, "%s · 未学习", state);
+        item(j, l, v, on ? IF_ACTIVE : 0);
+    }
+    fmt_volt(a, sizeof a, ks->port_mv);
+    if (ks->ovp)
+        snprintf(v, sizeof v, "K%u 接口 %s，过压已断开 · OK 重新检测", (unsigned)ks->ch + 1u, a);
+    else if (ks->supply_ok)
+        snprintf(v, sizeof v, "已上电 · K%u 接口 %s", (unsigned)ks->ch + 1u, a);
+    else
+        snprintf(v, sizeof v, "未上电：先在发送报文页发唤醒报文");
+    item(j, "APM 供电", v, ks->ovp || !ks->supply_ok ? IF_WARN : 0);
+    item(j, "全部松开", "回到高阻", ks->pressed != -1 ? IF_ACTION : IF_DISABLED);
+}
+
+static void items_keych(jw_t *j)
+{
+    const keysim_t *ks = keysim_get();
+    const ks_table_t *t = &ks->tables[ks->ch];
+    keych_rows_t r = keych_rows();
+    char v[TXT], a[24];
+    int st = keysim_apm_state();
+    fmt_volt(a, sizeof a, ks->port_mv);
+    if (ks->ovp)
+        snprintf(v, sizeof v, "%s · 过压，已断开", a);
+    else
+        snprintf(v, sizeof v, "%s · APM 判定：%s", a, st >= 0 ? keysim_state_name(st) : "读不到");
+    item(j, "接口", v, ks->ovp ? IF_WARN : ks->pressed != -1 ? IF_ACTIVE : 0);
+    item(j, "按法", ks->press_mode == KS_TAP ? "点按 300 ms（左右键切换）" : "保持：再按一次松开（左右键切换）", 0);
+    if (!r.nkeys)
+        item(j, "还没有键值表", "先学习或扫描", IF_DISABLED);
+    for (int i = 0; i < r.nkeys; i++) {
+        const ks_key_t *key = &t->keys[i];
+        if (key->mv == 0u)
+            snprintf(a, sizeof a, "直通 0 欧");
+        else
+            fmt_volt(a, sizeof a, key->mv);
+        snprintf(v, sizeof v, "%s%s", a, ks->pressed == i ? " · 按下中" : "");
+        item(j, key->name, v, ks->pressed == i ? IF_ACTIVE : IF_ACTION);
+    }
+    fmt_volt(a, sizeof a, ks->manual_mv);
+    snprintf(v, sizeof v, "%s · 左右键调 0.1 V · OK %s", a, ks->pressed == KS_MANUAL ? "松开" : "按下");
+    item(j, "手动电压", v, ks->pressed == KS_MANUAL ? IF_ACTIVE : IF_ACTION);
+    item(j, "全部松开", "回到高阻", ks->pressed != -1 ? IF_ACTION : IF_DISABLED);
+    item(j, "学习键值", "原车开关接着时用：设备只测量", IF_ACTION);
+    item(j, "门限扫描", "没有原车开关时用：需要 APM 开关状态", IF_ACTION);
+    snprintf(v, sizeof v, "%.1f 欧（%s）· OK 重新标定", (double)ks->r_series[ks->ch],
+             ks->calibrated[ks->ch] ? "已标定" : "未标定，用默认值");
+    item(j, "串联电阻", v, ks->calibrated[ks->ch] ? IF_ACTION : IF_WARN);
+    int16_t err = ks->sd_error[ks->ch];
+    if (!t->valid)
+        item(j, "键值表", "还没有", IF_DISABLED);
+    else if (ks->sd_saved[ks->ch]) {
+        snprintf(v, sizeof v, "%s · 已存 SD 卡 APMKEY/K%u.TXT", t->name, (unsigned)ks->ch + 1u);
+        item(j, "键值表", v, 0);
+    } else if (err == KS_IO_ERR_UNAVAILABLE)
+        item(j, "键值表", "只在内存：SD 卡不可用，插卡后自动保存", IF_WARN);
+    else if (err)
+        item(j, "键值表", "写入 SD 卡失败 · OK 重试", IF_WARN);
+    else
+        item(j, "键值表", "正在写入 SD 卡", IF_ACTIVE);
+    (void)r;
+}
+
+static void items_keylearn(jw_t *j)
+{
+    const keysim_t *ks = keysim_get();
+    char v[TXT], a[24], b[24], o[32], l[48];
+    bool on = ks->activity == KS_LEARNING;
+    if (on)
+        snprintf(v, sizeof v, "进行中：按住原车开关一个档位（稳定 %u%%）· OK 暂停", (unsigned)ks->learn_progress);
+    else
+        snprintf(v, sizeof v, "OK 开始 · 设备只测量，不下拉");
+    item(j, "学习", v, on ? IF_ACTIVE : IF_ACTION);
+    fmt_volt(a, sizeof a, ks->port_mv);
+    fmt_volt(b, sizeof b, ks->learn_idle_mv);
+    if (ks->learn_idle_mv)
+        snprintf(v, sizeof v, "%s · 空闲 %s", a, b);
+    else
+        snprintf(v, sizeof v, "%s", a);
+    item(j, "接口电压", v, 0);
+    for (int i = 0; i < ks->learn_n; i++) {
+        const ks_key_t *key = &ks->learn_keys[i];
+        fmt_volt(a, sizeof a, key->mv);
+        fmt_ohm_cn(o, sizeof o, key->ohm);
+        snprintf(l, sizeof l, "第 %d 档 %s", i + 1, key->name);
+        snprintf(v, sizeof v, "%s · %s · OK 改名", a, o);
+        item(j, l, v, 0);
+    }
+    item(j, "重学", "清空已记录的档位", ks->learn_n ? IF_ACTION : IF_DISABLED);
+    snprintf(v, sizeof v, "存为 K%u 的键值表", (unsigned)ks->ch + 1u);
+    item(j, "保存", v, ks->learn_n ? IF_ACTION : IF_DISABLED);
+}
+
+static void items_keyscan(jw_t *j)
+{
+    const keysim_t *ks = keysim_get();
+    char v[TXT], a[24], b[24], l[48], from[16];
+    int st = keysim_apm_state();
+    if (ks->activity == KS_SCANNING) {
+        fmt_volt(a, sizeof a, ks->scan_mv);
+        snprintf(v, sizeof v, "进行中：%s · OK 中止", a);
+    } else if (ks->scan_done) {
+        snprintf(v, sizeof v, "完成：%u 个门限 · OK 重新扫描", (unsigned)ks->scan_n);
+    } else {
+        snprintf(v, sizeof v, "OK 开始 · 原车开关要先断开 · 约 4 秒");
+    }
+    item(j, "扫描", v, ks->activity == KS_SCANNING ? IF_ACTIVE : IF_ACTION);
+    if (st >= 0)
+        snprintf(v, sizeof v, "APM 上报 · 当前 %s", keysim_state_name(st));
+    else
+        snprintf(v, sizeof v, "读不到：需要配置 CAN 开关状态信号");
+    item(j, "开关状态来源", v, st >= 0 ? 0 : IF_WARN);
+    for (int i = 0; i < ks->scan_n; i++) {
+        const ks_edge_t *e = &ks->scan_edges[i];
+        snprintf(from, sizeof from, "%s", keysim_state_name(e->from));
+        snprintf(l, sizeof l, "%s → %s", from, keysim_state_name(e->to));
+        fmt_volt(a, sizeof a, e->below_mv);
+        fmt_volt(b, sizeof b, e->above_mv);
+        snprintf(v, sizeof v, "%s – %s", a, b);
+        item(j, l, v, 0);
+    }
+    item(j, "保存", "每档取中点存为键值表", ks->scan_done && ks->scan_n ? IF_ACTION : IF_DISABLED);
+}
+
+static const char *keysim_title(void)
+{
+    static char t[24];
+    if (page != PG_KEYCH)
+        return page_title[page];
+    snprintf(t, sizeof t, "K%u 按键模拟", (unsigned)keysim_get()->ch + 1u);
+    return t;
+}
+
+static const char *keysim_hint(void)
+{
+    switch (page) {
+    case PG_KEYSIM:   return "OK 接通这一路并进入 · 同一时刻只接通一路";
+    case PG_KEYCH:    return "OK 按键 · 左右键切换按法或调电压 · BACK 松开并返回";
+    case PG_KEYLEARN: return "按住原车开关一个档位 0.5 秒自动记录 · BACK 退出，未保存的保留到下次";
+    case PG_KEYSCAN:  return "设备代替开关从 4.8 V 往下扫 · BACK 中止并回到高阻";
+    default:          return "";
+    }
+}
+
 void ui_json(jw_t *j)
 {
     memset(&item_window,0,sizeof item_window);
@@ -2737,7 +3120,7 @@ void ui_json(jw_t *j)
     }
 #endif
     jw_kstr(j, "page", page_id[page]);
-    jw_kstr(j, "title", page_title[page]);
+    jw_kstr(j, "title", keysim_title());
     jw_kint(j, "cursor", cursor[page]);
     jw_kint(j,"items_start",item_window.start);jw_kint(j,"items_total",item_window.total);
     jw_kint(j,"tx_channel",local_tx_channel);
@@ -2762,7 +3145,7 @@ void ui_json(jw_t *j)
         page==PG_PLANDETAIL ? "OK 加载/执行 · 可逐条查看完整数据 · BACK 返回" :
         page==PG_PLANENTRY ? "只读快照 · ↑↓ 查看完整载荷 · BACK 返回方案" :
         (page == PG_TXEDIT || page == PG_FILTER) ?
-        (numeric ? "←→ 选择位 · ↑↓ 改值 · OK 完成 · BACK 撤销本字段" : "↑↓ 选字段 · ←→ 切换 · OK 编辑数值 / 执行 · BACK 取消") : "";
+        (numeric ? "←→ 选择位 · ↑↓ 改值 · OK 完成 · BACK 撤销本字段" : "↑↓ 选字段 · ←→ 切换 · OK 编辑数值 / 执行 · BACK 取消") : keysim_hint();
     jw_kstr(j, "hint", hint);
     jw_kbool(j, "numeric", numeric);
     jw_kint(j, "digit", numeric_digit);
@@ -2819,6 +3202,10 @@ void ui_json(jw_t *j)
         case PG_CHSET:  items_chset(j); break;
         case PG_SYSSET: items_sysset(j); break;
         case PG_ENG:    items_eng(j); break;
+        case PG_KEYSIM: items_keysim(j); break;
+        case PG_KEYCH:  items_keych(j); break;
+        case PG_KEYLEARN: items_keylearn(j); break;
+        case PG_KEYSCAN:  items_keyscan(j); break;
         default: break;
         }
         jw_end_arr(j);

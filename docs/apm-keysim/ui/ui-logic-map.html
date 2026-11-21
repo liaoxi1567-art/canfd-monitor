@@ -1,0 +1,411 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CAN FD 界面逻辑</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a reference sheet. Summary strip, then a navigation map read left-to-right
+   (page → how you get there → sub-page), then input table, device screens, item lists,
+   and a dashed-bordered draft section for the new key-simulation feature. */
+:root {
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --ink: #17212d;
+  --muted: #5a6778;
+  --line: #d6dde6;
+  --accent: #1f5fae;
+  --accent-soft: #e5eef9;
+  --warn: #9a4b05;
+  --warn-soft: #fbefe1;
+  --new: #0b6f62;
+  --new-soft: #e1f3ef;
+  --ok: #2c7a33;
+  --screen: #0f1b2e;
+  --font-body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d131a; --surface: #151d27; --ink: #e5ecf4; --muted: #95a3b4; --line: #283444;
+    --accent: #79aef0; --accent-soft: #17283d; --warn: #f0a650; --warn-soft: #2b2015;
+    --new: #55c7b3; --new-soft: #10302a; --ok: #74c47a; --screen: #0a1322; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d131a; --surface: #151d27; --ink: #e5ecf4; --muted: #95a3b4; --line: #283444;
+  --accent: #79aef0; --accent-soft: #17283d; --warn: #f0a650; --warn-soft: #2b2015;
+  --new: #55c7b3; --new-soft: #10302a; --ok: #74c47a; --screen: #0a1322; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body);
+  font-size: 15px; line-height: 1.65;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 64px;
+}
+.wrap { max-width: 1080px; margin: 0 auto; display: grid; gap: 44px; }
+h1, h2, h3 { text-wrap: balance; line-height: 1.3; margin: 0; }
+h1 { font-size: 28px; font-weight: 700; letter-spacing: .01em; }
+h2 { font-size: 20px; font-weight: 700; }
+h3 { font-size: 15px; font-weight: 700; }
+p { margin: 0; }
+code, .mono { font-family: var(--font-mono); font-size: .88em; }
+.eyebrow { font-size: 12px; letter-spacing: .12em; color: var(--muted); text-transform: uppercase; font-family: var(--font-mono); }
+.lede { color: var(--muted); max-width: 70ch; }
+header { display: grid; gap: 10px; }
+section { display: grid; gap: 16px; }
+.section-head { display: grid; gap: 4px; }
+.section-head p { color: var(--muted); max-width: 72ch; }
+
+/* summary strip */
+.summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.sum { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 6px; align-content: start; }
+.sum .k { font-size: 12px; color: var(--muted); font-family: var(--font-mono); letter-spacing: .06em; }
+.sum.warn { border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); background: var(--warn-soft); }
+.sum.warn .k { color: var(--warn); }
+
+/* navigation map */
+.map { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.map-root { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--line); background: var(--accent-soft); }
+.map-root strong { font-size: 16px; }
+.map-root span { color: var(--muted); font-size: 13px; }
+.row { display: grid; grid-template-columns: 170px minmax(0, 1fr); border-bottom: 1px solid var(--line); }
+.row:last-child { border-bottom: 0; }
+.row > .page { padding: 14px 18px; display: grid; gap: 2px; align-content: start; border-right: 1px solid var(--line); }
+.page b { font-size: 15px; }
+.page small { color: var(--muted); font-size: 12px; }
+.edges { padding: 10px 18px; display: grid; gap: 6px; }
+.edge { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; align-items: baseline; font-size: 14px; }
+.edge .how { color: var(--muted); font-size: 13px; font-family: var(--font-mono); }
+.edge .how::after { content: " →"; color: var(--accent); }
+.edge .to b { font-weight: 500; color: var(--accent); }
+.row.global { background: color-mix(in srgb, var(--accent-soft) 45%, transparent); }
+.row.new { background: var(--new-soft); }
+.row.new .page b, .row.new .to b { color: var(--new); }
+.row.new .how::after { color: var(--new); }
+.chip { display: inline-block; font-size: 11px; font-family: var(--font-mono); letter-spacing: .04em; padding: 1px 7px; border-radius: 999px; border: 1px solid currentColor; vertical-align: 2px; margin-left: 6px; }
+.chip.new { color: var(--new); }
+.chip.warn { color: var(--warn); }
+
+/* input table */
+.tbl-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 14px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: .06em; background: var(--bg); }
+tr:last-child td { border-bottom: 0; }
+td:first-child { white-space: nowrap; font-weight: 500; }
+.st { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; white-space: nowrap; }
+.st::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex: none; }
+.st.ok { color: var(--ok); }
+.st.bad { color: var(--warn); }
+.st.mid { color: var(--accent); }
+td .note { color: var(--muted); font-size: 13px; display: block; margin-top: 2px; }
+
+/* device screens */
+.shots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+figure { margin: 0; display: grid; gap: 8px; align-content: start; }
+figure img { width: 100%; height: auto; aspect-ratio: 3 / 2; border-radius: 8px; background: var(--screen); border: 1px solid var(--line); display: block; }
+figcaption { font-size: 13px; color: var(--muted); }
+figcaption b { color: var(--ink); font-weight: 500; }
+
+/* item lists */
+.items { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.card h3 { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.card h3 span { font-size: 12px; color: var(--muted); font-weight: 400; font-family: var(--font-mono); }
+.card ol { margin: 0; padding-left: 1.6em; font-size: 13.5px; display: grid; gap: 2px; }
+.card li::marker { color: var(--muted); font-family: var(--font-mono); font-size: 11px; }
+.card li em { font-style: normal; color: var(--muted); }
+
+/* change list */
+.changes { display: grid; gap: 10px; counter-reset: c; }
+.change { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--warn); border-radius: 0 10px 10px 0; padding: 12px 16px; display: grid; gap: 4px; }
+.change h3 { font-size: 15px; }
+.change p { color: var(--muted); font-size: 14px; }
+
+/* draft section */
+.draft { border: 1.5px dashed color-mix(in srgb, var(--new) 60%, var(--line)); border-radius: 14px; padding: 22px; display: grid; gap: 18px; background: color-mix(in srgb, var(--new-soft) 50%, var(--bg)); }
+.flows { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.flow { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.flow h3 { color: var(--new); }
+.flow p.sub { color: var(--muted); font-size: 13px; }
+.steps { margin: 0; padding-left: 1.5em; display: grid; gap: 4px; font-size: 14px; }
+.steps li::marker { color: var(--new); font-family: var(--font-mono); font-size: 12px; }
+.qs { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.qs li { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 8px; font-size: 14px; }
+.qs li > span { font-family: var(--font-mono); color: var(--new); font-weight: 500; }
+.qs li small { display: block; color: var(--muted); font-size: 13px; }
+
+.foot { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 4px; }
+
+@media (max-width: 860px) {
+  .summary, .shots, .items, .flows { grid-template-columns: minmax(0, 1fr); }
+  .row { grid-template-columns: minmax(0, 1fr); }
+  .row > .page { border-right: 0; border-bottom: 1px dashed var(--line); }
+  .edge { grid-template-columns: minmax(0, 1fr); gap: 0; }
+}
+@media (min-width: 861px) and (max-width: 1020px) {
+  .shots, .items { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Hardware-C · 界面梳理 · 基于 ui_sm.c（Rev E 基线 06fc686）</div>
+  <h1>CAN FD 界面逻辑</h1>
+  <p class="lede">这份梳理来自固件状态机 <code>fw/app/ui/core/ui_sm.c</code> 和设备的真实 LVGL 渲染画面（480×320）。页面和条目是从运行中的模拟器里逐页读出来的，不是凭代码推测。末尾是新增“按键学习 / 模拟发送”的接入草案，等你确认后再细化。</p>
+</header>
+
+<div class="summary">
+  <div class="sum">
+    <div class="k">骨架</div>
+    <p>主页 6 个入口，进入功能页后再进子页。“返回”逐级回退。发送、格式化、恢复出厂等有风险的操作，都先弹确认框。</p>
+  </div>
+  <div class="sum">
+    <div class="k">输入</div>
+    <p>同一套状态机同时接物理键和触摸。屏幕上固定有左上“返回”、右上 REC，部分页面底部还有 ↑↓←→ 和 OK 软键，所以绝大多数操作纯触摸也能完成。</p>
+  </div>
+  <div class="sum warn">
+    <div class="k">Hardware-C 差异</div>
+    <p>主控上没有接任何按键，电源是拨动开关 SW101。所以长按返回回主页、POWER 熄屏和关机、BACK+REC 锁键、开机进升级这几项在新板上都用不了，要改。</p>
+  </div>
+</div>
+
+<section>
+  <div class="section-head">
+    <h2>页面导航</h2>
+    <p>左列是功能页，右边每行写“怎么操作 → 到哪里”。蓝色是现有子页；绿色虚线一行是新增功能的建议位置。</p>
+  </div>
+  <div class="map">
+    <div class="map-root"><strong>主页</strong><span>3×2 宫格：实时显示 · 发送报文 · 总线诊断 · 文件管理 · 通道设置 · 系统设置。点宫格进入，或用方向键选中后按 OK。</span></div>
+
+    <div class="row">
+      <div class="page"><b>实时显示</b><small>报文滚动 / 按 ID 汇总</small></div>
+      <div class="edges">
+        <div class="edge"><span class="how">点一行报文</span><span class="to"><b>报文详情</b>：←→ 上一条 / 下一条，返回原列表</span></div>
+        <div class="edge"><span class="how">顶部按钮</span><span class="to">CAN1 · CAN2 · 按 ID · 暂停 · 筛选（物理键 ← → 也能切换通道）</span></div>
+        <div class="edge"><span class="how">长按 OK</span><span class="to">操作菜单：切换滚动 / 按 ID · <b>显示筛选</b> · <b>录制设置</b></span></div>
+        <div class="edge"><span class="how">筛选</span><span class="to"><b>显示筛选</b>：通道、类型、匹配 ID、掩码、方向、ID 格式，然后应用。只影响屏幕显示，SD 卡照样录全部原始报文</span></div>
+        <div class="edge"><span class="how">返回</span><span class="to">暂停状态下先恢复跟随，再按一次回主页</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="page"><b>发送报文</b><small>每路 4 个发送槽</small></div>
+      <div class="edges">
+        <div class="edge"><span class="how">点报文行</span><span class="to"><b>编辑发送报文</b>：ID、格式、FD/BRS、长度、周期、逐字节或<b>十六进制键盘</b>，然后保存或取消</span></div>
+        <div class="edge"><span class="how">单发 / OK</span><span class="to">按当前发送范围发一帧（物理键 → 键切换本槽独立周期，← 键全部停止）</span></div>
+        <div class="edge"><span class="how">循环设置</span><span class="to"><b>本地循环设置</b> → 点第 n 条 → <b>本地单 ID 时序</b>（次数、间隔、总周期）</span></div>
+        <div class="edge"><span class="how">加载文件</span><span class="to"><b>现有报文文件</b>：点一个文件就替换它所含的通道，不会自动发送</span></div>
+        <div class="edge"><span class="how">保存列表</span><span class="to">用键盘命名，存成发送方案（本路或两路）</span></div>
+        <div class="edge"><span class="how">按范围启动循环</span><span class="to">确认框，确认后各通道按自己的时序一起开始</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="page"><b>总线诊断</b><small>状态只读 + 4 个操作</small></div>
+      <div class="edges">
+        <div class="edge"><span class="how">看</span><span class="to">每路：模式和速率、TEC/REC、负载和峰值、错误计数</span></div>
+        <div class="edge"><span class="how">OK</span><span class="to">自动识别 CAN1 / CAN2 的波特率（只听）· 恢复 Bus-Off（只有 Bus-Off 时可用）· 清零统计</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="page"><b>文件管理</b><small>SD 卡文件列表</small></div>
+      <div class="edges">
+        <div class="edge"><span class="how">点文件</span><span class="to"><b>文件详情</b>：名称、类型、大小和帧数、时长，可以保护或改名</span></div>
+        <div class="edge"><span class="how">进入 U 盘模式</span><span class="to">确认框。电脑通过 USB 直接读写 SD 卡</span></div>
+        <div class="edge"><span class="how">格式化 SD 卡</span><span class="to">确认框。发送方案会保留</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="page"><b>通道设置</b><small>←→ 直接改值</small></div>
+      <div class="edges">
+        <div class="edge"><span class="how">↑↓ 选，←→ 改</span><span class="to">每路的工作模式（只听 / 正常 / 受限）、标称速率、CAN FD 开关、数据段速率，以及 Bus-Off 恢复方式</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="page"><b>系统设置</b><small>←→ 改值，OK 进入</small></div>
+      <div class="edges">
+        <div class="edge"><span class="how">←→</span><span class="to">自动熄屏、自动关机、背光亮度</span></div>
+        <div class="edge"><span class="how">录制设置</span><span class="to"><b>录制设置</b>：录制通道、分段大小、卡满时的处理、下次录制的文件名前缀</span></div>
+        <div class="edge"><span class="how">工程菜单</span><span class="to"><b>工程菜单</b>：自检、事件队列溢出次数、丢帧数、开机次数、上次关机原因</span></div>
+        <div class="edge"><span class="how">恢复出厂设置</span><span class="to">确认框。序列号、校准值和录制文件都保留</span></div>
+      </div>
+    </div>
+
+    <div class="row global">
+      <div class="page"><b>任何页面</b><small>全局行为</small></div>
+      <div class="edges">
+        <div class="edge"><span class="how">REC</span><span class="to">开始或停止录制，并跳到实时显示。停止后弹出键盘，给录制文件命名</span></div>
+        <div class="edge"><span class="how">确认框</span><span class="to">服务层发来的确认请求（包括上位机的请求）排队弹出，确认或取消</span></div>
+        <div class="edge"><span class="how">提示条</span><span class="to">屏幕底部一行黄字，显示操作结果或错误</span></div>
+      </div>
+    </div>
+
+    <div class="row new">
+      <div class="page"><b>按键模拟</b><span class="chip new">建议新增</span><small>主页第 7 个入口</small></div>
+      <div class="edges">
+        <div class="edge"><span class="how">选通道</span><span class="to"><b>K1–K4</b>（路数待定），每路显示端口电压和当前状态</span></div>
+        <div class="edge"><span class="how">学习</span><span class="to"><b>按键学习</b>：在台架或实车上，测出原车每个按键档位的电压和等效电阻</span></div>
+        <div class="edge"><span class="how">发送</span><span class="to"><b>模拟发送</b>：选一个学过或手动输入的键值，点按、按住或保持</span></div>
+        <div class="edge"><span class="how">扫描</span><span class="to"><b>门限扫描</b>：没有原车开关时，从 4.8 V 往下扫，同时读 CAN 开关状态，自动得出门限表</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>按键与手势</h2>
+    <p>手势规则在 <code>services/input/keys.c</code>：OK、BACK 长按 1 秒；REC、POWER 长按 2 秒；方向键按住 0.5 秒后每 150 毫秒连发；同时按多个键时都不触发单键手势。右列是 Hardware-C 上的情况。</p>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>操作</th><th>现在的行为</th><th>Hardware-C（纯触摸 + 拨动开关）</th></tr></thead>
+      <tbody>
+        <tr><td>点“返回”/ BACK 短按</td><td>回上一级；有对话框时等于取消</td><td><span class="st ok">可用</span><span class="note">左上角“返回”按钮</span></td></tr>
+        <tr><td>BACK 长按 1 秒</td><td>任何页面直接回主页</td><td><span class="st bad">用不了</span><span class="note">屏幕上的“返回”只有点击，没有长按。深层页面只能一级一级点回去</span></td></tr>
+        <tr><td>点条目 / OK 短按</td><td>进入、执行、单发</td><td><span class="st ok">可用</span><span class="note">直接点条目，或用底部 OK 软键</span></td></tr>
+        <tr><td>OK 长按 1 秒</td><td>实时显示：打开操作菜单；发送页：编辑报文</td><td><span class="st mid">基本可用</span><span class="note">发送页点报文行就会进编辑。实时显示页的菜单项由顶部按钮代替，只有“录制设置”要从系统设置进去</span></td></tr>
+        <tr><td>↑↓←→，按住连发</td><td>选择、改值、切通道</td><td><span class="st ok">可用</span><span class="note">底部软键，按住也会连发</span></td></tr>
+        <tr><td>REC 短按</td><td>开始或停止录制</td><td><span class="st ok">可用</span><span class="note">右上角 REC 按钮</span></td></tr>
+        <tr><td>POWER 短按</td><td>熄屏</td><td><span class="st bad">用不了</span><span class="note">没有 POWER 键，只能等自动熄屏。熄屏后第一下触摸只用来唤醒</span></td></tr>
+        <tr><td>POWER 长按 2 秒</td><td>关机：先停止录制、关闭文件，再断电</td><td><span class="st bad">用不了</span><span class="note">SW101 直接切断电源。录制中断电，最后一段数据可能没写完</span></td></tr>
+        <tr><td>开机按住 POWER 1 秒</td><td>防止误开机</td><td><span class="st bad">不适用</span><span class="note">拨上开关就开机</span></td></tr>
+        <tr><td>开机时按住 BACK+REC 3 秒</td><td>进入升级模式（Bootloader）</td><td><span class="st bad">用不了</span><span class="note">需要换一种进入方式</span></td></tr>
+        <tr><td>BACK+REC 同时按 2 秒</td><td>锁定或解锁按键</td><td><span class="st bad">用不了</span><span class="note">触摸做不了组合键</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>设备画面</h2>
+    <p>用仓库自带的 <code>run_ui_host.py</code>，在电脑上跑真实的 LVGL 代码画出来，和设备屏幕上的像素一致（480×320）。</p>
+  </div>
+  <div class="shots">
+    <figure><img src="img/home.png" alt="主页：六个入口宫格，顶部返回和 REC，底部方向和 OK 软键" width="480" height="320"><figcaption><b>主页</b>：六宫格，底部是 ↑↓←→ OK 软键</figcaption></figure>
+    <figure><img src="img/live.png" alt="实时显示：顶部通道和视图按钮，中间报文行，底部录制状态和操作提示" width="480" height="320"><figcaption><b>实时显示</b>：顶部按钮代替方向键，点一行看详情</figcaption></figure>
+    <figure><img src="img/send-can1.png" alt="发送报文：两路状态按钮、加载文件、每条报文带单发和时序按钮" width="480" height="320"><figcaption><b>发送报文</b>：每条报文自带“单发”和时序按钮</figcaption></figure>
+    <figure><img src="img/keyboard-hex.png" alt="十六进制键盘：0 到 F、退格、清空、确定、取消" width="480" height="320"><figcaption><b>十六进制键盘</b>：报文 ID 和数据都用它输入</figcaption></figure>
+    <figure><img src="img/confirm.png" alt="确认框：启动循环发送的说明，确认和取消两个大按钮" width="480" height="320"><figcaption><b>确认框</b>：发送、格式化、恢复出厂之前都会弹出</figcaption></figure>
+    <figure><img src="img/files-long-names.png" alt="现有报文文件列表：长文件名截断显示，底部方向和 OK 软键" width="480" height="320"><figcaption><b>现有报文文件</b>：点一个文件就载入发送页</figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>各页条目</h2>
+    <p>从模拟器逐页读出的实际条目，顺序和设备上一致。</p>
+  </div>
+  <div class="items">
+    <div class="card"><h3>发送报文 <span>8 报文 + 9 操作</span></h3>
+      <ol start="9"><li>全部停止</li><li>本地循环设置</li><li>从本地 SD 数据库选帧 <em>（只在模拟器里有）</em></li><li>保存这一屏为发送方案</li><li>当前编辑通道</li><li>发送范围</li><li>按范围启动循环</li><li>停止范围内发送</li><li>加载文件</li></ol>
+    </div>
+    <div class="card"><h3>编辑发送报文 <span>13 项</span></h3>
+      <ol><li>报文 ID</li><li>ID 格式</li><li>帧协议</li><li>BRS</li><li>RTR</li><li>长度</li><li>单条独立周期</li><li>数据字节位置</li><li>数据字节值</li><li>动态字段</li><li>保存</li><li>取消</li><li>完整数据（键盘）</li></ol>
+    </div>
+    <div class="card"><h3>本地循环设置 <span>12 项</span></h3>
+      <ol><li>发送通道</li><li>不同 ID 间隔</li><li>第 1–4 条的次数和周期 <em>（4 行）</em></li><li>保存本路设置</li><li>本路时间恢复默认</li><li>两路时间恢复默认</li><li>开始本路循环</li><li>停止本路发送</li><li>取消并返回</li></ol>
+    </div>
+    <div class="card"><h3>总线诊断 <span>13 项</span></h3>
+      <ol><li>CAN1 状态 · TEC/REC · 负载 · 错误 <em>（4 行）</em></li><li>CAN2 同上 <em>（4 行）</em></li><li>自动识别 CAN1</li><li>自动识别 CAN2</li><li>恢复 CAN1 Bus-Off</li><li>恢复 CAN2 Bus-Off</li><li>清零统计</li></ol>
+    </div>
+    <div class="card"><h3>文件管理 <span>文件 + 2 操作</span></h3>
+      <ol><li>录制日志、ASC、candump、CSV 等文件 <em>（每个一行）</em></li><li>进入 U 盘模式</li><li>格式化 SD 卡</li></ol>
+      <h3>文件详情 <span>7 项</span></h3>
+      <ol><li>文件名</li><li>类型 / 状态</li><li>大小 / 帧数</li><li>时长 / 通道</li><li>保护文件</li><li>修改文件名</li><li>返回文件列表</li></ol>
+    </div>
+    <div class="card"><h3>通道设置 <span>9 项</span></h3>
+      <ol><li>CAN1 工作模式</li><li>CAN1 标称速率</li><li>CAN1 CAN FD</li><li>CAN1 数据段速率</li><li>CAN2 四项同上 <em>（4 行）</em></li><li>Bus-Off 恢复</li></ol>
+    </div>
+    <div class="card"><h3>系统设置 <span>11 项</span></h3>
+      <ol><li>自动熄屏</li><li>自动关机</li><li>背光亮度</li><li>时间</li><li>芯片版本</li><li>序列号</li><li>语言</li><li>恢复出厂设置</li><li>工程菜单</li><li>关于</li><li>录制设置</li></ol>
+    </div>
+    <div class="card"><h3>录制设置 <span>9 项</span></h3>
+      <ol><li>状态（OK 开始或停止）</li><li>录制通道</li><li>分段大小</li><li>卡满时</li><li>时长 / 帧数</li><li>大小</li><li>丢帧 / 标记</li><li>SD 卡</li><li>本地录制名称</li></ol>
+    </div>
+    <div class="card"><h3>显示筛选 <span>9 项</span></h3>
+      <ol><li>通道</li><li>类型</li><li>匹配 ID</li><li>ID 掩码</li><li>方向</li><li>ID 格式</li><li>应用显示筛选</li><li>重置草稿</li><li>取消</li></ol>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>为 Hardware-C 要改的交互</h2>
+    <p>这些和新功能无关，只要换到 Hardware-C 就得处理。括号里是建议做法，你定。</p>
+  </div>
+  <div class="changes">
+    <div class="change"><h3>回主页</h3><p>顶栏加一个“主页”按钮，或者把“返回”改成长按回主页（触摸长按 1 秒）。</p></div>
+    <div class="change"><h3>关机和熄屏</h3><p>系统设置里的“自动关机”在拨动开关供电下没有意义，建议去掉。熄屏只保留自动熄屏，或者点顶栏状态区熄屏。</p></div>
+    <div class="change"><h3>断电前保存录制<span class="chip warn">涉及原理图</span></h3><p>SW101 直接断电，录制文件的最后一段可能没写完。建议改成软关机：开关接到主控的输入脚，主控收尾后再断电。或者至少检测掉电，赶紧关闭文件。</p></div>
+    <div class="change"><h3>按键锁和升级模式</h3><p>纯触摸做不了组合键。按键锁可以去掉，或者做成系统设置里的开关。升级模式改成工程菜单里的“进入升级模式”加确认，或者用 USB 命令进入。</p></div>
+    <div class="change"><h3>主页宫格</h3><p>加上新功能后有 7 个入口，3×2 放不下。建议改成 4×2，多出的一格留给以后的功能。</p></div>
+  </div>
+</section>
+
+<section class="draft">
+  <div class="section-head">
+    <div class="eyebrow">草案 · 待确认</div>
+    <h2>按键学习和模拟发送放在哪里</h2>
+    <p>APM 的按键输入是 2.2 kΩ 上拉到 VCC2_5V_SW（APM 被 CAN 唤醒后才有电），输入脚对地有 100 nF。原车开关的每个档位，其实就是对地接一个不同的电阻。所以“学习”就是测出每个档位的电压，换算成电阻；“发送”就是用电阻阵把这个电阻复现出来。</p>
+  </div>
+  <div class="flows">
+    <div class="flow">
+      <h3>按键学习（原车开关在）</h3>
+      <p class="sub">台架或实车，用 T 型线把设备并在开关信号线上</p>
+      <ol class="steps">
+        <li>选通道，按屏幕提示接好线</li>
+        <li>发 CAN 唤醒 APM，测出空载电压</li>
+        <li>提示“按住第 1 个档位”，电压稳定 0.3 秒后自动记录</li>
+        <li>给这个档位命名（上升、一键上升……），接着学下一档</li>
+        <li>算出每档的电压和等效电阻，按车型存成键值表</li>
+      </ol>
+    </div>
+    <div class="flow">
+      <h3>门限扫描（没有原车开关）</h3>
+      <p class="sub">设备直接代替开关，需要知道 CAN 报文里的开关状态信号</p>
+      <ol class="steps">
+        <li>选通道，接到 APM 接插件</li>
+        <li>发 CAN 唤醒 APM，确认已经上电</li>
+        <li>从 4.8 V 每 50 mV 往下扫，每档读一次开关状态</li>
+        <li>得出各档门限，每档取中点作为键值</li>
+        <li>存成键值表（驱动里已经有这个扫描功能）</li>
+      </ol>
+    </div>
+    <div class="flow">
+      <h3>模拟发送</h3>
+      <p class="sub">用学过的或手动输入的键值去“按”APM</p>
+      <ol class="steps">
+        <li>选通道，再选键值表里的一个档位，或者手动输入电压或电阻</li>
+        <li>三种按法：点按（默认 300 ms）、按住（手指按在屏幕上期间一直生效）、保持（再点一次才松开）</li>
+        <li>屏幕实时显示端口电压，以及 CAN 读回的开关状态</li>
+        <li>“全部松开”按钮常驻；离开页面、过压或检测到拔线时自动回到高阻</li>
+      </ol>
+    </div>
+  </div>
+  <div class="section-head"><h3>决定路数和原理图之前要确认的事</h3></div>
+  <ul class="qs">
+    <li><span>1</span><div>需要几路，会不会同时按多路？<small>如果同一时刻只按一路，一套电阻阵加 4 选 1 切换就能复用成 4 路，成本低；要同时按（比如四门一起升窗），就得每路一套电阻阵。</small></div></li>
+    <li><span>2</span><div>原车开关松开时，APM 看到的是开路还是一个固定电阻？<small>如果是开路，没在用的通道直接高阻就行；如果是固定电阻，没在用的通道也要一直输出这个空闲电阻。</small></div></li>
+    <li><span>3</span><div>学习时原车开关还接着吗？<small>接着的话设备只并联测量，需要 T 型线；拔掉的话只能做门限扫描，要知道 CAN 开关状态信号在哪个报文的哪个字段。</small></div></li>
+    <li><span>4</span><div>键值表怎么存？<small>建议按车型存到 SD 卡，文件可以在上位机里查看和编辑；也可以存在内部 Flash 里，换卡不丢。</small></div></li>
+  </ul>
+</section>
+
+<footer class="foot">
+  <p>来源：<code>fw/app/ui/core/ui_sm.c</code>、<code>services/input/keys.c</code>、<code>services/power/power_sm.c</code>、<code>platform/stm32h743_revd/ui_lvgl.c</code>；Hardware-C 网表 C/062；apm 按键采集图（仓库 841f39a）。</p>
+  <p>本机可交互演示：在仓库的 fw 目录运行 <code>make sim</code>，然后打开 localhost:8765。模拟器按 Rev D 键位编译，有实体方向键，点屏幕就是触摸操作。</p>
+</footer>
+
+</div>

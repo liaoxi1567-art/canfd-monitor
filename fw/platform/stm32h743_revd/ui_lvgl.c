@@ -679,7 +679,8 @@ void ui_lvgl_task(uint32_t now_ms)
         const char *context=rendered_input?(equals(field(ui,"page"),"local_record_save")?"内容已保存 · 修改名称或保留默认名":equals(field(ui,"page"),"local_plan_name")?"保存报文列表 · 编辑文件名":"本地编辑 · 确定返回草稿"):rendered_send?"两路独立启停 · 加载后不自动发送":
             editor?"报文草稿 · 保存后生效":rendered_page==PG_PROJECTFILES?"选择文件，直接载入报文":
             rendered_page==PG_TXSET||rendered_page==PG_TXTIMING?"循环时序 · 保存后生效":
-            rendered_page==PG_FILES?"本机 SD 文件":rendered_page==PG_REC?"录制设置 · REC 短按启停":"CAN FD · 本机操作";
+            rendered_page==PG_FILES?"本机 SD 文件":rendered_page==PG_REC?"录制设置 · REC 短按启停":
+            rendered_page>=PG_KEYSIM&&rendered_page<=PG_KEYSCAN?"APM 按键模拟 · 同一时刻只接通一路":"CAN FD · 本机操作";
         if(record_state&&!rendered_input)snprintf(s,sizeof s,"REC %s · %lu 帧",record_state==2?"录制中":record_state==1?"准备中":"保存中",(unsigned long)number(field(field(ui,"rec_controls"),"frames")));
         else snprintf(s,sizeof s,"%s%s",power_get()->locked?"已锁定 · ":"",context);
     }

@@ -178,3 +178,21 @@ test-reve-storage: $(BUILD)/test_reve_storage_sd
 	./$(BUILD)/test_reve_storage_sd
 $(BUILD)/test_reve_storage_sd: tests/test_storage_sd.c platform/stm32h743_revd/storage_sd.c platform/stm32h743_revd/storage_files.inc platform/stm32h743_revd/send_plan_json.c platform/stm32h743_revd/diskio_sd.c vendor/fatfs/source/ff.c vendor/fatfs/source/ffunicode.c services/device/send_plan_validate.c services/tx_sched/tx_validate.c services/core/jsonw.c services/logfmt/candump.c services/config/cfg.c tests/test_storage_hal/stm32h7xx_hal.h platform/stm32h743_revd/storage_sd.h platform/stm32h743_revd/fatfs_conf/ffconf.h | $(BUILD)
 	$(CC) $(CFLAGS) -fsanitize=address,undefined -DCANFD_REVE_TARGET -include platform/stm32h743_revd/fatfs_conf/ffconf.h -Itests/test_storage_hal -Iplatform/stm32h743_revd -Ivendor/fatfs/source -o $@ $(filter %.c,$^)
+
+# Device SD storage of APM key tables: same RAM-card harness, built with the
+# page-12 hardware flag that current Rev D/E targets leave off.
+TEST_BIN += $(BUILD)/test_storage_sd_winsim
+test: $(BUILD)/test_storage_sd_winsim
+$(BUILD)/test_storage_sd_winsim: tests/test_storage_sd.c platform/stm32h743_revd/storage_sd.c platform/stm32h743_revd/storage_files.inc platform/stm32h743_revd/send_plan_json.c platform/stm32h743_revd/diskio_sd.c vendor/fatfs/source/ff.c vendor/fatfs/source/ffunicode.c services/device/send_plan_validate.c services/tx_sched/tx_validate.c services/core/jsonw.c services/logfmt/candump.c services/config/cfg.c services/keysim/keysim_file.c services/keysim/keysim_file.h services/keysim/keysim.h tests/test_storage_hal/stm32h7xx_hal.h platform/stm32h743_revd/storage_sd.h platform/stm32h743_revd/fatfs_conf/ffconf.h platform/stm32h743_revd/send_plan_json.h services/device/file_port.h services/device/send_plan_validate.h sim/send_plan.h sim/tx_sequence.h | $(BUILD)
+	$(CC) $(CFLAGS) -fsanitize=address,undefined -DCANFD_WINSIM_HW -include platform/stm32h743_revd/fatfs_conf/ffconf.h -Itests/test_storage_hal -Iplatform/stm32h743_revd -Ivendor/fatfs/source -o $@ $(filter %.c,$^)
+
+# Window-switch simulator driver (Hardware-C page-12 proposal). `make test`
+# already runs tests/test_win_sim.c; these targets run it on its own and build
+# the desktop demo of the sweep example.
+.PHONY: test-winsim winsim-example
+test-winsim: $(BUILD)/test_win_sim
+	./$(BUILD)/test_win_sim
+winsim-example: $(BUILD)/winsim_example
+	./$(BUILD)/winsim_example
+$(BUILD)/winsim_example: examples/winsim/win_sim_can_example.c services/winsim/win_sim.c services/winsim/win_sim.h | $(BUILD)
+	$(CC) $(CFLAGS) -fsanitize=address,undefined -DWINSIM_EXAMPLE_SIM -o $@ $(filter %.c,$^)

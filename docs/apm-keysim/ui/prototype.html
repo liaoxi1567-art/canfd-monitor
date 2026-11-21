@@ -1,0 +1,625 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APM 按键模拟原型</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a bench sheet. Device screen (true 480x320, scaled) on the left with the bench
+   controls under it; on the right the interaction rules this prototype encodes. */
+:root {
+  --bg: #eef1f5; --surface: #ffffff; --ink: #17212d; --muted: #5a6778; --line: #d4dbe4;
+  --accent: #1f5fae; --new: #0b6f62; --warn: #a14a06;
+  --font-body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  /* device screen: fixed LVGL palette, same in both page themes */
+  --d-bg: #0d1a2d; --d-card: #142338; --d-card2: #1a2c45; --d-line: #2d4262; --d-sel: #24497a;
+  --d-selb: #6aa0e8; --d-ink: #e8eef7; --d-muted: #8ea2bf; --d-toast: #f3b33d; --d-ok: #57c78a;
+  --d-bad: #f0645a; --d-new: #3cc4ad;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #0c1117; --surface: #141c25; --ink: #e4ebf3; --muted: #93a1b2; --line: #263241;
+    --accent: #79aef0; --new: #55c7b3; --warn: #f0a650; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #0c1117; --surface: #141c25; --ink: #e4ebf3; --muted: #93a1b2; --line: #263241;
+  --accent: #79aef0; --new: #55c7b3; --warn: #f0a650; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 56px; }
+.wrap { max-width: 1240px; margin: 0 auto; display: grid; gap: 22px; }
+header { display: grid; gap: 6px; }
+h1 { margin: 0; font-size: 26px; line-height: 1.3; text-wrap: balance; }
+h2 { margin: 0; font-size: 16px; line-height: 1.4; }
+p { margin: 0; }
+.lede { color: var(--muted); max-width: 78ch; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; color: var(--muted); }
+.cols { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+.stage { display: grid; gap: 14px; min-width: 0; }
+.bezel { background: #1c2533; border-radius: 18px; padding: 14px; box-shadow: 0 10px 30px rgba(10, 20, 40, .18); justify-self: start; }
+.screen-box { position: relative; overflow: hidden; border-radius: 4px; }
+#screen { position: absolute; left: 0; top: 0; width: 480px; height: 320px; transform-origin: 0 0; background: var(--d-bg);
+  color: var(--d-ink); font-family: var(--font-body); font-size: 15px; line-height: 1.35; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+.bench { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 10px; }
+.bench-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.bench-row > span.lbl { font-size: 13px; color: var(--muted); min-width: 120px; }
+.bench button { font: inherit; font-size: 13.5px; padding: 5px 12px; border-radius: 7px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; }
+.bench button.on { border-color: var(--accent); color: var(--accent); font-weight: 500; }
+.bench button.hot { border-color: var(--warn); color: var(--warn); }
+.bench button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.bench .hint { font-size: 12.5px; color: var(--muted); }
+.notes { display: grid; gap: 14px; min-width: 0; }
+.note-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 8px; }
+.note-card ul { margin: 0; padding-left: 1.2em; display: grid; gap: 5px; font-size: 14px; }
+.note-card li b { font-weight: 500; }
+.note-card.q { border-style: dashed; border-color: color-mix(in srgb, var(--new) 55%, var(--line)); }
+.note-card.q h2 { color: var(--new); }
+.mono { font-family: var(--font-mono); font-size: .9em; }
+@media (max-width: 900px) { .cols { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- device UI (480 x 320) ---------- */
+#screen button { font: inherit; color: inherit; background: var(--d-card); border: 1px solid var(--d-line); border-radius: 5px; padding: 0; cursor: pointer; }
+#screen button:disabled { opacity: .38; cursor: default; }
+#screen button.sel { background: var(--d-sel); border-color: var(--d-selb); }
+#screen button.pressed { background: #2f6b4f; border-color: var(--d-ok); }
+.top { position: absolute; left: 0; right: 0; top: 0; height: 44px; }
+.top .b { position: absolute; top: 4px; height: 34px; font-size: 14px; }
+.top .title { position: absolute; left: 112px; right: 74px; top: 2px; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top .sub { position: absolute; left: 112px; right: 74px; top: 22px; font-size: 12.5px; color: var(--d-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.body { position: absolute; left: 4px; right: 4px; top: 46px; bottom: 22px; }
+.foot { position: absolute; left: 6px; right: 6px; bottom: 2px; height: 18px; font-size: 12.5px; color: var(--d-toast); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.foot.status { color: var(--d-muted); }
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); gap: 5px; height: 100%; }
+.tiles button { display: grid; place-content: center; gap: 2px; font-size: 15px; }
+.tiles button small { font-size: 11px; color: var(--d-muted); }
+.tiles button.newtile { border-color: var(--d-new); }
+.tiles button.newtile small { color: var(--d-new); }
+.tiles .spare { border: 1px dashed var(--d-line); border-radius: 5px; display: grid; place-content: center; color: var(--d-muted); font-size: 12px; }
+.ph { display: grid; place-content: center; height: 100%; text-align: center; gap: 6px; color: var(--d-muted); font-size: 14px; padding: 0 30px; }
+.strip { display: flex; align-items: center; gap: 8px; height: 30px; font-size: 13.5px; }
+.strip .grow { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.strip button { height: 28px; padding: 0 10px !important; font-size: 13px; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
+.chs { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; height: calc(100% - 70px); }
+.chs button { text-align: left; padding: 6px 10px !important; display: grid; align-content: start; gap: 2px; }
+.chs button .h { font-size: 16px; font-weight: 700; display: flex; justify-content: space-between; }
+.chs button .h span { font-size: 12px; font-weight: 400; }
+.chs button .l { font-size: 12.5px; color: var(--d-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bottomrow { display: flex; gap: 5px; height: 34px; margin-top: 5px; }
+.bottomrow button { flex: 1; font-size: 13.5px; }
+.tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; height: 30px; }
+.tabs button { font-size: 14px; }
+.pane { position: absolute; left: 0; right: 0; top: 34px; bottom: 0; }
+.modes { display: flex; gap: 4px; height: 28px; align-items: center; font-size: 12.5px; color: var(--d-muted); }
+.modes button { height: 26px; padding: 0 10px !important; font-size: 13px; }
+.keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-top: 5px; }
+.keys button { height: 56px; display: grid; place-content: center; gap: 0; font-size: 15px; }
+.keys button small { font-size: 11.5px; color: var(--d-muted); font-family: var(--font-mono); }
+.keys button.pressed small { color: #d9f5e6; }
+.empty { display: grid; gap: 8px; place-content: center; height: 100%; text-align: center; color: var(--d-muted); font-size: 14px; }
+.empty .row { display: flex; gap: 6px; justify-content: center; }
+.empty button { height: 32px; padding: 0 12px !important; font-size: 13.5px; color: var(--d-ink); }
+.big { font-family: var(--font-mono); font-size: 34px; font-weight: 500; letter-spacing: .02em; }
+.big small { font-size: 14px; color: var(--d-muted); margin-left: 6px; }
+.learn { display: grid; grid-template-columns: 170px 1fr; gap: 8px; height: 100%; }
+.learn .live { background: var(--d-card); border: 1px solid var(--d-line); border-radius: 5px; padding: 6px 10px; display: grid; align-content: start; gap: 2px; }
+.learn .live .k { font-size: 12px; color: var(--d-muted); }
+.meter { height: 6px; background: var(--d-card2); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+.meter i { display: block; height: 100%; background: var(--d-selb); }
+.caps { display: grid; gap: 3px; align-content: start; overflow: hidden; }
+.cap { display: grid; grid-template-columns: 70px 1fr auto; gap: 6px; align-items: center; background: var(--d-card); border: 1px solid var(--d-line); border-radius: 4px; height: 25px; padding: 0 6px; font-size: 13px; }
+.cap .v { font-family: var(--font-mono); font-size: 12px; color: var(--d-muted); }
+.cap button { height: 21px; padding: 0 6px !important; font-size: 12px; }
+.prog { height: 8px; background: var(--d-card2); border-radius: 4px; overflow: hidden; }
+.prog i { display: block; height: 100%; background: var(--d-new); }
+.list { display: grid; gap: 3px; }
+.list .r { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; background: var(--d-card); border: 1px solid var(--d-line); border-radius: 4px; padding: 0 8px; height: 30px; font-size: 13.5px; }
+.list .r .v { color: var(--d-muted); font-size: 12.5px; }
+.list .r button { height: 24px; padding: 0 8px !important; font-size: 12.5px; }
+.banner { position: absolute; left: 0; right: 0; top: 0; z-index: 3; background: #4a1c1c; border: 1px solid var(--d-bad); border-radius: 5px; padding: 6px 10px; display: flex; gap: 8px; align-items: center; font-size: 13.5px; }
+.banner span { flex: 1; }
+.banner button { height: 26px; padding: 0 10px !important; font-size: 13px; }
+.overlay { position: absolute; inset: 0; background: rgba(5, 12, 24, .72); z-index: 5; display: grid; place-items: center; }
+.dlg { width: 360px; background: var(--d-card); border: 1px solid var(--d-line); border-radius: 6px; padding: 12px; display: grid; gap: 10px; font-size: 14px; }
+.dlg .row { display: flex; gap: 6px; }
+.dlg .row button { flex: 1; height: 36px; }
+.stepper { display: flex; gap: 6px; align-items: center; justify-content: center; }
+.stepper button { width: 54px; height: 34px; }
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">HARDWARE-C · 新增功能 · 可点击原型</div>
+  <h1>APM 按键模拟原型</h1>
+  <p class="lede">左边是 480×320 设备屏幕的可点击原型，样式照设备现有的 LVGL 界面。下面的“台架”用来模拟外部条件：APM 是否被唤醒、原车开关被按下、误接 12 V。右边列出这版交互定下来的规则和还要你确认的点。界面上的数值来自一个简化的 APM 模型，不是实测。</p>
+</header>
+
+<div class="cols">
+  <div class="stage">
+    <div class="bezel" id="bezel"><div class="screen-box" id="screenBox"><div id="screen" aria-live="polite"></div></div></div>
+    <div class="bench" aria-label="台架模拟">
+      <div class="bench-row"><span class="lbl">APM 供电</span><button type="button" id="bAwake"></button><span class="hint" id="bAwakeHint"></span></div>
+      <div class="bench-row"><span class="lbl">原车开关（并在当前通道）</span><button type="button" id="bAttached"></button></div>
+      <div class="bench-row" id="origKeys"><span class="lbl">按住原车开关</span></div>
+      <div class="bench-row"><span class="lbl">故障</span><button type="button" id="bFault"></button><button type="button" id="bReset">重置演示</button></div>
+      <p class="hint">学习时：先在屏幕上进入“学习”，再在这里按住原车开关的某个档位，保持半秒，屏幕会自动记录。</p>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="note-card">
+      <h2>这版交互定下来的规则</h2>
+      <ul>
+        <li><b>主页改成 4×2</b>，第 3 格是“按键模拟”，最后一格预留。</li>
+        <li><b>顶栏加“主页”按钮</b>（⌂），代替原来长按 BACK 回主页。Hardware-C 没有实体键。</li>
+        <li><b>同一时刻只接通一路。</b>点哪一路的卡片就切到哪一路：先断开电阻阵，再切继电器，然后自动标定这一路的串联电阻。</li>
+        <li><b>每路三件事：</b>按键（模拟发送）、学习（原车开关在，测出键值）、扫描（没有原车开关，靠 CAN 状态找门限）。</li>
+        <li><b>三种按法：</b>点按（默认 300 ms）、按住（手指按着才生效）、保持（再点一次松开）。</li>
+        <li><b>“全部松开”常驻。</b>离开这一路、切换通道、过压或 APM 掉电时，都会自动松开。</li>
+        <li><b>键值表按通道存</b>到 SD 卡，学习或扫描完成后保存，可以在设置里换成别的车型。</li>
+      </ul>
+    </div>
+    <div class="note-card">
+      <h2>试一遍</h2>
+      <ul>
+        <li>主页点“按键模拟”，看 4 路状态；点 K1 进入，按“上升”。</li>
+        <li>回到 4 路总览，点 K2（还没有键值表），选“学习”。在台架上依次按住原车开关的 4 个档位。</li>
+        <li>K3 选“扫描”：台架上先把原车开关断开，再开始扫描。</li>
+        <li>按住某个键时点台架上的“误接 12 V”，看过压保护。</li>
+      </ul>
+    </div>
+    <div class="note-card q">
+      <h2>还要你确认</h2>
+      <ul>
+        <li>原车开关松开时，APM 看到的是开路还是固定电阻？原型按开路处理（空闲约 4.97 V）。</li>
+        <li>扫描要读 CAN 里的开关状态。原型假设信号位置已经从 DBC 里选好，实际要在扫描页增加选择信号这一步。</li>
+        <li>键值表存 SD 卡还是内部 Flash？原型按 SD 卡。</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var VOPEN = 4970;                     // 5 V through 2.2 k into the 400 k readback load
+  var ORIG = [                          // demo vehicle: the real switch on the bench
+    { name: '上升', mv: 3480 }, { name: '一键上升', mv: 2510 },
+    { name: '下降', mv: 1550 }, { name: '一键下降', mv: 680 }
+  ];
+  var NAMES = ['上升', '一键上升', '下降', '一键下降', '对地短路', '自定义'];
+  function apmState(mv) {               // demo APM thresholds (as in the driver example)
+    if (mv > 4000) return '空闲';
+    if (mv > 3000) return '上升';
+    if (mv > 2000) return '一键上升';
+    if (mv > 1100) return '下降';
+    if (mv > 300) return '一键下降';
+    return '故障';
+  }
+  function eqR(mv) {
+    if (mv <= 60) return '≈0 Ω';
+    var r = 2200 * mv / (VOPEN - mv);
+    return r >= 1000 ? (r / 1000).toFixed(2) + ' kΩ' : Math.round(r) + ' Ω';
+  }
+  function fmtV(mv) { return (mv / 1000).toFixed(2) + ' V'; }
+
+  var S;
+  function initState() {
+    S = {
+      page: 'home', stack: [], ch: 0, tab: 'press', mode: 'tap', awake: true,
+      orig: { attached: true, pressed: null },
+      tables: [
+        { name: '示例车型 A · 主驾', keys: [{ name: '上升', mv: 3500 }, { name: '一键上升', mv: 2500 }, { name: '下降', mv: 1550 }, { name: '一键下降', mv: 700 }, { name: '对地短路', mv: 0 }] },
+        null, null, null
+      ],
+      rser: [12.4, 9.8, 15.1, 11.2],
+      active: null,                     // {ch, key, mv}
+      manual: false, manualMv: 2500,
+      learn: { step: 0, idle: null, caps: [], stable: 0, last: null, armed: true },
+      scan: { state: 'idle', mv: 4800, edges: [], keys: null },
+      fault: false, ovp: false,
+      toast: '', toastAt: 0, confirmSave: false
+    };
+  }
+  initState();
+
+  function toast(t) { S.toast = t; S.toastAt = Date.now(); }
+  function releaseAll(reason) {
+    if (S.active) { S.active = null; if (reason) toast(reason); }
+  }
+  function portMv() {
+    if (S.fault) return 12000;
+    if (!S.awake) return 0;
+    if (S.active && S.active.ch === S.ch) return S.active.mv;
+    if (S.orig.attached && S.orig.pressed !== null) return ORIG[S.orig.pressed].mv;
+    return VOPEN;
+  }
+
+  function go(page) { S.stack.push(page === S.page ? null : S.page); S.page = page; }
+  function back() {
+    if (S.page === 'channel') { releaseAll('已松开 K' + (S.ch + 1)); stopScan(); S.page = 'keysim'; return; }
+    if (S.page === 'keysim') { releaseAll(); S.page = 'home'; return; }
+    S.page = 'home';
+  }
+  function home() { releaseAll(S.active ? '已全部松开' : ''); stopScan(); S.page = 'home'; }
+
+  function selectChannel(k) {
+    if (k !== S.ch) {
+      releaseAll();
+      stopScan();
+      S.ch = k;
+      S.learn = { step: 0, idle: null, caps: [], stable: 0, last: null, armed: true };
+      S.scan = { state: 'idle', mv: 4800, edges: [], keys: null };
+      toast('已切到 K' + (k + 1) + '，串联电阻 ' + S.rser[k].toFixed(1) + ' Ω（已标定）');
+    }
+    S.tab = S.tables[k] ? 'press' : 'learn';
+    S.page = 'channel';
+  }
+
+  // ---------- pressing ----------
+  var tapTimer = null;
+  function press(key, mv) {
+    if (S.ovp) return;
+    if (!S.awake) { toast('APM 未上电，先点“CAN 唤醒”'); return; }
+    S.active = { ch: S.ch, key: key, mv: mv };
+  }
+  function keyDown(i) {
+    var t = S.tables[S.ch]; if (!t) return;
+    var k = t.keys[i];
+    if (S.mode === 'latch') {
+      if (S.active && S.active.key === k.name) releaseAll(); else press(k.name, k.mv);
+    } else if (S.mode === 'tap') {
+      press(k.name, k.mv);
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(function () { if (S.active && S.active.key === k.name) { S.active = null; render(); } }, 300);
+    } else {
+      press(k.name, k.mv);
+    }
+    render();
+  }
+  function keyUp() { if (S.mode === 'hold' && S.active) { S.active = null; render(); } }
+
+  // ---------- scan ----------
+  var scanTimer = null;
+  function stopScan() { if (scanTimer) { clearInterval(scanTimer); scanTimer = null; } if (S.scan.state === 'run') S.scan.state = 'idle'; }
+  function startScan() {
+    if (!S.awake) { toast('APM 未上电，先点“CAN 唤醒”'); return; }
+    if (S.orig.attached) { toast('请先断开原车开关：扫描时设备代替开关'); return; }
+    S.scan = { state: 'run', mv: 4800, edges: [], keys: null, prev: apmState(4800), prevMv: 4800 };
+    S.active = { ch: S.ch, key: '扫描', mv: 4800 };
+    scanTimer = setInterval(function () {
+      var sc = S.scan;
+      sc.mv -= 50;
+      if (sc.mv < 0) {
+        clearInterval(scanTimer); scanTimer = null;
+        S.active = null;
+        sc.state = 'done';
+        var bounds = [4800].concat(sc.edges.map(function (e) { return (e.above + e.below) / 2; })).concat([0]);
+        var keys = [];
+        sc.edges.forEach(function (e, i) {
+          var hi = bounds[i + 1], lo = bounds[i + 2];
+          var mid = e.to === '故障' ? 0 : Math.round((hi + lo) / 2 / 10) * 10;
+          keys.push({ name: e.to === '故障' ? '对地短路' : e.to, mv: mid });
+        });
+        sc.keys = keys;
+        toast('扫描完成：找到 ' + sc.edges.length + ' 个门限，已回到高阻');
+        render();
+        return;
+      }
+      S.active.mv = sc.mv;
+      var st = apmState(sc.mv);
+      if (st !== sc.prev) { sc.edges.push({ from: sc.prev, to: st, above: sc.prevMv, below: sc.mv }); sc.prev = st; }
+      sc.prevMv = sc.mv;
+      render();
+    }, 40);
+  }
+
+  // ---------- learning (sampled on the tick) ----------
+  function learnTick() {
+    var L = S.learn;
+    if (S.page !== 'channel' || S.tab !== 'learn' || L.step !== 2) return;
+    var mv = portMv();
+    if (mv > L.idle - 150) { L.armed = true; L.stable = 0; L.last = null; return; }
+    if (!L.armed) return;
+    if (L.last !== null && Math.abs(mv - L.last) < 25) L.stable += 100; else L.stable = 0;
+    L.last = mv;
+    if (L.stable >= 500) {
+      var dup = L.caps.some(function (c) { return Math.abs(c.mv - mv) < 60; });
+      if (!dup && L.caps.length < 6) {
+        L.caps.push({ mv: Math.round(mv / 10) * 10, name: NAMES[Math.min(L.caps.length, 3)] });
+        toast('已记录第 ' + L.caps.length + ' 档：' + fmtV(mv) + '，松开后学下一档');
+      } else if (dup) {
+        toast('这个档位已经学过');
+      }
+      L.armed = false; L.stable = 0;
+    }
+  }
+
+  // ---------- render ----------
+  var screen = document.getElementById('screen');
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function topbar(title, sub, opts) {
+    opts = opts || {};
+    return '<div class="top">' +
+      (opts.noBack ? '' : '<button class="b" style="left:4px;width:52px" data-act="back">返回</button>') +
+      (opts.noHome ? '' : '<button class="b" style="left:60px;width:44px" data-act="home" aria-label="主页">⌂</button>') +
+      '<div class="title">' + esc(title) + '</div><div class="sub">' + esc(sub) + '</div>' +
+      '<button class="b" style="right:4px;width:62px" data-act="rec">REC</button></div>';
+  }
+  function foot(statusText) {
+    var t = S.toast && Date.now() - S.toastAt < 3500 ? S.toast : '';
+    if (t) return '<div class="foot">' + esc(t) + '</div>';
+    return '<div class="foot status">' + esc(statusText || '') + '</div>';
+  }
+  function supplyStrip() {
+    var mv = portMv();
+    var on = S.awake && !S.fault;
+    return '<div class="strip"><span class="grow"><span class="dot" style="background:' + (on ? 'var(--d-ok)' : 'var(--d-bad)') + '"></span>' +
+      (S.fault ? 'K' + (S.ch + 1) + ' 接口 ' + fmtV(mv) + '，过压' : on ? 'APM 已上电 · K' + (S.ch + 1) + ' 接口 ' + fmtV(mv) : 'APM 未上电（VCC2_5V_SW 无电）') + '</span>' +
+      '<button data-act="wake"' + (S.awake ? ' disabled' : '') + '>CAN 唤醒</button></div>';
+  }
+
+  function renderHome() {
+    var tiles = [['实时显示', '查看 · 录制'], ['发送报文', '列表 / 加载'], ['按键模拟', 'APM 学习 · 发送', 'new'], ['总线诊断', '负载与错误'],
+      ['文件管理', 'SD 卡文件'], ['通道设置', '模式与速率'], ['系统设置', '屏幕与设备']];
+    var h = topbar('主页', 'CAN FD · 本机操作', { noBack: true, noHome: true }) + '<div class="body"><div class="tiles">';
+    tiles.forEach(function (t, i) {
+      h += '<button class="' + (t[2] ? 'newtile' : '') + '" data-act="tile" data-i="' + i + '">' + esc(t[0]) + '<small>' + esc(t[1]) + '</small></button>';
+    });
+    h += '<div class="spare">预留</div></div></div>' + foot('点宫格进入 · 右上 REC 启停录制');
+    return h;
+  }
+  function renderPlaceholder() {
+    return topbar(S.phTitle, '现有页面') + '<div class="body"><div class="ph"><div style="color:var(--d-ink);font-size:16px">' + esc(S.phTitle) + '</div>' +
+      '<div>这一页的交互不变，原型里省略。完整操作可以在本机模拟器里试：fw 目录下运行 make sim。</div></div></div>' + foot('');
+  }
+  function renderKeysim() {
+    var h = topbar('按键模拟', '4 路 · 同一时刻只接通一路') + '<div class="body">' + supplyStrip() + '<div class="chs">';
+    for (var k = 0; k < 4; k++) {
+      var t = S.tables[k], on = k === S.ch, act = S.active && S.active.ch === k;
+      h += '<button data-act="ch" data-k="' + k + '" class="' + (on ? 'sel' : '') + '">' +
+        '<div class="h">K' + (k + 1) + '<span>' + (on ? (act ? '<span style="color:var(--d-ok)">● 按下 ' + esc(S.active.key) + '</span>' : '● 已接通') : '○ 断开') + '</span></div>' +
+        '<div class="l">' + (t ? esc(t.name) : '未学习') + '</div>' +
+        '<div class="l">' + (t ? t.keys.length + ' 个键值' : '点进去学习或扫描') + '</div></button>';
+    }
+    h += '</div><div class="bottomrow"><button data-act="releaseAll"' + (S.active ? '' : ' disabled') + '>全部松开</button></div></div>' +
+      foot('点一路切换并进入；切换时自动断开上一路');
+    return h;
+  }
+  function renderChannel() {
+    var k = S.ch, t = S.tables[k];
+    var sub = 'K' + (k + 1) + ' 已接通 · 串联 ' + S.rser[k].toFixed(1) + ' Ω · ' + (t ? t.name : '无键值表');
+    var h = topbar('K' + (k + 1) + ' 按键模拟', sub) + '<div class="body"><div class="tabs">';
+    [['press', '按键'], ['learn', '学习'], ['scan', '扫描'], ['set', '设置']].forEach(function (x) {
+      h += '<button data-act="tab" data-t="' + x[0] + '" class="' + (S.tab === x[0] ? 'sel' : '') + '">' + x[1] + '</button>';
+    });
+    h += '</div><div class="pane">';
+    if (S.ovp) h += '<div class="banner"><span>K' + (k + 1) + ' 接口 ' + fmtV(portMv()) + '，超过 5.5 V，已断开电阻阵</span><button data-act="clearOvp">重新检测</button></div>';
+    if (S.tab === 'press') h += panePress(t);
+    else if (S.tab === 'learn') h += paneLearn();
+    else if (S.tab === 'scan') h += paneScan();
+    else h += paneSet(t);
+    h += '</div></div>';
+    var mv = portMv();
+    h += foot('接口 ' + fmtV(mv) + ' · APM 判定：' + (S.awake && !S.fault ? apmState(mv) : '—') + (S.active ? ' · 正在按：' + S.active.key : ''));
+    if (S.manual) h += manualDlg();
+    return h;
+  }
+  function panePress(t) {
+    if (!t) {
+      return '<div class="empty"><div>这一路还没有键值表</div><div class="row">' +
+        '<button data-act="tab" data-t="learn">去学习</button><button data-act="tab" data-t="scan">去扫描</button><button data-act="manual">手动电压</button></div></div>';
+    }
+    var h = '<div class="modes">按法';
+    [['tap', '点按 300 ms'], ['hold', '按住'], ['latch', '保持']].forEach(function (m) {
+      h += '<button data-act="mode" data-m="' + m[0] + '" class="' + (S.mode === m[0] ? 'sel' : '') + '">' + m[1] + '</button>';
+    });
+    var mv = portMv(), live = S.awake && !S.fault;
+    h += '<span class="readout" style="margin-left:auto;font-family:var(--font-mono);font-size:13px;color:' + (S.active ? 'var(--d-ok)' : 'var(--d-ink)') + '">' +
+      fmtV(mv) + ' · ' + (live ? apmState(mv) : '—') + '</span>';
+    h += '</div><div class="keys">';
+    t.keys.slice(0, 5).forEach(function (key, i) {
+      var p = S.active && S.active.key === key.name;
+      h += '<button data-key="' + i + '" class="' + (p ? 'pressed' : '') + '"' + (S.ovp ? ' disabled' : '') + '>' + esc(key.name) + '<small>' + (key.mv ? fmtV(key.mv) : '0 Ω') + '</small></button>';
+    });
+    h += '<button data-act="manual">手动<small>电压 / 电阻</small></button></div>';
+    h += '<div class="bottomrow"><button data-act="releaseAll"' + (S.active ? '' : ' disabled') + '>全部松开（回到高阻）</button></div>';
+    return h;
+  }
+  function paneLearn() {
+    var L = S.learn, mv = portMv();
+    if (L.step === 0) {
+      return '<div class="empty" style="padding:0 24px"><div style="color:var(--d-ink)">用 T 型线把 K' + (S.ch + 1) + ' 并在原车开关和 APM 之间</div>' +
+        '<div>学习时设备只测量、不下拉。APM 需要先上电。</div><div class="row">' +
+        (S.awake ? '' : '<button data-act="wake">CAN 唤醒</button>') + '<button data-act="learnStart"' + (S.awake ? '' : ' disabled') + '>开始学习</button></div></div>';
+    }
+    if (L.step === 3) {
+      return '<div class="empty"><div style="color:var(--d-ink)">保存 ' + L.caps.length + ' 个键值为“车型 B · K' + (S.ch + 1) + '”</div>' +
+        '<div>存到 SD 卡 /APM/KEYS/，以后可以在设置里换用</div><div class="row"><button data-act="learnBack">返回修改</button><button data-act="learnSave">保存</button></div></div>';
+    }
+    var pct = Math.max(0, Math.min(100, mv / 50));
+    var h = '<div class="learn"><div class="live"><div class="k">接口电压</div><div class="big">' + (mv / 1000).toFixed(2) + '<small>V</small></div>' +
+      '<div class="meter"><i style="width:' + pct + '%"></i></div>' +
+      '<div class="k" style="margin-top:6px">空闲 ' + fmtV(L.idle) + '（开路）</div>' +
+      '<div class="k">' + (mv < L.idle - 150 ? (L.armed ? '稳定中… ' + Math.min(100, L.stable / 5) + '%' : '已记录，请松开') : '按住原车开关的一个档位') + '</div></div><div class="caps">';
+    if (!L.caps.length) h += '<div style="color:var(--d-muted);font-size:13px;padding:6px 2px">还没有记录。按住一个档位并保持半秒，会自动记下来。</div>';
+    L.caps.forEach(function (c, i) {
+      h += '<div class="cap"><span>' + esc(c.name) + '</span><span class="v">' + fmtV(c.mv) + ' · ' + eqR(c.mv) + '</span>' +
+        '<button data-act="capName" data-i="' + i + '">改名</button></div>';
+    });
+    h += '<div style="display:flex;gap:4px;margin-top:2px"><button style="flex:1;height:28px" data-act="learnReset">重学</button>' +
+      '<button style="flex:1;height:28px" data-act="learnDone"' + (L.caps.length ? '' : ' disabled') + '>完成</button></div></div></div>';
+    return h;
+  }
+  function paneScan() {
+    var sc = S.scan;
+    if (sc.state === 'idle') {
+      return '<div class="empty" style="padding:0 20px"><div style="color:var(--d-ink)">设备代替开关，从 4.80 V 每 50 mV 往下扫</div>' +
+        '<div>每一档读 CAN 开关状态（CAN1 · 0x3B1 · 字节 2）。原车开关要先断开，APM 要已上电。约 4 秒。</div>' +
+        '<div class="row"><button data-act="scanStart">开始扫描</button></div></div>';
+    }
+    var done = sc.state === 'done';
+    var h = '<div style="display:grid;gap:5px"><div class="strip" style="height:24px"><span class="grow">' +
+      (done ? '扫描完成，已回到高阻' : '正在扫描：' + fmtV(Math.max(sc.mv, 0)) + ' · APM 判定 ' + apmState(Math.max(sc.mv, 0))) + '</span></div>' +
+      '<div class="prog"><i style="width:' + Math.min(100, (4800 - Math.max(sc.mv, 0)) / 48) + '%"></i></div><div class="list">';
+    sc.edges.slice(-5).forEach(function (e) {
+      h += '<div class="r"><span>' + esc(e.from) + ' → ' + esc(e.to) + '</span><span class="v">' + fmtV(e.below) + ' – ' + fmtV(e.above) + '</span></div>';
+    });
+    h += '</div>';
+    if (done) h += '<div class="bottomrow"><button data-act="scanAgain">重新扫描</button><button data-act="scanSave">存为键值表（取每档中点）</button></div>';
+    return h + '</div>';
+  }
+  function paneSet(t) {
+    var rows = [
+      ['键值表', t ? t.name : '无', '更换'],
+      ['点按时长', '300 ms', '调整'],
+      ['串联电阻', S.rser[S.ch].toFixed(1) + ' Ω · 切换时自动标定', '重测'],
+      ['回读校验', '开 · 误差 > 80 mV 提示', ''],
+      ['空闲电阻', '未贴（R' + (827 + S.ch) + ' 预留位）', '']
+    ];
+    var h = '<div class="list">';
+    rows.forEach(function (r) {
+      h += '<div class="r"><span>' + esc(r[0]) + ' <span class="v">' + esc(r[1]) + '</span></span>' + (r[2] ? '<button data-act="noop">' + r[2] + '</button>' : '<span></span>') + '</div>';
+    });
+    return h + '</div>';
+  }
+  function manualDlg() {
+    return '<div class="overlay"><div class="dlg"><div>手动电压（K' + (S.ch + 1) + '）</div>' +
+      '<div class="stepper"><button data-act="mvDown">−100</button><div class="big" style="font-size:28px;min-width:120px;text-align:center">' + (S.manualMv / 1000).toFixed(2) + '<small>V</small></div><button data-act="mvUp">+100</button></div>' +
+      '<div style="color:var(--d-muted);font-size:12.5px;text-align:center">等效 ' + eqR(S.manualMv) + ' · APM 判定 ' + apmState(S.manualMv) + '</div>' +
+      '<div class="row"><button data-act="manualClose">关闭</button><button data-act="manualPress">' + (S.active && S.active.key === '手动' ? '松开' : '按下并保持') + '</button></div></div></div>';
+  }
+  var lastHtml = '';
+  function render() {
+    var h;
+    if (S.page === 'home') h = renderHome();
+    else if (S.page === 'keysim') h = renderKeysim();
+    else if (S.page === 'channel') h = renderChannel();
+    else h = renderPlaceholder();
+    if (h !== lastHtml) { screen.innerHTML = h; lastHtml = h; }   // untouched DOM keeps taps intact
+    renderBench();
+  }
+
+  // ---------- device events ----------
+  screen.addEventListener('click', function (ev) {
+    var b = ev.target.closest('button[data-act]'); if (!b || b.disabled) return;
+    var a = b.dataset.act;
+    switch (a) {
+      case 'back': back(); break;
+      case 'home': home(); break;
+      case 'rec': toast('REC：开始或停止录制（沿用现有逻辑）'); break;
+      case 'tile':
+        var i = +b.dataset.i;
+        if (i === 2) S.page = 'keysim';
+        else { S.phTitle = ['实时显示', '发送报文', '', '总线诊断', '文件管理', '通道设置', '系统设置'][i]; S.page = 'ph'; }
+        break;
+      case 'wake': S.awake = true; toast('已发送 CAN 唤醒，VCC2_5V_SW 上电'); break;
+      case 'ch': selectChannel(+b.dataset.k); break;
+      case 'releaseAll': releaseAll('已全部松开，回到高阻'); break;
+      case 'tab':
+        if (S.tab !== b.dataset.t) { releaseAll(S.active ? '切换页签，已松开' : ''); stopScan(); }
+        S.tab = b.dataset.t; break;
+      case 'mode': S.mode = b.dataset.m; releaseAll(); break;
+      case 'manual': S.manual = true; break;
+      case 'manualClose': S.manual = false; if (S.active && S.active.key === '手动') releaseAll('已松开'); break;
+      case 'mvUp': S.manualMv = Math.min(4900, S.manualMv + 100); if (S.active && S.active.key === '手动') S.active.mv = S.manualMv; break;
+      case 'mvDown': S.manualMv = Math.max(0, S.manualMv - 100); if (S.active && S.active.key === '手动') S.active.mv = S.manualMv; break;
+      case 'manualPress': if (S.active && S.active.key === '手动') releaseAll(); else press('手动', S.manualMv); break;
+      case 'learnStart':
+        S.learn = { step: 2, idle: portMv() > 4000 ? VOPEN : VOPEN, caps: [], stable: 0, last: null, armed: true };
+        toast('空闲电压 ' + fmtV(VOPEN) + '，现在按住原车开关的一个档位'); break;
+      case 'learnReset': S.learn.caps = []; toast('已清空，重新学习'); break;
+      case 'learnDone': S.learn.step = 3; break;
+      case 'learnBack': S.learn.step = 2; break;
+      case 'learnSave':
+        S.tables[S.ch] = { name: '车型 B · K' + (S.ch + 1), keys: S.learn.caps.map(function (c) { return { name: c.name, mv: c.mv }; }) };
+        toast('已保存 ' + S.learn.caps.length + ' 个键值'); S.learn.step = 0; S.tab = 'press'; break;
+      case 'capName':
+        var c = S.learn.caps[+b.dataset.i]; c.name = NAMES[(NAMES.indexOf(c.name) + 1) % NAMES.length]; break;
+      case 'scanStart': startScan(); break;
+      case 'scanAgain': S.scan = { state: 'idle', mv: 4800, edges: [], keys: null }; break;
+      case 'scanSave':
+        S.tables[S.ch] = { name: '扫描 · K' + (S.ch + 1), keys: S.scan.keys };
+        toast('已保存 ' + S.scan.keys.length + ' 个键值（每档中点）'); S.tab = 'press'; S.scan = { state: 'idle', mv: 4800, edges: [], keys: null }; break;
+      case 'clearOvp':
+        if (S.fault) toast('接口仍是 ' + fmtV(portMv()) + '，保持断开'); else { S.ovp = false; toast('电压正常，已解除过压锁定'); }
+        break;
+      case 'noop': toast('原型里省略'); break;
+    }
+    render();
+  });
+  // hold / tap / latch keys use pointer events; release is tracked on the document
+  var holding = false;
+  screen.addEventListener('pointerdown', function (ev) {
+    var b = ev.target.closest('button[data-key]'); if (!b || b.disabled) return;
+    ev.preventDefault();
+    holding = S.mode === 'hold';
+    keyDown(+b.dataset.key);
+  });
+  ['pointerup', 'pointercancel'].forEach(function (t) {
+    document.addEventListener(t, function () { if (holding) { holding = false; keyUp(); } });
+  });
+  screen.addEventListener('keydown', function (ev) {
+    var b = ev.target.closest('button[data-key]');
+    if (b && (ev.key === 'Enter' || ev.key === ' ') && !ev.repeat) { ev.preventDefault(); keyDown(+b.dataset.key); }
+  });
+  screen.addEventListener('keyup', function (ev) {
+    if (ev.target.closest('button[data-key]') && (ev.key === 'Enter' || ev.key === ' ')) keyUp();
+  });
+
+  // ---------- bench ----------
+  var bAwake = document.getElementById('bAwake'), bAttached = document.getElementById('bAttached');
+  var bFault = document.getElementById('bFault'), origRow = document.getElementById('origKeys');
+  ORIG.forEach(function (o, i) {
+    var b = document.createElement('button'); b.type = 'button'; b.textContent = o.name; b.dataset.orig = i;
+    b.addEventListener('pointerdown', function (ev) { ev.preventDefault(); if (!S.orig.attached) return; S.orig.pressed = i; try { b.setPointerCapture(ev.pointerId); } catch (e) { /* ignore */ } render(); });
+    ['pointerup', 'pointercancel'].forEach(function (t) { b.addEventListener(t, function () { if (S.orig.pressed === i) { S.orig.pressed = null; render(); } }); });
+    b.addEventListener('keydown', function (ev) { if ((ev.key === 'Enter' || ev.key === ' ') && !ev.repeat && S.orig.attached) { ev.preventDefault(); S.orig.pressed = i; render(); } });
+    b.addEventListener('keyup', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { S.orig.pressed = null; render(); } });
+    origRow.appendChild(b);
+  });
+  bAwake.addEventListener('click', function () {
+    S.awake = !S.awake;
+    if (!S.awake) { releaseAll('APM 掉电，已全部松开'); stopScan(); }
+    render();
+  });
+  bAttached.addEventListener('click', function () { S.orig.attached = !S.orig.attached; S.orig.pressed = null; render(); });
+  bFault.addEventListener('click', function () {
+    S.fault = !S.fault;
+    if (S.fault) { S.ovp = true; releaseAll(); stopScan(); toast('K' + (S.ch + 1) + ' 过压 12.0 V：电阻阵已断开，按键被锁定'); }
+    render();
+  });
+  document.getElementById('bReset').addEventListener('click', function () { stopScan(); initState(); render(); });
+  function renderBench() {
+    bAwake.textContent = S.awake ? '已唤醒（点一下让 APM 休眠）' : '休眠中（点一下唤醒）';
+    bAwake.className = S.awake ? 'on' : '';
+    bAttached.textContent = S.orig.attached ? '已接（学习用）' : '已断开（扫描用）';
+    bAttached.className = S.orig.attached ? 'on' : '';
+    bFault.textContent = S.fault ? '撤掉 12 V' : '当前通道误接 12 V';
+    bFault.className = S.fault ? 'hot' : '';
+    Array.prototype.forEach.call(origRow.querySelectorAll('button'), function (b) {
+      b.disabled = !S.orig.attached; b.className = S.orig.pressed === +b.dataset.orig ? 'on' : '';
+    });
+  }
+
+  // ---------- tick + scaling ----------
+  setInterval(function () {
+    learnTick();
+    if (S.toast && Date.now() - S.toastAt > 3600) S.toast = '';
+    render();
+  }, 100);
+  var box = document.getElementById('screenBox'), bezel = document.getElementById('bezel');
+  function fit() {
+    var avail = bezel.parentElement.clientWidth - 28;
+    var s = Math.max(0.5, Math.min(1.6, avail / 480));
+    screen.style.transform = 'scale(' + s + ')';
+    box.style.width = Math.round(480 * s) + 'px';
+    box.style.height = Math.round(320 * s) + 'px';
+  }
+  if (window.ResizeObserver) new ResizeObserver(fit).observe(bezel.parentElement); else window.addEventListener('resize', fit);
+  fit();
+  render();
+})();
+</script>

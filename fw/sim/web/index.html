@@ -209,7 +209,7 @@ button:disabled { opacity:.5; cursor:not-allowed; }
 .rec-actions button.sel,.rec-config button.sel,.rec-metrics div.sel{outline:1px solid #b4d4ff;background:#315683}
 .lcd-hint.local-error{color:#ffb7bc;background:#351c27}
 
-.tiles{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr)}
+.tiles{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr)}.tiles.cols4{grid-template-columns:repeat(4,1fr)}
 .live{position:relative;height:100%;padding-bottom:24px}.live .live-empty{height:115px}
 .live-record{position:absolute;left:0;right:0;bottom:0;height:24px;padding:3px 6px;background:#182436;border-top:1px solid #34485f}
 .live-record-state{display:flex;gap:7px;align-items:center;height:17px;font-size:8px;color:#8fa5bf;white-space:nowrap;overflow:hidden}.live-record-state b{font-size:10px;color:#b7ccdf}.live-record-state b.running{color:#ff9a9d}.live-record-state b.pending{color:#eac37f}.live-record-state .file{margin-left:auto;overflow:hidden;text-overflow:ellipsis;max-width:185px}
@@ -235,7 +235,7 @@ button:disabled { opacity:.5; cursor:not-allowed; }
   <button id="reset" class="danger subtle">重置模拟</button>
 </header>
 <main class="review-layout">
-  <aside class="nav-rail"><div class="rail-label">设备菜单</div><nav id="deviceNav" aria-label="设备页面导航"><button type="button" class="nav-item" data-page="home"><span class="nav-symbol" data-icon="home"></span><span><b>概览</b><small>主页</small></span></button><button type="button" class="nav-item" data-page="live"><span class="nav-symbol" data-icon="live"></span><span><b>实时显示</b><small>报文查看与录制</small></span></button><button type="button" class="nav-item" data-page="send"><span class="nav-symbol" data-icon="tx"></span><span><b>发送报文</b><small>报文列表 / 加载文件</small></span></button><button type="button" class="nav-item" data-page="diag"><span class="nav-symbol" data-icon="diag"></span><span><b>总线诊断</b><small>负载与错误</small></span></button><button type="button" class="nav-item" data-page="files"><span class="nav-symbol" data-icon="files"></span><span><b>文件管理</b><small>卡内文件列表</small></span></button><button type="button" class="nav-item" data-page="chset"><span class="nav-symbol" data-icon="chset"></span><span><b>通道设置</b><small>模式与位速率</small></span></button><button type="button" class="nav-item" data-page="sysset"><span class="nav-symbol" data-icon="sysset"></span><span><b>系统设置</b><small>屏幕与设备</small></span></button></nav><div class="rail-note"><span class="review-dot"></span>界面确认阶段<p>先确认信息和操作流程，再继续底层优化。</p></div></aside>
+  <aside class="nav-rail"><div class="rail-label">设备菜单</div><nav id="deviceNav" aria-label="设备页面导航"><button type="button" class="nav-item" data-page="home"><span class="nav-symbol" data-icon="home"></span><span><b>概览</b><small>主页</small></span></button><button type="button" class="nav-item" data-page="live"><span class="nav-symbol" data-icon="live"></span><span><b>实时显示</b><small>报文查看与录制</small></span></button><button type="button" class="nav-item" data-page="send"><span class="nav-symbol" data-icon="tx"></span><span><b>发送报文</b><small>报文列表 / 加载文件</small></span></button><button type="button" class="nav-item" data-page="diag"><span class="nav-symbol" data-icon="diag"></span><span><b>总线诊断</b><small>负载与错误</small></span></button><button type="button" class="nav-item" data-page="files"><span class="nav-symbol" data-icon="files"></span><span><b>文件管理</b><small>卡内文件列表</small></span></button><button type="button" class="nav-item" data-page="chset"><span class="nav-symbol" data-icon="chset"></span><span><b>通道设置</b><small>模式与位速率</small></span></button><button type="button" class="nav-item" data-page="sysset"><span class="nav-symbol" data-icon="sysset"></span><span><b>系统设置</b><small>屏幕与设备</small></span></button><button type="button" class="nav-item" data-page="keysim"><span class="nav-symbol" data-icon="keysim"></span><span><b>按键模拟</b><small>APM 学习 / 发送</small></span></button></nav><div class="rail-note"><span class="review-dot"></span>界面确认阶段<p>先确认信息和操作流程，再继续底层优化。</p></div></aside>
   <section class="preview-column">
     <div class="preview-heading"><div><span class="eyebrow">DEVICE PREVIEW</span><h2 id="previewTitle">设备概览</h2></div><button type="button" id="bootPreview" class="primary">启动设备预览</button></div>
     <div class="device">
@@ -385,6 +385,7 @@ button:disabled { opacity:.5; cursor:not-allowed; }
         <button id="screenConn" class="on">屏幕已连接</button>
         <button data-env="rtc_lost">拔电池（RTC 丢失）</button>
       </div>
+      <div id="keysimBench"></div>
       <div id="buses"></div>
     </div></div>
     <div data-side-pane="engineering" hidden><div class="panel">
@@ -473,11 +474,12 @@ const PATHS = {
  rec:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.3" fill="currentColor" stroke="none"/>',
  play:'<path d="M7 4.5v15l13-7.5-13-7.5Z"/>',diag:'<path d="M3 12h4l2-6 4 12 3-6h5"/><path d="M5 4h14M5 20h14" opacity=".4"/>',
  files:'<path d="M3 6h7l2 3h9v11H3V6Z"/><path d="M4 4h6l2 2h7"/>',chset:'<path d="M4 6h5m5 0h6M4 12h9m5 0h2M4 18h2m5 0h9"/><circle cx="11" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="8" cy="18" r="2"/>',
- sysset:'<path d="m9 3-.6 3-2 .9L3.8 6l-2 3.5L4 11v2l-2.2 1.5 2 3.5 2.6-.9 2 .9.6 3h4l.6-3 2-.9 2.6.9 2-3.5L18 13v-2l2.2-1.5-2-3.5-2.6.9-2-.9-.6-3H9Z"/><circle cx="11" cy="12" r="3"/>'
+ sysset:'<path d="m9 3-.6 3-2 .9L3.8 6l-2 3.5L4 11v2l-2.2 1.5 2 3.5 2.6-.9 2 .9.6 3h4l.6-3 2-.9 2.6.9 2-3.5L18 13v-2l2.2-1.5-2-3.5-2.6.9-2-.9-.6-3H9Z"/><circle cx="11" cy="12" r="3"/>',
+ keysim:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h2M7 14h2M15 10h2M15 14h2M11 10v4"/>'
 };
 function icon(name) { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${PATHS[name==="send"?"tx":name] || PATHS.home}</svg>`; }
-const TILE_PAGES = ["live","send","diag","files","chset","sysset"];
-const TILE_NOTES = ["查看 · 录制 · 停止","报文列表 / 加载文件","负载与错误","卡内文件列表","模式与位速率","屏幕与设备"];
+const TILE_PAGES = ["live","send","diag","files","chset","sysset","keysim"];
+const TILE_NOTES = ["查看 · 录制 · 停止","报文列表 / 加载文件","负载与错误","卡内文件列表","模式与位速率","屏幕与设备","APM 学习 · 发送"];
 function reviewFeedback(message, bad=false) {
   const box = $("#reviewFeedback"); if (!box) return;
   box.textContent = message; box.classList.toggle("bad",bad);
@@ -623,7 +625,7 @@ function renderScreen(d) {
   let h = statusBar(d);
   const right=ui.page==="live"?(ui.live.paused?"列表已冻结":"实时更新"):ui.page==="detail"?"报文快照":ui.page==="tx"?"OK 单发 · → 周期":ui.page==="txedit"?"草稿 · 保存后生效":ui.page==="filter"?"只影响显示":ui.page==="plan_detail"?esc((ui.plan_view?.selected_name||"").replace(/\.canplan\.json$/i,"")):ui.page==="plan_entry"?`CAN${(ui.plan_view?.entry_channel||0)+1} · 第${(ui.plan_view?.entry_index||0)+1}条`:"";
   h+=`<div class="tb">${ui.page!=="home"?'<span class="back" data-back="1" role="button" tabindex="0" aria-label="返回上一页">‹</span>':""}<span class="t">${esc(ui.title)}</span><span class="r">${right}</span></div><div class="content">`;
-  if(ui.page==="home") h+='<div class="tiles">'+ui.items.map((it,i)=>`<div class="tile ${i===ui.cursor?"sel":""}" data-item="${i}" role="button" tabindex="0"><span class="ic">${icon(TILE_PAGES[i])}</span>${esc(it.l)}<small>${TILE_NOTES[i]}</small></div>`).join("")+'</div>';
+  if(ui.page==="home") h+=`<div class="tiles${ui.home_columns===4?" cols4":""}">`+ui.items.map((it,i)=>`<div class="tile ${i===ui.cursor?"sel":""}" data-item="${i}" role="button" tabindex="0"><span class="ic">${icon(TILE_PAGES[i])}</span>${esc(it.l)}<small>${TILE_NOTES[i]}</small></div>`).join("")+'</div>';
   else if(ui.page==="live")h+=liveView(ui.live,d);
   else if(ui.page==="detail")h+=detailView(ui.detail);
   else if(ui.keyboard&&typeof localKeyboardView==="function")h+=localKeyboardView(ui);
@@ -679,6 +681,7 @@ function renderPanels(s) {
   setOn("#screenConn", e.screen); $("#screenConn").textContent = e.screen ? "屏幕已连接" : "屏幕未连接";
   if (document.activeElement !== $("#chip")) $("#chip").value = e.chip === "Y" ? "89" : "86";
   renderBuses(e.bus);
+  renderKeysimBench(e.keysim);
   if (typeof renderWorkbench === "function") renderWorkbench(s);
   if (typeof renderControls === "function") renderControls(s);
   document.querySelectorAll("[data-speed]").forEach((b) => b.classList.toggle("on", +b.dataset.speed === s.sim.speed));
@@ -687,6 +690,33 @@ function renderPanels(s) {
 }
 function setOn(sel, on) { $(sel).classList.toggle("on", !!on); }
 
+let keysimBuilt = false;
+const KS_POS = ["松开", "上升", "一键上升", "下降", "一键下降"];
+const KS_STATE = ["空闲", "上升", "一键上升", "下降", "一键下降", "故障"];
+function renderKeysimBench(ks) {
+  const box = $("#keysimBench");
+  if (!box || !ks) return;
+  if (!keysimBuilt) {
+    box.innerHTML = `<div class="buscard"><h3>APM 按键模拟台架 <span class="muted" id="ksSel"></span></h3>
+      <div class="row"><button id="ksApm">APM 已唤醒</button><span class="muted">学习：点一个档位保持 1 秒再点“松开”。扫描前先断开原车开关。</span></div>
+      ${ks.ch.map((_, c) => `<div class="row"><label>K${c + 1}</label><button id="ksAtt${c}">原车开关已接</button>${KS_POS.map((n, p) => `<button id="ksPos${c}_${p}">${n}</button>`).join("")}<button id="ksFault${c}">误接 12 V</button><span class="muted" id="ksInfo${c}"></span></div>`).join("")}</div>`;
+    $("#ksApm").onclick = () => env("ks_apm", S.env.keysim.apm ? 0 : 1, 0);
+    ks.ch.forEach((_, c) => {
+      $(`#ksAtt${c}`).onclick = () => env("ks_attach", c, S.env.keysim.ch[c].attached ? 0 : 1);
+      KS_POS.forEach((_, p) => { $(`#ksPos${c}_${p}`).onclick = () => env("ks_switch", c, p); });
+      $(`#ksFault${c}`).onclick = () => env("ks_fault", c, S.env.keysim.ch[c].fault ? 0 : 1);
+    });
+    keysimBuilt = true;
+  }
+  setOn("#ksApm", ks.apm); $("#ksApm").textContent = ks.apm ? "APM 已唤醒" : "APM 休眠中";
+  $("#ksSel").textContent = `设备当前接通 K${ks.selected + 1}`;
+  ks.ch.forEach((c, i) => {
+    setOn(`#ksAtt${i}`, c.attached); $(`#ksAtt${i}`).textContent = c.attached ? "原车开关已接" : "原车开关已断开";
+    KS_POS.forEach((_, p) => { const b = $(`#ksPos${i}_${p}`); b.classList.toggle("on", c.attached && c.pos === p); b.disabled = !c.attached; });
+    setOn(`#ksFault${i}`, c.fault);
+    $(`#ksInfo${i}`).textContent = `${(c.port_mv / 1000).toFixed(2)} V · ${c.state >= 0 ? (KS_STATE[c.state] || "状态 " + c.state) : "无状态报文"}${c.sd_file ? ` · SD 有 K${i + 1}.TXT` : ""}`;
+  });
+}
 let busesBuilt = false;
 function renderBuses(bus) {
   const box = $("#buses");
@@ -723,6 +753,10 @@ function renderBuses(bus) {
 
 /* ---------- 审阅辅助 ---------- */
 const GUIDE = {
+ keysim:["4 路按键模拟，同一时刻只接通一路","点一路就切换并自动标定串联电阻。右边“环境”里的台架可以唤醒或休眠 APM、按原车开关、断开原车开关、模拟误接 12 V。",[["打开台架","environment"]]],
+ keych:["这一路的按键","点按 300 ms 后自动松开；切到“保持”后再按一次才松开。左右键调手动电压。离开这一页会自动松开。",[["打开台架","environment"]]],
+ keylearn:["原车开关接着时学习","点“学习”开始，然后在台架上点一个档位保持 1 秒再点“松开”，会自动记录一档。记录完点“保存”。",[["打开台架","environment"]]],
+ keyscan:["没有原车开关时扫描门限","先在台架上把这一路的原车开关断开。扫描从 4.8 V 每 50 mV 往下设，读 APM 上报的开关状态，约 4 秒。",[["打开台架","environment"]]],
  send:["两路独立开关，各用各自列表","CAN1、CAN2 分别开启或停止本路循环。两组8条固定显示，行内可编辑、设置时序或单发；加载文件不自动发送，保存列表包含两路。",[["加载文件","plan:0"],["保存两路列表","plan:2"]]],
  send_files:["直接按文件内容载入","文件中的通道、帧格式、长度、数据与时序会完整恢复，不必重新选格式。只替换文件包含通道的列表，加载不自动发送。",[["导入发送文件","tool:plans"]]],
  local_input:["直接用屏幕键盘输入","点数字或十六进制键输入当前字段，也可用电脑键盘或粘贴。确定后回到原草稿；取消保留原字段，最后保存或应用外层设置才生效。",[]],
@@ -763,7 +797,7 @@ function renderReview(s) {
  const d=s.dev,p=d.power,ui=d.ui;
  const sendPages=["send","send_files","play","plan_detail","plan_entry","local_plan_name","tx","txedit","txset","txtiming","local_db","local_frames","local_frame"];
  const contextPage=ui.page==="local_input"?(ui.parent_page||ui.return_page||"txedit"):ui.page;
- const navPage=sendPages.includes(contextPage)?"send":["rec","local_name","local_record_save","detail","filter"].includes(contextPage)?"live":["local_files","local_rename","file_detail"].includes(contextPage)?"files":contextPage==="eng"?"sysset":contextPage;
+ const navPage=sendPages.includes(contextPage)?"send":["rec","local_name","local_record_save","detail","filter"].includes(contextPage)?"live":["local_files","local_rename","file_detail"].includes(contextPage)?"files":contextPage==="eng"?"sysset":["keych","keylearn","keyscan"].includes(contextPage)?"keysim":contextPage;
  document.querySelectorAll("[data-page]").forEach(b=>{const active=b.dataset.page===navPage;b.classList.toggle("active",active);b.setAttribute("aria-current",active?"page":"false");});
  $("#previewTitle").textContent=p.sid===4?ui.title:"设备概览";
  $("#bootPreview").textContent=p.sid===4?p.screen?"返回主页":"唤醒屏幕":"启动设备预览";

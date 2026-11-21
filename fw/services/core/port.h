@@ -6,6 +6,7 @@
 #define PORT_H
 
 #include "services/core/app_types.h"
+#include "services/winsim/win_sim.h"
 /* Same monotonic microsecond epoch used by received/transmitted frame stamps.
  * It may differ from the logical boot/gesture clock during startup. */
 uint64_t port_capture_time_us(void);
@@ -82,5 +83,10 @@ bool     port_sd_busy(void);              /* SD 正在长时间写忙（回放�
 
 /* ---- USB ---- */
 void port_usb_msc(bool share);
+
+/* ---- 按键模拟（Hardware-C 第 12 页，见 services/winsim、services/keysim） ----
+ * 只有启用按键模拟的目标需要实现；Rev D/E 目标上 keysim 编译成空壳，不引用这两个函数。 */
+bool port_keysim_hal(winsim_hal_t *out);   /* 填好驱动 HAL 并返回 true；板上没有这部分硬件时返回 false */
+int  port_keysim_apm_state(uint8_t ch);    /* APM 上报的开关状态（编号见 keysim_state_name）；读不到返回 -1 */
 
 #endif

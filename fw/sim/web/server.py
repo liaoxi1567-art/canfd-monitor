@@ -337,7 +337,7 @@ def execute(path, req):
         action = req.get("action")
         pages = {"home":0, "live":1, "tx":2, "rec":3,
                  "diag":5, "files":6, "chset":7, "sysset":8,
-                 "send":18, "send_files":20}
+                 "send":18, "send_files":20, "keysim":22}
         actions = {"navigate":0, "live_view":1, "live_pause":2, "live_detail":3, "filter_open":4, "live_channel":5, "live_scroll":6}
         if not isinstance(action, str) or action not in actions:
             raise InputError("界面操作无效")

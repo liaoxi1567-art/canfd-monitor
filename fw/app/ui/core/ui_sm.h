@@ -3,6 +3,7 @@
  * 固件里由 LVGL 按视图模型绘制，模拟器里由网页绘制。
  *
  * 页面：主页 → 6 个功能页（实时显示 / 发送报文 / 总线诊断 / 文件管理 / 通道设置 / 系统设置），
+ *       板上有按键模拟硬件时再加第 7 个“按键模拟”，
  *       系统设置里进工程菜单。BACK 短按返回，长按回主页。
  * 对话框：服务层发来的确认请求（EV_NTF_ASK）排队显示；OK 确认，BACK 取消。
  * 全局键：REC 开始 / 停止录制；POWER 由电源状态机处理。 */
@@ -15,7 +16,9 @@
 typedef enum {
     PG_HOME, PG_LIVE, PG_TX, PG_REC, PG_PLAY, PG_DIAG, PG_FILES, PG_CHSET, PG_SYSSET, PG_ENG, PG_TXEDIT, PG_FILTER, PG_DETAIL,
     PG_TXSET, PG_TXTIMING, PG_LOGPLAY, PG_PLANDETAIL, PG_PLANENTRY,
-    PG_SENDMODE, PG_PROJECTS, PG_PROJECTFILES, PG_FILEDETAIL, PG_NUM
+    PG_SENDMODE, PG_PROJECTS, PG_PROJECTFILES, PG_FILEDETAIL,
+    /* APM 按键模拟（Hardware-C 第 12 页）。追加在末尾，保持既有页面编号不变。 */
+    PG_KEYSIM, PG_KEYCH, PG_KEYLEARN, PG_KEYSCAN, PG_NUM
 } page_t;
 
 /* Long OK / touch on a TX row opens a local draft. Host edits use tx_entry_update
