@@ -1,0 +1,4379 @@
+{
+  "BT301": {
+    "part": "1060TR",
+    "pins": {
+      "1": {
+        "pin_name": "+",
+        "net": "RTC_CELL_PLUS"
+      },
+      "2": {
+        "pin_name": "-",
+        "net": "GND"
+      }
+    }
+  },
+  "C161": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C306": {
+    "part": "CL10A475KO8NNNC",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C307": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "VBAT_RTC"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C308": {
+    "part": "CL10A225KO8NNNC",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "VCAP1"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C309": {
+    "part": "CL10A225KO8NNNC",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "VCAP2"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C310": {
+    "part": "CL10A105KB8NNNC",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3A"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C311": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3A"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C312": {
+    "part": "CL10C180JB8NNNC",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "HSE_IN"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C313": {
+    "part": "CL10C180JB8NNNC",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "HSE_OUT"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C314": {
+    "part": "8.2pF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "LSE_IN"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C315": {
+    "part": "8.2pF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "LSE_OUT"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C316": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "NRST"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C317": {
+    "part": "1uF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "VBAT_RTC"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C320": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C321": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C322": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C323": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C324": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C325": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C326": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C327": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C328": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C329": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C330": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C331": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C411": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V_CAN1"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C412": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_CAN1"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C413": {
+    "part": "CL10A105KB8NNNC",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V_CAN1"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C421": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V_CAN2"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C422": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_CAN2"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C423": {
+    "part": "CL10A105KB8NNNC",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V_CAN2"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C430": {
+    "part": "CL21A106KAYNNNE",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C501": {
+    "part": "CL21A106KAYNNNE",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V_LCD"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C502": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V_LCD"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C503": {
+    "part": "CL21A106KAYNNNE",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_SD"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C504": {
+    "part": "CC0603KRX7R9BB104",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_SD"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C505": {
+    "part": "CL10A105KB8NNNC",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C506": {
+    "part": "CL10A105KB8NNNC",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C601": {
+    "part": "1uF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C602": {
+    "part": "10uF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_SDRAM"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C603": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_SDRAM"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C604": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_SDRAM"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C605": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_SDRAM"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C606": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_SDRAM"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C607": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_SDRAM"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C608": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_SDRAM"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C609": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_SDRAM"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C701": {
+    "part": "47nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "EXT_DVDT"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "EFUSE_RTN"
+      }
+    }
+  },
+  "C702": {
+    "part": "GRM188R72A104KA35D",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "EXT_FUSED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C703": {
+    "part": "C3216X7R2A105KT0L0U",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "EXT_FUSED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C704": {
+    "part": "EEHZC1V470P",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "EXT_PROTECTED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C705": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "EXT_PROTECTED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C706": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_VBUS_RAW"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C707": {
+    "part": "1uF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_VBUS_RAW"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C708": {
+    "part": "1uF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_LIMITED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C709": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_LIMITED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C710": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_VBUS_RAW"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C711": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_VBUS_RAW"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C712": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_REF_1V25"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C713": {
+    "part": "1uF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "MUX_SS"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C714": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "EXT_PROTECTED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C715": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_LIMITED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C716": {
+    "part": "EEHZC1V470P",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "VIN_SELECTED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C717": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "VIN_SELECTED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C718": {
+    "part": "22nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "BUCK3_SS"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C719": {
+    "part": "C3225X7R1H106KT000E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "VIN_SELECTED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C720": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "VIN_SELECTED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C721": {
+    "part": "C3225X7R1E226MT000N",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C722": {
+    "part": "C3225X7R1E226MT000N",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C723": {
+    "part": "43nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "COMP_ZERO"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C724": {
+    "part": "100pF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "BOOST5_COMP"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C725": {
+    "part": "C3225X7R1H106KT000E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "BOOST5_VCC"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C726": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "BOOST5_BOOT1"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "BOOST5_SW1"
+      }
+    }
+  },
+  "C727": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "BOOST5_BOOT2"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "BOOST5_SW2"
+      }
+    }
+  },
+  "C728": {
+    "part": "C3225X7R1H106KT000E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "VIN_SELECTED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C729": {
+    "part": "C3225X7R1H106KT000E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "VIN_SELECTED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C730": {
+    "part": "100nF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "VIN_SELECTED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C731": {
+    "part": "GRM32ER71A476KE15L",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C732": {
+    "part": "GRM32ER71A476KE15L",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C733": {
+    "part": "GRM32ER71A476KE15L",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C734": {
+    "part": "GRM32ER71A476KE15L",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C735": {
+    "part": "C3225X7R1H106KT000E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "VIN_SELECTED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C736": {
+    "part": "C3225X7R1H106KT000E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "VIN_SELECTED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C737": {
+    "part": "C3225X7R1H106KT000E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "VIN_SELECTED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C738": {
+    "part": "C3225X7R1H106KT000E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "VIN_SELECTED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "C739": {
+    "part": "GRM155R71C104KA88D",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "D101": {
+    "part": "SMF5.0A",
+    "pins": {
+      "1": {
+        "pin_name": "C",
+        "net": "USB_VBUS_RAW"
+      },
+      "2": {
+        "pin_name": "A",
+        "net": "GND"
+      }
+    }
+  },
+  "D301": {
+    "part": "19-217/G7C-AN1P2/6T",
+    "pins": {
+      "1": {
+        "pin_name": "A",
+        "net": "LED_STAT_A"
+      },
+      "2": {
+        "pin_name": "K",
+        "net": "GND"
+      }
+    }
+  },
+  "D303": {
+    "part": "BAS116,235",
+    "pins": {
+      "1": {
+        "pin_name": "A",
+        "net": "RTC_DIODE_A"
+      },
+      "2": {
+        "pin_name": "NC",
+        "net": null
+      },
+      "3": {
+        "pin_name": "K",
+        "net": "VBAT_RTC"
+      }
+    }
+  },
+  "D411": {
+    "part": "PESD2CANFD24V-TR",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "CAN1_H"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "CAN1_L"
+      },
+      "3": {
+        "pin_name": "3",
+        "net": "GND"
+      }
+    }
+  },
+  "D421": {
+    "part": "PESD2CANFD24V-TR",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "CAN2_H"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "CAN2_L"
+      },
+      "3": {
+        "pin_name": "3",
+        "net": "GND"
+      }
+    }
+  },
+  "D701": {
+    "part": "SMCJ33CA-M3/57T",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "EXT_FUSED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "F701": {
+    "part": "0451002.MRL",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "EXT_RAW"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "EXT_FUSED"
+      }
+    }
+  },
+  "FB301": {
+    "part": "BLM18PG121SN1D",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "+3V3A"
+      }
+    }
+  },
+  "FB411": {
+    "part": "BLM18PG121SN1D",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "+5V_CAN1"
+      }
+    }
+  },
+  "FB421": {
+    "part": "BLM18PG121SN1D",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "+5V_CAN2"
+      }
+    }
+  },
+  "J101": {
+    "part": "TYPE-C-31-M-12",
+    "pins": {
+      "1": {
+        "pin_name": "EH",
+        "net": "GND"
+      },
+      "2": {
+        "pin_name": "EH",
+        "net": "GND"
+      },
+      "3": {
+        "pin_name": "EH",
+        "net": "GND"
+      },
+      "4": {
+        "pin_name": "EH",
+        "net": "GND"
+      },
+      "A1B12": {
+        "pin_name": "GND",
+        "net": "GND"
+      },
+      "A4B9": {
+        "pin_name": "VBUS",
+        "net": "USB_VBUS_RAW"
+      },
+      "B8": {
+        "pin_name": "SBU2",
+        "net": null
+      },
+      "A5": {
+        "pin_name": "CC1",
+        "net": "CC1"
+      },
+      "B7": {
+        "pin_name": "DN2",
+        "net": "USB_DM"
+      },
+      "A6": {
+        "pin_name": "DP1",
+        "net": "USB_DP"
+      },
+      "A7": {
+        "pin_name": "DN1",
+        "net": "USB_DM"
+      },
+      "B6": {
+        "pin_name": "DP2",
+        "net": "USB_DP"
+      },
+      "A8": {
+        "pin_name": "SBU1",
+        "net": null
+      },
+      "B5": {
+        "pin_name": "CC2",
+        "net": "CC2"
+      },
+      "B4A9": {
+        "pin_name": "VBUS",
+        "net": "USB_VBUS_RAW"
+      },
+      "B1A12": {
+        "pin_name": "GND",
+        "net": "GND"
+      }
+    }
+  },
+  "J103": {
+    "part": "KF2EDGR-3.81-2P",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "EXT_RAW"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "J301": {
+    "part": "HX PZ1.27-2x5P TP",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "SWDIO"
+      },
+      "3": {
+        "pin_name": "3",
+        "net": "GND"
+      },
+      "4": {
+        "pin_name": "4",
+        "net": "SWCLK"
+      },
+      "5": {
+        "pin_name": "5",
+        "net": "GND"
+      },
+      "6": {
+        "pin_name": "6",
+        "net": "SWO"
+      },
+      "7": {
+        "pin_name": "7",
+        "net": null
+      },
+      "8": {
+        "pin_name": "8",
+        "net": null
+      },
+      "9": {
+        "pin_name": "9",
+        "net": "GND"
+      },
+      "10": {
+        "pin_name": "10",
+        "net": "NRST"
+      }
+    }
+  },
+  "J302": {
+    "part": "PZ254V-11-08P",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      },
+      "3": {
+        "pin_name": "3",
+        "net": "USART1_TX"
+      },
+      "4": {
+        "pin_name": "4",
+        "net": "USART1_RX"
+      },
+      "5": {
+        "pin_name": "5",
+        "net": "UART7_TX"
+      },
+      "6": {
+        "pin_name": "6",
+        "net": "UART7_RX"
+      },
+      "7": {
+        "pin_name": "7",
+        "net": "EXP_SCL"
+      },
+      "8": {
+        "pin_name": "8",
+        "net": "EXP_SDA"
+      }
+    }
+  },
+  "J401": {
+    "part": "KF2EDGR-3.81-3P",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "CAN1_H"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "CAN1_L"
+      },
+      "3": {
+        "pin_name": "3",
+        "net": "GND"
+      }
+    }
+  },
+  "J402": {
+    "part": "KF2EDGR-3.81-3P",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "CAN2_H"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "CAN2_L"
+      },
+      "3": {
+        "pin_name": "3",
+        "net": "GND"
+      }
+    }
+  },
+  "J501": {
+    "part": "AFC01-S14FCA-00",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V_LCD"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      },
+      "3": {
+        "pin_name": "3",
+        "net": "LCD_CS"
+      },
+      "4": {
+        "pin_name": "4",
+        "net": "LCD_RST"
+      },
+      "5": {
+        "pin_name": "5",
+        "net": "LCD_DC"
+      },
+      "6": {
+        "pin_name": "6",
+        "net": "LCD_MOSI"
+      },
+      "7": {
+        "pin_name": "7",
+        "net": "LCD_SCK"
+      },
+      "8": {
+        "pin_name": "8",
+        "net": "LCD_BL"
+      },
+      "9": {
+        "pin_name": "9",
+        "net": "LCD_MISO"
+      },
+      "10": {
+        "pin_name": "10",
+        "net": "I2C1_SCL"
+      },
+      "11": {
+        "pin_name": "11",
+        "net": "CTP_RST"
+      },
+      "12": {
+        "pin_name": "12",
+        "net": "I2C1_SDA"
+      },
+      "13": {
+        "pin_name": "13",
+        "net": "CTP_INT"
+      },
+      "14": {
+        "pin_name": "14",
+        "net": null
+      },
+      "15": {
+        "pin_name": "15",
+        "net": "GND"
+      },
+      "16": {
+        "pin_name": "16",
+        "net": "GND"
+      }
+    }
+  },
+  "J502": {
+    "part": "1040310811",
+    "pins": {
+      "1": {
+        "pin_name": "DAT2",
+        "net": "SD_D2"
+      },
+      "2": {
+        "pin_name": "CD/DAT3",
+        "net": "SD_D3"
+      },
+      "3": {
+        "pin_name": "CMD",
+        "net": "SD_CMD"
+      },
+      "4": {
+        "pin_name": "VDD",
+        "net": "+3V3_SD"
+      },
+      "5": {
+        "pin_name": "CLK",
+        "net": "SD_CLK_S"
+      },
+      "6": {
+        "pin_name": "VSS",
+        "net": "GND"
+      },
+      "7": {
+        "pin_name": "DAT0",
+        "net": "SD_D0"
+      },
+      "8": {
+        "pin_name": "DAT1",
+        "net": "SD_D1"
+      },
+      "9": {
+        "pin_name": "9",
+        "net": "GND"
+      },
+      "10": {
+        "pin_name": "10",
+        "net": "GND"
+      },
+      "11": {
+        "pin_name": "11",
+        "net": "SD_DET"
+      },
+      "12": {
+        "pin_name": "12",
+        "net": "GND"
+      },
+      "13": {
+        "pin_name": "13",
+        "net": "GND"
+      },
+      "14": {
+        "pin_name": "14",
+        "net": "GND"
+      }
+    }
+  },
+  "J503": {
+    "part": "AFC01-S40FCA-00",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": null
+      },
+      "2": {
+        "pin_name": "2",
+        "net": null
+      },
+      "3": {
+        "pin_name": "3",
+        "net": "GND"
+      },
+      "4": {
+        "pin_name": "4",
+        "net": null
+      },
+      "5": {
+        "pin_name": "5",
+        "net": null
+      },
+      "6": {
+        "pin_name": "6",
+        "net": null
+      },
+      "7": {
+        "pin_name": "7",
+        "net": "RGB_R0"
+      },
+      "8": {
+        "pin_name": "8",
+        "net": "RGB_R1"
+      },
+      "9": {
+        "pin_name": "9",
+        "net": "RGB_R2"
+      },
+      "10": {
+        "pin_name": "10",
+        "net": "RGB_R3"
+      },
+      "11": {
+        "pin_name": "11",
+        "net": "RGB_R4"
+      },
+      "12": {
+        "pin_name": "12",
+        "net": "RGB_R5"
+      },
+      "13": {
+        "pin_name": "13",
+        "net": null
+      },
+      "14": {
+        "pin_name": "14",
+        "net": null
+      },
+      "15": {
+        "pin_name": "15",
+        "net": "RGB_G0"
+      },
+      "16": {
+        "pin_name": "16",
+        "net": "RGB_G1"
+      },
+      "17": {
+        "pin_name": "17",
+        "net": "RGB_G2"
+      },
+      "18": {
+        "pin_name": "18",
+        "net": "RGB_G3"
+      },
+      "19": {
+        "pin_name": "19",
+        "net": "RGB_G4"
+      },
+      "20": {
+        "pin_name": "20",
+        "net": "RGB_G5"
+      },
+      "21": {
+        "pin_name": "21",
+        "net": null
+      },
+      "22": {
+        "pin_name": "22",
+        "net": null
+      },
+      "23": {
+        "pin_name": "23",
+        "net": "RGB_B0"
+      },
+      "24": {
+        "pin_name": "24",
+        "net": "RGB_B1"
+      },
+      "25": {
+        "pin_name": "25",
+        "net": "RGB_B2"
+      },
+      "26": {
+        "pin_name": "26",
+        "net": "RGB_B3"
+      },
+      "27": {
+        "pin_name": "27",
+        "net": "RGB_B4"
+      },
+      "28": {
+        "pin_name": "28",
+        "net": "RGB_B5"
+      },
+      "29": {
+        "pin_name": "29",
+        "net": "GND"
+      },
+      "30": {
+        "pin_name": "30",
+        "net": "RGB_CLK"
+      },
+      "31": {
+        "pin_name": "31",
+        "net": null
+      },
+      "32": {
+        "pin_name": "32",
+        "net": "RGB_HSYNC"
+      },
+      "33": {
+        "pin_name": "33",
+        "net": "RGB_VSYNC"
+      },
+      "34": {
+        "pin_name": "34",
+        "net": "RGB_DE"
+      },
+      "35": {
+        "pin_name": "35",
+        "net": null
+      },
+      "36": {
+        "pin_name": "36",
+        "net": "GND"
+      },
+      "37": {
+        "pin_name": "37",
+        "net": null
+      },
+      "38": {
+        "pin_name": "38",
+        "net": null
+      },
+      "39": {
+        "pin_name": "39",
+        "net": null
+      },
+      "40": {
+        "pin_name": "40",
+        "net": null
+      },
+      "41": {
+        "pin_name": "41",
+        "net": "GND"
+      },
+      "42": {
+        "pin_name": "42",
+        "net": "GND"
+      }
+    }
+  },
+  "L701": {
+    "part": "XGL4020-102MEC",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "BUCK3_SW"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "+3V3"
+      }
+    }
+  },
+  "L702": {
+    "part": "XGL6060-472MEC",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "BOOST5_SW1"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "BOOST5_SW2"
+      }
+    }
+  },
+  "Q106": {
+    "part": "2N7002",
+    "pins": {
+      "1": {
+        "pin_name": "G",
+        "net": "USB_VBUS_RAW"
+      },
+      "2": {
+        "pin_name": "S",
+        "net": "GND"
+      },
+      "3": {
+        "pin_name": "D",
+        "net": "USB_VBUS_N"
+      }
+    }
+  },
+  "Q120": {
+    "part": "2N7002",
+    "pins": {
+      "1": {
+        "pin_name": "G",
+        "net": "USB_HI_G"
+      },
+      "2": {
+        "pin_name": "S",
+        "net": "GND"
+      },
+      "3": {
+        "pin_name": "D",
+        "net": "USB_HI_D"
+      }
+    }
+  },
+  "Q121": {
+    "part": "2N7002",
+    "pins": {
+      "1": {
+        "pin_name": "G",
+        "net": "USB_SUSP_G"
+      },
+      "2": {
+        "pin_name": "S",
+        "net": "GND"
+      },
+      "3": {
+        "pin_name": "D",
+        "net": "USB_LIMIT_EN"
+      }
+    }
+  },
+  "Q122": {
+    "part": "2N7002",
+    "pins": {
+      "1": {
+        "pin_name": "G",
+        "net": "USB_SEL_G"
+      },
+      "2": {
+        "pin_name": "S",
+        "net": "GND"
+      },
+      "3": {
+        "pin_name": "D",
+        "net": "USB_SEL_IN"
+      }
+    }
+  },
+  "R141": {
+    "part": "0603WAF1002T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "USB_VBUS_N"
+      }
+    }
+  },
+  "R161": {
+    "part": "887k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_VBUS_RAW"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "TYPEC_VBUS_DET"
+      }
+    }
+  },
+  "R162": {
+    "part": "200k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "TYPEC_INT_N"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "+3V3"
+      }
+    }
+  },
+  "R301": {
+    "part": "0603WAF1002T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "BOOT0"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R302": {
+    "part": "0603WAF4700T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "LED_STAT"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "LED_STAT_A"
+      }
+    }
+  },
+  "R304": {
+    "part": "0603WAF4701T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "EXP_SCL"
+      }
+    }
+  },
+  "R305": {
+    "part": "0603WAF4701T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "EXP_SDA"
+      }
+    }
+  },
+  "R307": {
+    "part": "10k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "NRST"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "+3V3"
+      }
+    }
+  },
+  "R308": {
+    "part": "1k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "RTC_CELL_PLUS"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "RTC_DIODE_A"
+      }
+    }
+  },
+  "R411": {
+    "part": "0603WAF1002T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_CAN1"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "CAN1_STB_X"
+      }
+    }
+  },
+  "R412": {
+    "part": "1206W4F1200T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "CAN1_H"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "CAN1_TERM"
+      }
+    }
+  },
+  "R413": {
+    "part": "0603WAF0000T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "+3V3_CAN1"
+      }
+    }
+  },
+  "R414": {
+    "part": "0603WAF330JT5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "CAN1_TX"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "CAN1_TX_X"
+      }
+    }
+  },
+  "R415": {
+    "part": "0603WAF330JT5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "CAN1_RX"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "CAN1_RX_X"
+      }
+    }
+  },
+  "R416": {
+    "part": "0603WAF330JT5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "CAN1_STB"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "CAN1_STB_X"
+      }
+    }
+  },
+  "R417": {
+    "part": "0R DNP",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "CAN1_TERM"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "CAN1_L"
+      }
+    }
+  },
+  "R421": {
+    "part": "0603WAF1002T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_CAN2"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "CAN2_STB_X"
+      }
+    }
+  },
+  "R422": {
+    "part": "1206W4F1200T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "CAN2_H"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "CAN2_TERM"
+      }
+    }
+  },
+  "R423": {
+    "part": "0603WAF0000T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "+3V3_CAN2"
+      }
+    }
+  },
+  "R424": {
+    "part": "0603WAF330JT5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "CAN2_TX"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "CAN2_TX_X"
+      }
+    }
+  },
+  "R425": {
+    "part": "0603WAF330JT5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "CAN2_RX"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "CAN2_RX_X"
+      }
+    }
+  },
+  "R426": {
+    "part": "0603WAF330JT5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "CAN2_STB"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "CAN2_STB_X"
+      }
+    }
+  },
+  "R427": {
+    "part": "0R DNP",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "CAN2_TERM"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "CAN2_L"
+      }
+    }
+  },
+  "R510": {
+    "part": "0603WAF4702T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_SD"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "SD_D0"
+      }
+    }
+  },
+  "R511": {
+    "part": "0603WAF4702T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_SD"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "SD_D1"
+      }
+    }
+  },
+  "R512": {
+    "part": "0603WAF4702T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_SD"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "SD_D2"
+      }
+    }
+  },
+  "R513": {
+    "part": "0603WAF4702T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_SD"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "SD_D3"
+      }
+    }
+  },
+  "R514": {
+    "part": "0603WAF4702T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3_SD"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "SD_CMD"
+      }
+    }
+  },
+  "R515": {
+    "part": "0603WAF4702T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "SD_DET"
+      }
+    }
+  },
+  "R516": {
+    "part": "0603WAF220JT5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "SD_CLK"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "SD_CLK_S"
+      }
+    }
+  },
+  "R517": {
+    "part": "0603WAF1003T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "LCD_PWR_EN"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R518": {
+    "part": "0603WAF1003T5E",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "SD_PWR_EN"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R601": {
+    "part": "22",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "SDRAM_SDCLK"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "SDRAM_CLK_S"
+      }
+    }
+  },
+  "R602": {
+    "part": "100k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "SDRAM_PWR_EN"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R603": {
+    "part": "10k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "SDRAM_SDNE0"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "+3V3_SDRAM"
+      }
+    }
+  },
+  "R604": {
+    "part": "10k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "SDRAM_SDCKE0"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R701": {
+    "part": "243k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "EXT_FUSED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "EXT_UVLO"
+      }
+    }
+  },
+  "R702": {
+    "part": "66.5k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "EXT_UVLO"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "EXT_OVP"
+      }
+    }
+  },
+  "R703": {
+    "part": "26.7k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "EXT_OVP"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "EFUSE_RTN"
+      }
+    }
+  },
+  "R704": {
+    "part": "6.81k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "EXT_ILIM"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "EFUSE_RTN"
+      }
+    }
+  },
+  "R705": {
+    "part": "10k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "EXT_FAULT_N"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "+3V3"
+      }
+    }
+  },
+  "R706": {
+    "part": "100k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_VBUS_RAW"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "USB_LIMIT_EN"
+      }
+    }
+  },
+  "R707": {
+    "part": "1k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_500MA_EN"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "USB_SEL_G"
+      }
+    }
+  },
+  "R708": {
+    "part": "100k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_SEL_G"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R709": {
+    "part": "60.4k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_ILIM_RES"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R710": {
+    "part": "60.4k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_ILIM_RES"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "USB_HI_D"
+      }
+    }
+  },
+  "R711": {
+    "part": "1k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_HI_EN"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "USB_HI_G"
+      }
+    }
+  },
+  "R712": {
+    "part": "100k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_HI_G"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R713": {
+    "part": "1k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_SUSPEND"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "USB_SUSP_G"
+      }
+    }
+  },
+  "R714": {
+    "part": "100k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_SUSP_G"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R715": {
+    "part": "100k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_REF_1V25"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R716": {
+    "part": "1.30M",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "EXT_PROTECTED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "MUX_OV1"
+      }
+    }
+  },
+  "R717": {
+    "part": "100k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "MUX_OV1"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R718": {
+    "part": "470k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_LIMITED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "MUX_OV2"
+      }
+    }
+  },
+  "R719": {
+    "part": "100k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "MUX_OV2"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R720": {
+    "part": "249k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "EXT_PROTECTED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "MUX_PR1"
+      }
+    }
+  },
+  "R721": {
+    "part": "100k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "MUX_PR1"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R722": {
+    "part": "10k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "EXT_SOURCE_SELECTED"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "+3V3"
+      }
+    }
+  },
+  "R723": {
+    "part": "44.2k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "MUX_ILIM"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R724": {
+    "part": "312k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "BUCK3_FB"
+      }
+    }
+  },
+  "R725": {
+    "part": "100k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "BUCK3_FB"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R726": {
+    "part": "10k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "PGOOD_3V3"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "+3V3"
+      }
+    }
+  },
+  "R727": {
+    "part": "100k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "MAIN_ENABLE"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R728": {
+    "part": "1k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "5V_EN"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "BOOST5_ENABLE"
+      }
+    }
+  },
+  "R729": {
+    "part": "100k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "BOOST5_ENABLE"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R730": {
+    "part": "10k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "5V_PG"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "+3V3"
+      }
+    }
+  },
+  "R731": {
+    "part": "49.9k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "BOOST5_FSW"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R732": {
+    "part": "100k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "BOOST5_FB"
+      }
+    }
+  },
+  "R733": {
+    "part": "31.6k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "BOOST5_FB"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "GND"
+      }
+    }
+  },
+  "R734": {
+    "part": "4.75k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "BOOST5_COMP"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "COMP_ZERO"
+      }
+    }
+  },
+  "R735": {
+    "part": "10k",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_VBUS_RAW"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "USB_SEL_IN"
+      }
+    }
+  },
+  "SW101": {
+    "part": "TS01CBE",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "GND"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "MAIN_ENABLE"
+      },
+      "3": {
+        "pin_name": "3",
+        "net": "VIN_SELECTED"
+      }
+    }
+  },
+  "TP112": {
+    "part": null,
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "USB_FAULT_TP"
+      }
+    }
+  },
+  "TP210": {
+    "part": null,
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V_CAN1"
+      }
+    }
+  },
+  "TP211": {
+    "part": null,
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "+5V_CAN2"
+      }
+    }
+  },
+  "TP301": {
+    "part": null,
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "BOOT0"
+      }
+    }
+  },
+  "TP302": {
+    "part": null,
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "NRST"
+      }
+    }
+  },
+  "U101": {
+    "part": "TPD2E2U06DRLR",
+    "pins": {
+      "1": {
+        "pin_name": "NC",
+        "net": null
+      },
+      "2": {
+        "pin_name": "NC",
+        "net": null
+      },
+      "3": {
+        "pin_name": "IO1",
+        "net": "USB_DP"
+      },
+      "4": {
+        "pin_name": "GND",
+        "net": "GND"
+      },
+      "5": {
+        "pin_name": "IO2",
+        "net": "USB_DM"
+      }
+    }
+  },
+  "U106": {
+    "part": "TPS26600PWPR",
+    "pins": {
+      "1": {
+        "pin_name": "IN",
+        "net": "EXT_FUSED"
+      },
+      "2": {
+        "pin_name": "IN",
+        "net": "EXT_FUSED"
+      },
+      "3": {
+        "pin_name": "UVLO",
+        "net": "EXT_UVLO"
+      },
+      "4": {
+        "pin_name": "NC",
+        "net": null
+      },
+      "5": {
+        "pin_name": "OVP",
+        "net": "EXT_OVP"
+      },
+      "6": {
+        "pin_name": "MODE",
+        "net": "EFUSE_RTN"
+      },
+      "7": {
+        "pin_name": "SHDN#",
+        "net": null
+      },
+      "8": {
+        "pin_name": "RTN",
+        "net": "EFUSE_RTN"
+      },
+      "9": {
+        "pin_name": "GND",
+        "net": "GND"
+      },
+      "10": {
+        "pin_name": "IMON",
+        "net": null
+      },
+      "11": {
+        "pin_name": "ILIM",
+        "net": "EXT_ILIM"
+      },
+      "12": {
+        "pin_name": "dVdT",
+        "net": "EXT_DVDT"
+      },
+      "13": {
+        "pin_name": "NC",
+        "net": null
+      },
+      "14": {
+        "pin_name": "FLT#",
+        "net": "EXT_FAULT_N"
+      },
+      "15": {
+        "pin_name": "OUT",
+        "net": "EXT_PROTECTED"
+      },
+      "16": {
+        "pin_name": "OUT",
+        "net": "EXT_PROTECTED"
+      },
+      "17": {
+        "pin_name": "EP",
+        "net": "EFUSE_RTN"
+      }
+    }
+  },
+  "U107": {
+    "part": "TPS2121RUXR",
+    "pins": {
+      "1": {
+        "pin_name": "OUT",
+        "net": "VIN_SELECTED"
+      },
+      "2": {
+        "pin_name": "IN2",
+        "net": "USB_LIMITED"
+      },
+      "3": {
+        "pin_name": "CP2",
+        "net": "USB_REF_1V25"
+      },
+      "4": {
+        "pin_name": "OV2",
+        "net": "MUX_OV2"
+      },
+      "5": {
+        "pin_name": "OV1",
+        "net": "MUX_OV1"
+      },
+      "6": {
+        "pin_name": "PR1",
+        "net": "MUX_PR1"
+      },
+      "7": {
+        "pin_name": "IN1",
+        "net": "EXT_PROTECTED"
+      },
+      "8": {
+        "pin_name": "OUT",
+        "net": "VIN_SELECTED"
+      },
+      "9": {
+        "pin_name": "ST",
+        "net": "EXT_SOURCE_SELECTED"
+      },
+      "10": {
+        "pin_name": "ILM",
+        "net": "MUX_ILIM"
+      },
+      "11": {
+        "pin_name": "SS",
+        "net": "MUX_SS"
+      },
+      "12": {
+        "pin_name": "GND",
+        "net": "GND"
+      }
+    }
+  },
+  "U110": {
+    "part": "TPD2E2U06DRLR",
+    "pins": {
+      "1": {
+        "pin_name": "NC",
+        "net": null
+      },
+      "2": {
+        "pin_name": "NC",
+        "net": null
+      },
+      "3": {
+        "pin_name": "IO1",
+        "net": "CC1"
+      },
+      "4": {
+        "pin_name": "GND",
+        "net": "GND"
+      },
+      "5": {
+        "pin_name": "IO2",
+        "net": "CC2"
+      }
+    }
+  },
+  "U111": {
+    "part": "TUSB320LAIRWBR",
+    "pins": {
+      "1": {
+        "pin_name": "CC1",
+        "net": "CC1"
+      },
+      "2": {
+        "pin_name": "CC2",
+        "net": "CC2"
+      },
+      "3": {
+        "pin_name": "PORT",
+        "net": "GND"
+      },
+      "4": {
+        "pin_name": "VBUS_DET",
+        "net": "TYPEC_VBUS_DET"
+      },
+      "5": {
+        "pin_name": "ADDR",
+        "net": "GND"
+      },
+      "6": {
+        "pin_name": "INT_N/OUT3",
+        "net": "TYPEC_INT_N"
+      },
+      "7": {
+        "pin_name": "SDA/OUT1",
+        "net": "EXP_SDA"
+      },
+      "8": {
+        "pin_name": "SCL/OUT2",
+        "net": "EXP_SCL"
+      },
+      "9": {
+        "pin_name": "ID",
+        "net": null
+      },
+      "10": {
+        "pin_name": "GND",
+        "net": "GND"
+      },
+      "11": {
+        "pin_name": "EN_N",
+        "net": "GND"
+      },
+      "12": {
+        "pin_name": "VDD",
+        "net": "+3V3"
+      }
+    }
+  },
+  "U112": {
+    "part": "TPS2553DBVR",
+    "pins": {
+      "1": {
+        "pin_name": "IN",
+        "net": "USB_VBUS_RAW"
+      },
+      "2": {
+        "pin_name": "GND",
+        "net": "GND"
+      },
+      "3": {
+        "pin_name": "EN",
+        "net": "USB_LIMIT_EN"
+      },
+      "4": {
+        "pin_name": "/FAULT",
+        "net": "USB_FAULT_TP"
+      },
+      "5": {
+        "pin_name": "ILIM",
+        "net": "USB_ILIM_COM"
+      },
+      "6": {
+        "pin_name": "OUT",
+        "net": "USB_LIMITED"
+      }
+    }
+  },
+  "U113": {
+    "part": "TS5A3159DBVR",
+    "pins": {
+      "1": {
+        "pin_name": "NO",
+        "net": "USB_VBUS_RAW"
+      },
+      "2": {
+        "pin_name": "GND",
+        "net": "GND"
+      },
+      "3": {
+        "pin_name": "NC",
+        "net": "USB_ILIM_RES"
+      },
+      "4": {
+        "pin_name": "COM",
+        "net": "USB_ILIM_COM"
+      },
+      "5": {
+        "pin_name": "V+",
+        "net": "USB_VBUS_RAW"
+      },
+      "6": {
+        "pin_name": "IN",
+        "net": "USB_SEL_IN"
+      }
+    }
+  },
+  "U114": {
+    "part": "REF3312AIDBZR",
+    "pins": {
+      "1": {
+        "pin_name": "IN",
+        "net": "USB_VBUS_RAW"
+      },
+      "2": {
+        "pin_name": "OUT",
+        "net": "USB_REF_1V25"
+      },
+      "3": {
+        "pin_name": "GND",
+        "net": "GND"
+      }
+    }
+  },
+  "U201": {
+    "part": "TPS62130RGTR",
+    "pins": {
+      "1": {
+        "pin_name": "SW",
+        "net": "BUCK3_SW"
+      },
+      "2": {
+        "pin_name": "SW",
+        "net": "BUCK3_SW"
+      },
+      "3": {
+        "pin_name": "SW",
+        "net": "BUCK3_SW"
+      },
+      "4": {
+        "pin_name": "PG",
+        "net": "PGOOD_3V3"
+      },
+      "5": {
+        "pin_name": "FB",
+        "net": "BUCK3_FB"
+      },
+      "6": {
+        "pin_name": "AGND",
+        "net": "GND"
+      },
+      "7": {
+        "pin_name": "FSW",
+        "net": "GND"
+      },
+      "8": {
+        "pin_name": "DEF",
+        "net": "GND"
+      },
+      "9": {
+        "pin_name": "SS/TR",
+        "net": "BUCK3_SS"
+      },
+      "10": {
+        "pin_name": "AVIN",
+        "net": "VIN_SELECTED"
+      },
+      "11": {
+        "pin_name": "PVIN",
+        "net": "VIN_SELECTED"
+      },
+      "12": {
+        "pin_name": "PVIN",
+        "net": "VIN_SELECTED"
+      },
+      "13": {
+        "pin_name": "EN",
+        "net": "MAIN_ENABLE"
+      },
+      "14": {
+        "pin_name": "VOS",
+        "net": "+3V3"
+      },
+      "15": {
+        "pin_name": "PGND",
+        "net": "GND"
+      },
+      "16": {
+        "pin_name": "PGND",
+        "net": "GND"
+      },
+      "17": {
+        "pin_name": "EP",
+        "net": "GND"
+      }
+    }
+  },
+  "U202": {
+    "part": "TPS552872RYQR",
+    "pins": {
+      "1": {
+        "pin_name": "EN/UVLO",
+        "net": "BOOST5_ENABLE"
+      },
+      "2": {
+        "pin_name": "MODE",
+        "net": "GND"
+      },
+      "3": {
+        "pin_name": "PG",
+        "net": "5V_PG"
+      },
+      "4": {
+        "pin_name": "CC#",
+        "net": null
+      },
+      "5": {
+        "pin_name": "DITH/SYNC",
+        "net": "GND"
+      },
+      "6": {
+        "pin_name": "FSW",
+        "net": "BOOST5_FSW"
+      },
+      "7": {
+        "pin_name": "VIN",
+        "net": "VIN_SELECTED"
+      },
+      "8": {
+        "pin_name": "SW1",
+        "net": "BOOST5_SW1"
+      },
+      "9": {
+        "pin_name": "PGND",
+        "net": "GND"
+      },
+      "10": {
+        "pin_name": "SW2",
+        "net": "BOOST5_SW2"
+      },
+      "11": {
+        "pin_name": "VOUT",
+        "net": "+5V"
+      },
+      "12": {
+        "pin_name": "ISP",
+        "net": "+5V"
+      },
+      "13": {
+        "pin_name": "ISN",
+        "net": "+5V"
+      },
+      "14": {
+        "pin_name": "FB",
+        "net": "BOOST5_FB"
+      },
+      "15": {
+        "pin_name": "COMP",
+        "net": "BOOST5_COMP"
+      },
+      "16": {
+        "pin_name": "CDC",
+        "net": null
+      },
+      "17": {
+        "pin_name": "AGND",
+        "net": "GND"
+      },
+      "18": {
+        "pin_name": "VCC",
+        "net": "BOOST5_VCC"
+      },
+      "19": {
+        "pin_name": "BOOT2",
+        "net": "BOOST5_BOOT2"
+      },
+      "20": {
+        "pin_name": "BOOT1",
+        "net": "BOOST5_BOOT1"
+      },
+      "21": {
+        "pin_name": "EXTVCC",
+        "net": null
+      }
+    }
+  },
+  "U301": {
+    "part": "STM32H743ZIT6",
+    "pins": {
+      "1": {
+        "pin_name": "PE2",
+        "net": "LCD_SCK"
+      },
+      "2": {
+        "pin_name": "PE3",
+        "net": "USB_500MA_EN"
+      },
+      "3": {
+        "pin_name": "PE4",
+        "net": "LCD_CS"
+      },
+      "4": {
+        "pin_name": "PE5",
+        "net": "LCD_MISO"
+      },
+      "5": {
+        "pin_name": "PE6",
+        "net": "LCD_MOSI"
+      },
+      "6": {
+        "pin_name": "VBAT",
+        "net": "VBAT_RTC"
+      },
+      "7": {
+        "pin_name": "PC13",
+        "net": "TYPEC_INT_N"
+      },
+      "8": {
+        "pin_name": "PC14-OSC32_IN",
+        "net": "LSE_IN"
+      },
+      "9": {
+        "pin_name": "PC15-OSC32_OUT",
+        "net": "LSE_OUT"
+      },
+      "10": {
+        "pin_name": "PF0",
+        "net": "SDRAM_A0"
+      },
+      "11": {
+        "pin_name": "PF1",
+        "net": "SDRAM_A1"
+      },
+      "12": {
+        "pin_name": "PF2",
+        "net": "SDRAM_A2"
+      },
+      "13": {
+        "pin_name": "PF3",
+        "net": "SDRAM_A3"
+      },
+      "14": {
+        "pin_name": "PF4",
+        "net": "SDRAM_A4"
+      },
+      "15": {
+        "pin_name": "PF5",
+        "net": "SDRAM_A5"
+      },
+      "16": {
+        "pin_name": "VSS",
+        "net": "GND"
+      },
+      "17": {
+        "pin_name": "VDD",
+        "net": "+3V3"
+      },
+      "18": {
+        "pin_name": "PF6",
+        "net": "UART7_RX"
+      },
+      "19": {
+        "pin_name": "PF7",
+        "net": "UART7_TX"
+      },
+      "20": {
+        "pin_name": "PF8",
+        "net": "LCD_BL"
+      },
+      "21": {
+        "pin_name": "PF9",
+        "net": "5V_EN"
+      },
+      "22": {
+        "pin_name": "PF10",
+        "net": "RGB_DE"
+      },
+      "23": {
+        "pin_name": "PH0-OSC_IN",
+        "net": "HSE_IN"
+      },
+      "24": {
+        "pin_name": "PH1-OSC_OUT",
+        "net": "HSE_OUT"
+      },
+      "25": {
+        "pin_name": "NRST",
+        "net": "NRST"
+      },
+      "26": {
+        "pin_name": "PC0",
+        "net": "RGB_R3"
+      },
+      "27": {
+        "pin_name": "PC1",
+        "net": "CAN1_STB"
+      },
+      "28": {
+        "pin_name": "PC2_C",
+        "net": null
+      },
+      "29": {
+        "pin_name": "PC3_C",
+        "net": null
+      },
+      "30": {
+        "pin_name": "VDD",
+        "net": "+3V3"
+      },
+      "31": {
+        "pin_name": "VSSA",
+        "net": "GND"
+      },
+      "32": {
+        "pin_name": "VREF+",
+        "net": "+3V3A"
+      },
+      "33": {
+        "pin_name": "VDDA",
+        "net": "+3V3A"
+      },
+      "34": {
+        "pin_name": "PA0-WKUP",
+        "net": "USB_SUSPEND"
+      },
+      "35": {
+        "pin_name": "PA1",
+        "net": "RGB_R0"
+      },
+      "36": {
+        "pin_name": "PA2",
+        "net": "CAN2_STB"
+      },
+      "37": {
+        "pin_name": "PA3",
+        "net": "RGB_B3"
+      },
+      "38": {
+        "pin_name": "VSS",
+        "net": "GND"
+      },
+      "39": {
+        "pin_name": "VDD",
+        "net": "+3V3"
+      },
+      "40": {
+        "pin_name": "PA4",
+        "net": "RGB_VSYNC"
+      },
+      "41": {
+        "pin_name": "PA5",
+        "net": "RGB_R2"
+      },
+      "42": {
+        "pin_name": "PA6",
+        "net": "RGB_G0"
+      },
+      "43": {
+        "pin_name": "PA7",
+        "net": "SDRAM_SDNWE"
+      },
+      "44": {
+        "pin_name": "PC4",
+        "net": "SDRAM_SDNE0"
+      },
+      "45": {
+        "pin_name": "PC5",
+        "net": "SDRAM_SDCKE0"
+      },
+      "46": {
+        "pin_name": "PB0",
+        "net": "RGB_R1"
+      },
+      "47": {
+        "pin_name": "PB1",
+        "net": "RGB_R4"
+      },
+      "48": {
+        "pin_name": "PB2",
+        "net": "SDRAM_PWR_EN"
+      },
+      "49": {
+        "pin_name": "PF11",
+        "net": "SDRAM_SDNRAS"
+      },
+      "50": {
+        "pin_name": "PF12",
+        "net": "SDRAM_A6"
+      },
+      "51": {
+        "pin_name": "VSS",
+        "net": "GND"
+      },
+      "52": {
+        "pin_name": "VDD",
+        "net": "+3V3"
+      },
+      "53": {
+        "pin_name": "PF13",
+        "net": "SDRAM_A7"
+      },
+      "54": {
+        "pin_name": "PF14",
+        "net": "SDRAM_A8"
+      },
+      "55": {
+        "pin_name": "PF15",
+        "net": "SDRAM_A9"
+      },
+      "56": {
+        "pin_name": "PG0",
+        "net": "SDRAM_A10"
+      },
+      "57": {
+        "pin_name": "PG1",
+        "net": "SDRAM_A11"
+      },
+      "58": {
+        "pin_name": "PE7",
+        "net": "SDRAM_D4"
+      },
+      "59": {
+        "pin_name": "PE8",
+        "net": "SDRAM_D5"
+      },
+      "60": {
+        "pin_name": "PE9",
+        "net": "SDRAM_D6"
+      },
+      "61": {
+        "pin_name": "VSS",
+        "net": "GND"
+      },
+      "62": {
+        "pin_name": "VDD",
+        "net": "+3V3"
+      },
+      "63": {
+        "pin_name": "PE10",
+        "net": "SDRAM_D7"
+      },
+      "64": {
+        "pin_name": "PE11",
+        "net": "SDRAM_D8"
+      },
+      "65": {
+        "pin_name": "PE12",
+        "net": "SDRAM_D9"
+      },
+      "66": {
+        "pin_name": "PE13",
+        "net": "SDRAM_D10"
+      },
+      "67": {
+        "pin_name": "PE14",
+        "net": "SDRAM_D11"
+      },
+      "68": {
+        "pin_name": "PE15",
+        "net": "SDRAM_D12"
+      },
+      "69": {
+        "pin_name": "PB10",
+        "net": "RGB_G2"
+      },
+      "70": {
+        "pin_name": "PB11",
+        "net": "RGB_G3"
+      },
+      "71": {
+        "pin_name": "Vcap_1",
+        "net": "VCAP1"
+      },
+      "72": {
+        "pin_name": "VDD",
+        "net": "+3V3"
+      },
+      "73": {
+        "pin_name": "PB12",
+        "net": "CAN2_RX"
+      },
+      "74": {
+        "pin_name": "PB13",
+        "net": "CAN2_TX"
+      },
+      "75": {
+        "pin_name": "PB14",
+        "net": "USB_DM"
+      },
+      "76": {
+        "pin_name": "PB15",
+        "net": "USB_DP"
+      },
+      "77": {
+        "pin_name": "PD8",
+        "net": "SDRAM_D13"
+      },
+      "78": {
+        "pin_name": "PD9",
+        "net": "SDRAM_D14"
+      },
+      "79": {
+        "pin_name": "PD10",
+        "net": "SDRAM_D15"
+      },
+      "80": {
+        "pin_name": "PD11",
+        "net": "CTP_RST"
+      },
+      "81": {
+        "pin_name": "PD12",
+        "net": "EXP_SCL"
+      },
+      "82": {
+        "pin_name": "PD13",
+        "net": "EXP_SDA"
+      },
+      "83": {
+        "pin_name": "VSS",
+        "net": "GND"
+      },
+      "84": {
+        "pin_name": "VDD",
+        "net": "+3V3"
+      },
+      "85": {
+        "pin_name": "PD14",
+        "net": "SDRAM_D0"
+      },
+      "86": {
+        "pin_name": "PD15",
+        "net": "SDRAM_D1"
+      },
+      "87": {
+        "pin_name": "PG2",
+        "net": null
+      },
+      "88": {
+        "pin_name": "PG3",
+        "net": "USB_VBUS_N"
+      },
+      "89": {
+        "pin_name": "PG4",
+        "net": "SDRAM_BA0"
+      },
+      "90": {
+        "pin_name": "PG5",
+        "net": "SDRAM_BA1"
+      },
+      "91": {
+        "pin_name": "PG6",
+        "net": "RGB_R5"
+      },
+      "92": {
+        "pin_name": "PG7",
+        "net": "RGB_CLK"
+      },
+      "93": {
+        "pin_name": "PG8",
+        "net": "SDRAM_SDCLK"
+      },
+      "94": {
+        "pin_name": "VSS",
+        "net": "GND"
+      },
+      "95": {
+        "pin_name": "VDDUSB",
+        "net": "+3V3"
+      },
+      "96": {
+        "pin_name": "PC6",
+        "net": "RGB_HSYNC"
+      },
+      "97": {
+        "pin_name": "PC7",
+        "net": "RGB_G4"
+      },
+      "98": {
+        "pin_name": "PC8",
+        "net": "SD_D0"
+      },
+      "99": {
+        "pin_name": "PC9",
+        "net": "SD_D1"
+      },
+      "100": {
+        "pin_name": "PA8",
+        "net": "LED_STAT"
+      },
+      "101": {
+        "pin_name": "PA9",
+        "net": "USART1_TX"
+      },
+      "102": {
+        "pin_name": "PA10",
+        "net": "USART1_RX"
+      },
+      "103": {
+        "pin_name": "PA11",
+        "net": "CAN1_RX"
+      },
+      "104": {
+        "pin_name": "PA12",
+        "net": "CAN1_TX"
+      },
+      "105": {
+        "pin_name": "PA13",
+        "net": "SWDIO"
+      },
+      "106": {
+        "pin_name": "Vcap_2",
+        "net": "VCAP2"
+      },
+      "107": {
+        "pin_name": "VSS",
+        "net": "GND"
+      },
+      "108": {
+        "pin_name": "VDD",
+        "net": "+3V3"
+      },
+      "109": {
+        "pin_name": "PA14",
+        "net": "SWCLK"
+      },
+      "110": {
+        "pin_name": "PA15",
+        "net": "5V_PG"
+      },
+      "111": {
+        "pin_name": "PC10",
+        "net": "SD_D2"
+      },
+      "112": {
+        "pin_name": "PC11",
+        "net": "SD_D3"
+      },
+      "113": {
+        "pin_name": "PC12",
+        "net": "SD_CLK"
+      },
+      "114": {
+        "pin_name": "PD0",
+        "net": "SDRAM_D2"
+      },
+      "115": {
+        "pin_name": "PD1",
+        "net": "SDRAM_D3"
+      },
+      "116": {
+        "pin_name": "PD2",
+        "net": "SD_CMD"
+      },
+      "117": {
+        "pin_name": "PD3",
+        "net": "RGB_G5"
+      },
+      "118": {
+        "pin_name": "PD4",
+        "net": "SD_DET"
+      },
+      "119": {
+        "pin_name": "PD5",
+        "net": "EXT_SOURCE_SELECTED"
+      },
+      "120": {
+        "pin_name": "VSS",
+        "net": "GND"
+      },
+      "121": {
+        "pin_name": "VDD",
+        "net": "+3V3"
+      },
+      "122": {
+        "pin_name": "PD6",
+        "net": "RGB_B0"
+      },
+      "123": {
+        "pin_name": "PD7",
+        "net": "SD_PWR_EN"
+      },
+      "124": {
+        "pin_name": "PG9",
+        "net": "LCD_PWR_EN"
+      },
+      "125": {
+        "pin_name": "PG10",
+        "net": "RGB_G1"
+      },
+      "126": {
+        "pin_name": "PG11",
+        "net": "RGB_B1"
+      },
+      "127": {
+        "pin_name": "PG12",
+        "net": "RGB_B2"
+      },
+      "128": {
+        "pin_name": "PG13",
+        "net": "LCD_DC"
+      },
+      "129": {
+        "pin_name": "PG14",
+        "net": "LCD_RST"
+      },
+      "130": {
+        "pin_name": "VSS",
+        "net": "GND"
+      },
+      "131": {
+        "pin_name": "VDD",
+        "net": "+3V3"
+      },
+      "132": {
+        "pin_name": "PG15",
+        "net": "SDRAM_SDNCAS"
+      },
+      "133": {
+        "pin_name": "PB3",
+        "net": "SWO"
+      },
+      "134": {
+        "pin_name": "PB4",
+        "net": "CTP_INT"
+      },
+      "135": {
+        "pin_name": "PB5",
+        "net": "USB_HI_EN"
+      },
+      "136": {
+        "pin_name": "PB6",
+        "net": "I2C1_SCL"
+      },
+      "137": {
+        "pin_name": "PB7",
+        "net": "I2C1_SDA"
+      },
+      "138": {
+        "pin_name": "BOOT0",
+        "net": "BOOT0"
+      },
+      "139": {
+        "pin_name": "PB8",
+        "net": "RGB_B4"
+      },
+      "140": {
+        "pin_name": "PB9",
+        "net": "RGB_B5"
+      },
+      "141": {
+        "pin_name": "PE0",
+        "net": "SDRAM_NBL0"
+      },
+      "142": {
+        "pin_name": "PE1",
+        "net": "SDRAM_NBL1"
+      },
+      "143": {
+        "pin_name": "PDR_ON",
+        "net": "+3V3"
+      },
+      "144": {
+        "pin_name": "VDD",
+        "net": "+3V3"
+      }
+    }
+  },
+  "U401": {
+    "part": "TJA1042T/3/1J",
+    "pins": {
+      "1": {
+        "pin_name": "TXD",
+        "net": "CAN1_TX_X"
+      },
+      "2": {
+        "pin_name": "GND",
+        "net": "GND"
+      },
+      "3": {
+        "pin_name": "VCC",
+        "net": "+5V_CAN1"
+      },
+      "4": {
+        "pin_name": "RXD",
+        "net": "CAN1_RX_X"
+      },
+      "5": {
+        "pin_name": "VIO",
+        "net": "+3V3_CAN1"
+      },
+      "6": {
+        "pin_name": "CANL",
+        "net": "CAN1_L"
+      },
+      "7": {
+        "pin_name": "CANH",
+        "net": "CAN1_H"
+      },
+      "8": {
+        "pin_name": "STB",
+        "net": "CAN1_STB_X"
+      }
+    }
+  },
+  "U402": {
+    "part": "TJA1042T/3/1J",
+    "pins": {
+      "1": {
+        "pin_name": "TXD",
+        "net": "CAN2_TX_X"
+      },
+      "2": {
+        "pin_name": "GND",
+        "net": "GND"
+      },
+      "3": {
+        "pin_name": "VCC",
+        "net": "+5V_CAN2"
+      },
+      "4": {
+        "pin_name": "RXD",
+        "net": "CAN2_RX_X"
+      },
+      "5": {
+        "pin_name": "VIO",
+        "net": "+3V3_CAN2"
+      },
+      "6": {
+        "pin_name": "CANL",
+        "net": "CAN2_L"
+      },
+      "7": {
+        "pin_name": "CANH",
+        "net": "CAN2_H"
+      },
+      "8": {
+        "pin_name": "STB",
+        "net": "CAN2_STB_X"
+      }
+    }
+  },
+  "U501": {
+    "part": "TPS22919DCKR",
+    "pins": {
+      "1": {
+        "pin_name": "IN",
+        "net": "+5V"
+      },
+      "2": {
+        "pin_name": "GND",
+        "net": "GND"
+      },
+      "3": {
+        "pin_name": "ON",
+        "net": "LCD_PWR_EN"
+      },
+      "4": {
+        "pin_name": "NC",
+        "net": null
+      },
+      "5": {
+        "pin_name": "QOD",
+        "net": "+5V_LCD"
+      },
+      "6": {
+        "pin_name": "VOUT",
+        "net": "+5V_LCD"
+      }
+    }
+  },
+  "U502": {
+    "part": "TPS22919DCKR",
+    "pins": {
+      "1": {
+        "pin_name": "IN",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "GND",
+        "net": "GND"
+      },
+      "3": {
+        "pin_name": "ON",
+        "net": "SD_PWR_EN"
+      },
+      "4": {
+        "pin_name": "NC",
+        "net": null
+      },
+      "5": {
+        "pin_name": "QOD",
+        "net": "+3V3_SD"
+      },
+      "6": {
+        "pin_name": "VOUT",
+        "net": "+3V3_SD"
+      }
+    }
+  },
+  "U503": {
+    "part": "TPD6E05U06RVZR",
+    "pins": {
+      "1": {
+        "pin_name": "NC",
+        "net": "SD_D1"
+      },
+      "2": {
+        "pin_name": "NC",
+        "net": "SD_D0"
+      },
+      "3": {
+        "pin_name": "NC",
+        "net": "SD_CLK_S"
+      },
+      "4": {
+        "pin_name": "NC",
+        "net": "SD_CMD"
+      },
+      "5": {
+        "pin_name": "GND",
+        "net": "GND"
+      },
+      "6": {
+        "pin_name": "NC",
+        "net": "SD_D3"
+      },
+      "7": {
+        "pin_name": "NC",
+        "net": "SD_D2"
+      },
+      "8": {
+        "pin_name": "D3-",
+        "net": "SD_D2"
+      },
+      "9": {
+        "pin_name": "D3+",
+        "net": "SD_D3"
+      },
+      "10": {
+        "pin_name": "GND",
+        "net": "GND"
+      },
+      "11": {
+        "pin_name": "D2-",
+        "net": "SD_CMD"
+      },
+      "12": {
+        "pin_name": "D2+",
+        "net": "SD_CLK_S"
+      },
+      "13": {
+        "pin_name": "D1-",
+        "net": "SD_D0"
+      },
+      "14": {
+        "pin_name": "D1+",
+        "net": "SD_D1"
+      }
+    }
+  },
+  "U601": {
+    "part": "W9812G6KH-6",
+    "pins": {
+      "1": {
+        "pin_name": "VDD",
+        "net": "+3V3_SDRAM"
+      },
+      "2": {
+        "pin_name": "DQ0",
+        "net": "SDRAM_D0"
+      },
+      "3": {
+        "pin_name": "VDDQ",
+        "net": "+3V3_SDRAM"
+      },
+      "4": {
+        "pin_name": "DQ1",
+        "net": "SDRAM_D1"
+      },
+      "5": {
+        "pin_name": "DQ2",
+        "net": "SDRAM_D2"
+      },
+      "6": {
+        "pin_name": "VSSQ",
+        "net": "GND"
+      },
+      "7": {
+        "pin_name": "DQ3",
+        "net": "SDRAM_D7"
+      },
+      "8": {
+        "pin_name": "DQ4",
+        "net": "SDRAM_D6"
+      },
+      "9": {
+        "pin_name": "VDDQ",
+        "net": "+3V3_SDRAM"
+      },
+      "10": {
+        "pin_name": "DQ5",
+        "net": "SDRAM_D5"
+      },
+      "11": {
+        "pin_name": "DQ6",
+        "net": "SDRAM_D4"
+      },
+      "12": {
+        "pin_name": "VSSQ",
+        "net": "GND"
+      },
+      "13": {
+        "pin_name": "DQ7",
+        "net": "SDRAM_D3"
+      },
+      "14": {
+        "pin_name": "VDD",
+        "net": "+3V3_SDRAM"
+      },
+      "15": {
+        "pin_name": "LDQM",
+        "net": "SDRAM_NBL0"
+      },
+      "16": {
+        "pin_name": "WE#",
+        "net": "SDRAM_SDNWE"
+      },
+      "17": {
+        "pin_name": "CAS#",
+        "net": "SDRAM_SDNCAS"
+      },
+      "18": {
+        "pin_name": "RAS#",
+        "net": "SDRAM_SDNRAS"
+      },
+      "19": {
+        "pin_name": "CS#",
+        "net": "SDRAM_SDNE0"
+      },
+      "20": {
+        "pin_name": "BS0",
+        "net": "SDRAM_BA0"
+      },
+      "21": {
+        "pin_name": "BS1",
+        "net": "SDRAM_BA1"
+      },
+      "22": {
+        "pin_name": "A10/AP",
+        "net": "SDRAM_A10"
+      },
+      "23": {
+        "pin_name": "A0",
+        "net": "SDRAM_A0"
+      },
+      "24": {
+        "pin_name": "A1",
+        "net": "SDRAM_A1"
+      },
+      "25": {
+        "pin_name": "A2",
+        "net": "SDRAM_A2"
+      },
+      "26": {
+        "pin_name": "A3",
+        "net": "SDRAM_A3"
+      },
+      "27": {
+        "pin_name": "VDD",
+        "net": "+3V3_SDRAM"
+      },
+      "28": {
+        "pin_name": "VSS",
+        "net": "GND"
+      },
+      "29": {
+        "pin_name": "A4",
+        "net": "SDRAM_A4"
+      },
+      "30": {
+        "pin_name": "A5",
+        "net": "SDRAM_A5"
+      },
+      "31": {
+        "pin_name": "A6",
+        "net": "SDRAM_A6"
+      },
+      "32": {
+        "pin_name": "A7",
+        "net": "SDRAM_A7"
+      },
+      "33": {
+        "pin_name": "A8",
+        "net": "SDRAM_A8"
+      },
+      "34": {
+        "pin_name": "A9",
+        "net": "SDRAM_A9"
+      },
+      "35": {
+        "pin_name": "A11",
+        "net": "SDRAM_A11"
+      },
+      "36": {
+        "pin_name": "NC",
+        "net": null
+      },
+      "37": {
+        "pin_name": "CKE",
+        "net": "SDRAM_SDCKE0"
+      },
+      "38": {
+        "pin_name": "CLK",
+        "net": "SDRAM_CLK_S"
+      },
+      "39": {
+        "pin_name": "UDQM",
+        "net": "SDRAM_NBL1"
+      },
+      "40": {
+        "pin_name": "NC",
+        "net": null
+      },
+      "41": {
+        "pin_name": "VSS",
+        "net": "GND"
+      },
+      "42": {
+        "pin_name": "DQ8",
+        "net": "SDRAM_D8"
+      },
+      "43": {
+        "pin_name": "VDDQ",
+        "net": "+3V3_SDRAM"
+      },
+      "44": {
+        "pin_name": "DQ9",
+        "net": "SDRAM_D9"
+      },
+      "45": {
+        "pin_name": "DQ10",
+        "net": "SDRAM_D10"
+      },
+      "46": {
+        "pin_name": "VSSQ",
+        "net": "GND"
+      },
+      "47": {
+        "pin_name": "DQ11",
+        "net": "SDRAM_D11"
+      },
+      "48": {
+        "pin_name": "DQ12",
+        "net": "SDRAM_D12"
+      },
+      "49": {
+        "pin_name": "VDDQ",
+        "net": "+3V3_SDRAM"
+      },
+      "50": {
+        "pin_name": "DQ13",
+        "net": "SDRAM_D15"
+      },
+      "51": {
+        "pin_name": "DQ14",
+        "net": "SDRAM_D14"
+      },
+      "52": {
+        "pin_name": "VSSQ",
+        "net": "GND"
+      },
+      "53": {
+        "pin_name": "DQ15",
+        "net": "SDRAM_D13"
+      },
+      "54": {
+        "pin_name": "VSS",
+        "net": "GND"
+      }
+    }
+  },
+  "U602": {
+    "part": "TPS22919DCKR",
+    "pins": {
+      "1": {
+        "pin_name": "IN",
+        "net": "+3V3"
+      },
+      "2": {
+        "pin_name": "GND",
+        "net": "GND"
+      },
+      "3": {
+        "pin_name": "ON",
+        "net": "SDRAM_PWR_EN"
+      },
+      "4": {
+        "pin_name": "NC",
+        "net": null
+      },
+      "5": {
+        "pin_name": "QOD",
+        "net": "+3V3_SDRAM"
+      },
+      "6": {
+        "pin_name": "VOUT",
+        "net": "+3V3_SDRAM"
+      }
+    }
+  },
+  "Y301": {
+    "part": "X322525MOB4SI",
+    "pins": {
+      "1": {
+        "pin_name": "OSC1",
+        "net": "HSE_IN"
+      },
+      "2": {
+        "pin_name": "GND",
+        "net": "GND"
+      },
+      "3": {
+        "pin_name": "OSC2",
+        "net": "HSE_OUT"
+      },
+      "4": {
+        "pin_name": "GND",
+        "net": "GND"
+      }
+    }
+  },
+  "Y302": {
+    "part": "SC-32S32.768kHz20PPM7pF",
+    "pins": {
+      "1": {
+        "pin_name": "1",
+        "net": "LSE_IN"
+      },
+      "2": {
+        "pin_name": "2",
+        "net": "LSE_OUT"
+      }
+    }
+  }
+}

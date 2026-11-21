@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "filename": "hwc_c062.kicad_pro",
+    "version": 3
+  },
+  "schematic": {
+    "drawing": {
+      "intersheets_ref_own_page": false,
+      "intersheets_ref_prefix": "[",
+      "intersheets_ref_short": false,
+      "intersheets_ref_show": true,
+      "intersheets_ref_suffix": "]",
+      "default_line_thickness": 6.0,
+      "default_text_size": 50.0,
+      "label_size_ratio": 0.375,
+      "pin_symbol_size": 25.0,
+      "text_offset_ratio": 0.15,
+      "junction_size_choice": 3
+    },
+    "legacy_lib_dir": "",
+    "legacy_lib_list": []
+  },
+  "erc": {
+    "rule_severities": {
+      "pin_not_driven": "ignore",
+      "power_pin_not_driven": "ignore",
+      "pin_to_pin": "ignore",
+      "lib_symbol_mismatch": "ignore",
+      "lib_symbol_issues": "warning",
+      "footprint_link_issues": "ignore",
+      "simulation_model_issue": "ignore"
+    }
+  },
+  "sheets": [
+    [
+      "9cd36d9b-fe73-51c0-8daa-a1c02f221830",
+      "Root"
+    ],
+    [
+      "b9bceb89-ce23-5199-ad47-125a715fbbd6",
+      "p01"
+    ],
+    [
+      "c94e5a84-8a7f-59b7-9d1e-b64aeb0fb970",
+      "p02"
+    ],
+    [
+      "d2b6c3c9-252f-5c9d-8f82-576131aecd83",
+      "p03"
+    ],
+    [
+      "bc12ae7d-a6f6-57bb-b6cf-ea8ed1ed07ea",
+      "p04"
+    ],
+    [
+      "92faf5c9-d5bd-54f8-b0b6-08be92b82f01",
+      "p05"
+    ],
+    [
+      "dcd615c7-cdea-5910-82c1-07f116c10c17",
+      "p06"
+    ],
+    [
+      "71048b23-559f-510d-964a-24e3b2429d5b",
+      "p07"
+    ],
+    [
+      "adc669cb-c306-50e4-8a27-421ffe7ca877",
+      "p08"
+    ],
+    [
+      "5e101ed5-143b-5ef1-bfb2-2a4347e6592d",
+      "p09"
+    ],
+    [
+      "d50aa6ea-ae10-5e0d-9ecc-32c4e071e43e",
+      "p10"
+    ],
+    [
+      "731197c0-708a-50f0-91ab-f8cc017dd3f2",
+      "p11"
+    ]
+  ],
+  "text_variables": {}
+}

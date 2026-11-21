@@ -1,0 +1,1701 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "9cd36d9b-fe73-51c0-8daa-a1c02f221830")
+	(paper "A3")
+	(title_block
+		(title "Hardware-C C062 schematic - redrawn (index)")
+		(date "2026-11-21")
+		(rev "C062 redraw")
+		(company "Hardware-C (CANFD monitor)")
+		(comment 1 "Netlist identical to the original C062 schematic (209 parts, 189 nets)")
+	)
+	(lib_symbols)
+	(sheet
+		(at 20 42)
+		(size 74 24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.3)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(color 255 255 225 1)
+		)
+		(uuid "dcd615c7-cdea-5910-82c1-07f116c10c17")
+		(property "Sheetname" "06 USB-C - data and Type-C sink"
+			(at 20 41.2 0)
+			(effects
+				(font
+					(size 1.8 1.8)
+					(bold yes)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "p06.kicad_sch"
+			(at 20 66.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "hwc_c062"
+				(path "/9cd36d9b-fe73-51c0-8daa-a1c02f221830"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 118 42)
+		(size 74 24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.3)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(color 255 255 225 1)
+		)
+		(uuid "5e101ed5-143b-5ef1-bfb2-2a4347e6592d")
+		(property "Sheetname" "09 USB input - current limiting"
+			(at 118 41.2 0)
+			(effects
+				(font
+					(size 1.8 1.8)
+					(bold yes)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "p09.kicad_sch"
+			(at 118 66.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "hwc_c062"
+				(path "/9cd36d9b-fe73-51c0-8daa-a1c02f221830"
+					(page "9")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 118 82)
+		(size 74 24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.3)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(color 255 255 225 1)
+		)
+		(uuid "adc669cb-c306-50e4-8a27-421ffe7ca877")
+		(property "Sheetname" "08 External 5V or 12V - input protection"
+			(at 118 81.2 0)
+			(effects
+				(font
+					(size 1.8 1.8)
+					(bold yes)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "p08.kicad_sch"
+			(at 118 106.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "hwc_c062"
+				(path "/9cd36d9b-fe73-51c0-8daa-a1c02f221830"
+					(page "8")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 216 62)
+		(size 74 24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.3)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(color 255 255 225 1)
+		)
+		(uuid "d50aa6ea-ae10-5e0d-9ecc-32c4e071e43e")
+		(property "Sheetname" "10 Source selection and 3.3V regulator"
+			(at 216 61.2 0)
+			(effects
+				(font
+					(size 1.8 1.8)
+					(bold yes)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "p10.kicad_sch"
+			(at 216 86.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "hwc_c062"
+				(path "/9cd36d9b-fe73-51c0-8daa-a1c02f221830"
+					(page "10")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 314 62)
+		(size 74 24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.3)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(color 255 255 225 1)
+		)
+		(uuid "731197c0-708a-50f0-91ab-f8cc017dd3f2")
+		(property "Sheetname" "11 Regulated 5V - display and CAN"
+			(at 314 61.2 0)
+			(effects
+				(font
+					(size 1.8 1.8)
+					(bold yes)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "p11.kicad_sch"
+			(at 314 86.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "hwc_c062"
+				(path "/9cd36d9b-fe73-51c0-8daa-a1c02f221830"
+					(page "11")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 20 138)
+		(size 74 24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.3)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(color 255 255 225 1)
+		)
+		(uuid "c94e5a84-8a7f-59b7-9d1e-b64aeb0fb970")
+		(property "Sheetname" "02 RTC - oscillators and MCU decoupling"
+			(at 20 137.2 0)
+			(effects
+				(font
+					(size 1.8 1.8)
+					(bold yes)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "p02.kicad_sch"
+			(at 20 162.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "hwc_c062"
+				(path "/9cd36d9b-fe73-51c0-8daa-a1c02f221830"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 118 138)
+		(size 74 24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.3)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(color 255 255 225 1)
+		)
+		(uuid "b9bceb89-ce23-5199-ad47-125a715fbbd6")
+		(property "Sheetname" "01 MCU - STM32H743ZIT6"
+			(at 118 137.2 0)
+			(effects
+				(font
+					(size 1.8 1.8)
+					(bold yes)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "p01.kicad_sch"
+			(at 118 162.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "hwc_c062"
+				(path "/9cd36d9b-fe73-51c0-8daa-a1c02f221830"
+					(page "1")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 216 128)
+		(size 74 24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.3)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(color 255 255 225 1)
+		)
+		(uuid "d2b6c3c9-252f-5c9d-8f82-576131aecd83")
+		(property "Sheetname" "03 External SDRAM - 16MiB x16"
+			(at 216 127.2 0)
+			(effects
+				(font
+					(size 1.8 1.8)
+					(bold yes)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "p03.kicad_sch"
+			(at 216 152.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "hwc_c062"
+				(path "/9cd36d9b-fe73-51c0-8daa-a1c02f221830"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 314 128)
+		(size 74 24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.3)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(color 255 255 225 1)
+		)
+		(uuid "bc12ae7d-a6f6-57bb-b6cf-ea8ed1ed07ea")
+		(property "Sheetname" "04 Display - native FFC and RGB reservation"
+			(at 314 127.2 0)
+			(effects
+				(font
+					(size 1.8 1.8)
+					(bold yes)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "p04.kicad_sch"
+			(at 314 152.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "hwc_c062"
+				(path "/9cd36d9b-fe73-51c0-8daa-a1c02f221830"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 118 178)
+		(size 74 24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.3)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(color 255 255 225 1)
+		)
+		(uuid "71048b23-559f-510d-964a-24e3b2429d5b")
+		(property "Sheetname" "07 microSD - switched SDMMC storage"
+			(at 118 177.2 0)
+			(effects
+				(font
+					(size 1.8 1.8)
+					(bold yes)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "p07.kicad_sch"
+			(at 118 202.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "hwc_c062"
+				(path "/9cd36d9b-fe73-51c0-8daa-a1c02f221830"
+					(page "7")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 216 178)
+		(size 74 24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.3)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(color 255 255 225 1)
+		)
+		(uuid "92faf5c9-d5bd-54f8-b0b6-08be92b82f01")
+		(property "Sheetname" "05 Dual CAN FD - protected transceivers"
+			(at 216 177.2 0)
+			(effects
+				(font
+					(size 1.8 1.8)
+					(bold yes)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "p05.kicad_sch"
+			(at 216 202.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "hwc_c062"
+				(path "/9cd36d9b-fe73-51c0-8daa-a1c02f221830"
+					(page "5")
+				)
+			)
+		)
+	)
+	(text "Hardware-C（C062）原理图 · 重画版"
+		(exclude_from_sim no)
+		(at 20 16 0)
+		(effects
+			(font
+				(size 4 4)
+				(bold yes)
+				(color 0 60 120 1)
+			)
+			(justify left top)
+		)
+		(uuid "ed07eb09-f7c3-58c9-ae4d-792f6a1f34a6")
+	)
+	(text "共 11 页 + 2 个附录。下图是各页之间的电源和信号关系，点方框进入对应页。"
+		(exclude_from_sim no)
+		(at 20 24 0)
+		(effects
+			(font
+				(size 1.8 1.8)
+			)
+			(justify left top)
+		)
+		(uuid "9f0a3fde-0e59-5426-82ab-7c28f7a709c8")
+	)
+	(text "USB-C · ESD · TUSB320LAI"
+		(exclude_from_sim no)
+		(at 22.5 49 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "39528629-3cc3-5f60-a589-be91f5f0bbe7")
+	)
+	(text "VBUS 检测"
+		(exclude_from_sim no)
+		(at 22.5 53.6 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "1bce3fad-96ae-5c6f-affd-0da4ce0fa50c")
+	)
+	(text "第 6 页"
+		(exclude_from_sim no)
+		(at 92 64 0)
+		(effects
+			(font
+				(size 1.4 1.4)
+				(color 120 120 120 1)
+			)
+			(justify right bottom)
+		)
+		(uuid "f037d194-5de9-586e-ba45-beda6e4b06b9")
+	)
+	(text "TPS2553 限流"
+		(exclude_from_sim no)
+		(at 120.5 49 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "15d6a3a1-8302-556d-98be-6cce8e65c747")
+	)
+	(text "TS5A3159 选择限流档位"
+		(exclude_from_sim no)
+		(at 120.5 53.6 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "a11c4c5b-a468-5721-8f25-67e7b849cf73")
+	)
+	(text "第 9 页"
+		(exclude_from_sim no)
+		(at 190 64 0)
+		(effects
+			(font
+				(size 1.4 1.4)
+				(color 120 120 120 1)
+			)
+			(justify right bottom)
+		)
+		(uuid "9ac96b6c-651c-5166-821b-69a88ba17425")
+	)
+	(text "J103 · 保险丝 · TVS"
+		(exclude_from_sim no)
+		(at 120.5 89 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "c6da5d2e-f371-512d-8cb8-4f32b5e93b64")
+	)
+	(text "TPS26600 电子保险丝"
+		(exclude_from_sim no)
+		(at 120.5 93.6 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "08ee004f-3e4f-5462-8aa8-b2950585b8ba")
+	)
+	(text "第 8 页"
+		(exclude_from_sim no)
+		(at 190 104 0)
+		(effects
+			(font
+				(size 1.4 1.4)
+				(color 120 120 120 1)
+			)
+			(justify right bottom)
+		)
+		(uuid "486eb834-1d2e-5a12-bbcd-f24c6797a9fe")
+	)
+	(text "TPS2121 电源选择"
+		(exclude_from_sim no)
+		(at 218.5 69 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "b89462da-aba8-5d20-8c18-95348461724f")
+	)
+	(text "TPS62130 → +3V3"
+		(exclude_from_sim no)
+		(at 218.5 73.6 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "589f22ab-6e29-5d7c-85cc-7dc1c3e6091e")
+	)
+	(text "第 10 页"
+		(exclude_from_sim no)
+		(at 288 84 0)
+		(effects
+			(font
+				(size 1.4 1.4)
+				(color 120 120 120 1)
+			)
+			(justify right bottom)
+		)
+		(uuid "b068ec06-4dea-5aa7-9aec-e169f1444edf")
+	)
+	(text "TPS552872 升降压"
+		(exclude_from_sim no)
+		(at 316.5 69 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "d0cd5e3e-9cc7-551d-bdf6-07a2b7893977")
+	)
+	(text "→ +5V"
+		(exclude_from_sim no)
+		(at 316.5 73.6 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "e7376859-40fc-5aea-8d6f-cdc088f3fc55")
+	)
+	(text "第 11 页"
+		(exclude_from_sim no)
+		(at 386 84 0)
+		(effects
+			(font
+				(size 1.4 1.4)
+				(color 120 120 120 1)
+			)
+			(justify right bottom)
+		)
+		(uuid "0a49c3ab-aedf-5101-984b-d44f04ef17f5")
+	)
+	(text "MCU 电源 / 时钟引脚、去耦"
+		(exclude_from_sim no)
+		(at 22.5 145 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "a13ffc02-6d94-5457-b010-067c1ccd7ed7")
+	)
+	(text "HSE 25 MHz · LSE 32.768 kHz · RTC 电池"
+		(exclude_from_sim no)
+		(at 22.5 149.6 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "f4ba25f9-4248-51fc-a8a2-e47c22b796f0")
+	)
+	(text "第 2 页"
+		(exclude_from_sim no)
+		(at 92 160 0)
+		(effects
+			(font
+				(size 1.4 1.4)
+				(color 120 120 120 1)
+			)
+			(justify right bottom)
+		)
+		(uuid "7d134969-a001-5307-bdbe-a67b0a2c6b5b")
+	)
+	(text "STM32H743ZIT6：GPIO A–G"
+		(exclude_from_sim no)
+		(at 120.5 145 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "e7fbb767-4177-5197-9cee-26aa68bb457c")
+	)
+	(text "SWD · 串口 / I2C 扩展 · 状态灯"
+		(exclude_from_sim no)
+		(at 120.5 149.6 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "b9cb082a-dab8-5350-a596-735c1d80346e")
+	)
+	(text "第 1 页"
+		(exclude_from_sim no)
+		(at 190 160 0)
+		(effects
+			(font
+				(size 1.4 1.4)
+				(color 120 120 120 1)
+			)
+			(justify right bottom)
+		)
+		(uuid "d7adb80f-dff1-5720-8d3e-698a4700c237")
+	)
+	(text "W9812G6KH-6 16 MiB SDRAM"
+		(exclude_from_sim no)
+		(at 218.5 135 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "427d2ec5-18b4-569f-a0cd-d1249a48b82f")
+	)
+	(text "TPS22919 电源开关"
+		(exclude_from_sim no)
+		(at 218.5 139.6 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "47e76828-3a49-5250-9f39-dc9604443699")
+	)
+	(text "第 3 页"
+		(exclude_from_sim no)
+		(at 288 150 0)
+		(effects
+			(font
+				(size 1.4 1.4)
+				(color 120 120 120 1)
+			)
+			(justify right bottom)
+		)
+		(uuid "7190a7e6-aeb5-53b7-87a6-9b212936c5d8")
+	)
+	(text "16 针 FFC：SPI 屏 + 触摸"
+		(exclude_from_sim no)
+		(at 316.5 135 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "135c61f8-5cab-5442-9745-68ebff2d1a11")
+	)
+	(text "40 针 RGB 屏预留（DNP）"
+		(exclude_from_sim no)
+		(at 316.5 139.6 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "bd4f60c2-a6bc-53c2-ad1b-707c58fd7067")
+	)
+	(text "第 4 页"
+		(exclude_from_sim no)
+		(at 386 150 0)
+		(effects
+			(font
+				(size 1.4 1.4)
+				(color 120 120 120 1)
+			)
+			(justify right bottom)
+		)
+		(uuid "593a5e64-c4e6-5648-8e3c-30f117aa0a53")
+	)
+	(text "microSD · TPD6E05U06"
+		(exclude_from_sim no)
+		(at 120.5 185 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "c4ffc8eb-4782-512e-9462-01eb36381df2")
+	)
+	(text "TPS22919 电源开关"
+		(exclude_from_sim no)
+		(at 120.5 189.6 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "d049f686-f42d-564e-8488-d7605761d1a7")
+	)
+	(text "第 7 页"
+		(exclude_from_sim no)
+		(at 190 200 0)
+		(effects
+			(font
+				(size 1.4 1.4)
+				(color 120 120 120 1)
+			)
+			(justify right bottom)
+		)
+		(uuid "da8bf1fd-7a7a-541f-a0b9-7d24b709f46f")
+	)
+	(text "2 × TJA1042T/3"
+		(exclude_from_sim no)
+		(at 218.5 185 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "32a0ec05-8fdc-5556-b4de-2137ee1d8129")
+	)
+	(text "TVS · 120 Ω 终端（可选）"
+		(exclude_from_sim no)
+		(at 218.5 189.6 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "0fc2b501-bf09-5ce7-9c54-e024f169e267")
+	)
+	(text "第 5 页"
+		(exclude_from_sim no)
+		(at 288 200 0)
+		(effects
+			(font
+				(size 1.4 1.4)
+				(color 120 120 120 1)
+			)
+			(justify right bottom)
+		)
+		(uuid "c04bf79b-f319-55a7-9ae5-e51bc6033df2")
+	)
+	(polyline
+		(pts
+			(xy 94 54)
+			(xy 118 54)
+		)
+		(stroke
+			(width 0.35)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "f2ce4d9f-4b34-5d9c-9afd-1dd77f0c71e8")
+	)
+	(polyline
+		(pts
+			(xy 118 54)
+			(xy 115.4 55.1)
+			(xy 115.4 52.9)
+			(xy 118 54)
+		)
+		(stroke
+			(width 0.1)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type color)
+			(color 0 60 120 1)
+		)
+		(uuid "6bd41a76-fecf-5b9e-8a81-9fa14cfe61fc")
+	)
+	(text "USB_VBUS_RAW"
+		(exclude_from_sim no)
+		(at 95.5 52.5 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(color 0 60 120 1)
+			)
+			(justify left bottom)
+		)
+		(uuid "27689899-8c9d-5c74-acf3-3f7572b589c3")
+	)
+	(polyline
+		(pts
+			(xy 192 54)
+			(xy 204 54)
+			(xy 204 70)
+			(xy 216 70)
+		)
+		(stroke
+			(width 0.35)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "5caae9e8-38a6-5ab2-a4a9-a2b1254fbdfd")
+	)
+	(polyline
+		(pts
+			(xy 216 70)
+			(xy 213.4 71.1)
+			(xy 213.4 68.9)
+			(xy 216 70)
+		)
+		(stroke
+			(width 0.1)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type color)
+			(color 0 60 120 1)
+		)
+		(uuid "ee6349fa-e25d-59ea-8ed1-a2cfd8d32921")
+	)
+	(text "USB_LIMITED"
+		(exclude_from_sim no)
+		(at 193.5 52.5 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(color 0 60 120 1)
+			)
+			(justify left bottom)
+		)
+		(uuid "c31aafe9-cf24-5cae-ae8a-61b8d5b67231")
+	)
+	(polyline
+		(pts
+			(xy 192 94)
+			(xy 204 94)
+			(xy 204 80)
+			(xy 216 80)
+		)
+		(stroke
+			(width 0.35)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "b52ceb2c-9f73-5825-b588-b20840164ec2")
+	)
+	(polyline
+		(pts
+			(xy 216 80)
+			(xy 213.4 81.1)
+			(xy 213.4 78.9)
+			(xy 216 80)
+		)
+		(stroke
+			(width 0.1)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type color)
+			(color 0 60 120 1)
+		)
+		(uuid "3b0289cb-4de2-5333-aac7-b6738c1e9e3d")
+	)
+	(text "EXT_PROTECTED"
+		(exclude_from_sim no)
+		(at 193.5 98.5 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(color 0 60 120 1)
+			)
+			(justify left bottom)
+		)
+		(uuid "bc819973-df7b-5186-a0df-22fab560b060")
+	)
+	(polyline
+		(pts
+			(xy 290 74)
+			(xy 314 74)
+		)
+		(stroke
+			(width 0.35)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "0e6c564e-e097-54f5-af23-8ba5bae64d92")
+	)
+	(polyline
+		(pts
+			(xy 314 74)
+			(xy 311.4 75.1)
+			(xy 311.4 72.9)
+			(xy 314 74)
+		)
+		(stroke
+			(width 0.1)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type color)
+			(color 0 60 120 1)
+		)
+		(uuid "e580f6f2-31a4-5b5c-b823-bc088c2d747a")
+	)
+	(text "VIN_SELECTED"
+		(exclude_from_sim no)
+		(at 291.5 72.5 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(color 0 60 120 1)
+			)
+			(justify left bottom)
+		)
+		(uuid "827bba6f-b7b7-5d1d-8f3c-7098a660bc28")
+	)
+	(text "外部 5–12 V（J103）"
+		(exclude_from_sim no)
+		(at 62 88 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+				(color 0 60 120 1)
+			)
+			(justify left bottom)
+		)
+		(uuid "a42c3c4b-d58a-56d2-95f9-0a78ddb19846")
+	)
+	(polyline
+		(pts
+			(xy 62 94)
+			(xy 118 94)
+		)
+		(stroke
+			(width 0.35)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "fb246592-9f9e-5d6e-bab9-bc9442901cae")
+	)
+	(polyline
+		(pts
+			(xy 118 94)
+			(xy 115.4 95.1)
+			(xy 115.4 92.9)
+			(xy 118 94)
+		)
+		(stroke
+			(width 0.1)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type color)
+			(color 0 60 120 1)
+		)
+		(uuid "8e96d2c6-de19-522e-b52b-b985d5ea8c8d")
+	)
+	(text "EXT_RAW"
+		(exclude_from_sim no)
+		(at 64 92.5 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(color 0 60 120 1)
+			)
+			(justify left bottom)
+		)
+		(uuid "816ac7ad-3c0e-57d2-b413-fb3482bed044")
+	)
+	(polyline
+		(pts
+			(xy 253 86)
+			(xy 253 110)
+		)
+		(stroke
+			(width 0.35)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "2c057c1b-5042-57d8-b3a0-40ba1149f43b")
+	)
+	(polyline
+		(pts
+			(xy 253 110)
+			(xy 251.9 107.4)
+			(xy 254.1 107.4)
+			(xy 253 110)
+		)
+		(stroke
+			(width 0.1)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type color)
+			(color 0 60 120 1)
+		)
+		(uuid "ba7468dc-5b13-5737-a9c7-438e4f4577a3")
+	)
+	(text "+3V3：MCU、SDRAM、microSD、CAN VIO …"
+		(exclude_from_sim no)
+		(at 255 104 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(color 0 60 120 1)
+			)
+			(justify left bottom)
+		)
+		(uuid "1235d583-100b-5574-bda0-cdc28b97e7e3")
+	)
+	(polyline
+		(pts
+			(xy 351 86)
+			(xy 351 100)
+			(xy 398 100)
+			(xy 398 140)
+			(xy 388 140)
+		)
+		(stroke
+			(width 0.35)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "8bd7472e-979b-5d4b-ae7d-728f775bc79a")
+	)
+	(polyline
+		(pts
+			(xy 388 140)
+			(xy 390.6 138.9)
+			(xy 390.6 141.1)
+			(xy 388 140)
+		)
+		(stroke
+			(width 0.1)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type color)
+			(color 0 60 120 1)
+		)
+		(uuid "f8f7ada4-fd9c-5b01-b696-0dce4d8cb198")
+	)
+	(text "+5V：显示、CAN"
+		(exclude_from_sim no)
+		(at 353 98.5 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(color 0 60 120 1)
+			)
+			(justify left bottom)
+		)
+		(uuid "629a5f64-bff0-5fd8-aff1-a35fa16767d4")
+	)
+	(polyline
+		(pts
+			(xy 398 140)
+			(xy 398 190)
+			(xy 290 190)
+		)
+		(stroke
+			(width 0.35)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "fa7904f8-1994-5a1d-8bb6-c02be3f4994c")
+	)
+	(polyline
+		(pts
+			(xy 290 190)
+			(xy 292.6 188.9)
+			(xy 292.6 191.1)
+			(xy 290 190)
+		)
+		(stroke
+			(width 0.1)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type color)
+			(color 0 60 120 1)
+		)
+		(uuid "b7f1e493-309d-50b3-8aab-35142148c6bc")
+	)
+	(polyline
+		(pts
+			(xy 192 145)
+			(xy 216 145)
+		)
+		(stroke
+			(width 0.35)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "0f2b4723-799b-55c8-917d-7e918ff89c01")
+	)
+	(polyline
+		(pts
+			(xy 216 145)
+			(xy 213.4 146.1)
+			(xy 213.4 143.9)
+			(xy 216 145)
+		)
+		(stroke
+			(width 0.1)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type color)
+			(color 0 60 120 1)
+		)
+		(uuid "b4721dd2-51ea-5ccf-942d-fc3e72b53878")
+	)
+	(text "FMC"
+		(exclude_from_sim no)
+		(at 198 143.5 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(color 0 60 120 1)
+			)
+			(justify left bottom)
+		)
+		(uuid "bf4c1b36-eba8-55ce-ac50-4a3faa414c82")
+	)
+	(polyline
+		(pts
+			(xy 118 158)
+			(xy 108 158)
+			(xy 108 190)
+			(xy 118 190)
+		)
+		(stroke
+			(width 0.35)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "9ff3b153-779e-58c9-9a8b-9dbb27520f99")
+	)
+	(polyline
+		(pts
+			(xy 118 190)
+			(xy 115.4 191.1)
+			(xy 115.4 188.9)
+			(xy 118 190)
+		)
+		(stroke
+			(width 0.1)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type color)
+			(color 0 60 120 1)
+		)
+		(uuid "090869af-d0c4-5a0a-85d1-8cac2f6b728c")
+	)
+	(text "SDMMC"
+		(exclude_from_sim no)
+		(at 96 175 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(color 0 60 120 1)
+			)
+			(justify left bottom)
+		)
+		(uuid "dd4fa07e-53d2-534e-80c2-c96393145fcd")
+	)
+	(polyline
+		(pts
+			(xy 192 156)
+			(xy 206 156)
+			(xy 206 194)
+			(xy 216 194)
+		)
+		(stroke
+			(width 0.35)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "a3de2d47-9db7-5fc7-b45e-cb43eb501dcb")
+	)
+	(polyline
+		(pts
+			(xy 216 194)
+			(xy 213.4 195.1)
+			(xy 213.4 192.9)
+			(xy 216 194)
+		)
+		(stroke
+			(width 0.1)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type color)
+			(color 0 60 120 1)
+		)
+		(uuid "4992b4f1-ff11-5c0b-a49d-77f6e02cbd6c")
+	)
+	(text "FDCAN1 / 2"
+		(exclude_from_sim no)
+		(at 193.5 154.5 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(color 0 60 120 1)
+			)
+			(justify left bottom)
+		)
+		(uuid "17ad6085-f056-5ec6-8b01-92dd20c0ee77")
+	)
+	(polyline
+		(pts
+			(xy 170 138)
+			(xy 170 120)
+			(xy 300 120)
+			(xy 300 140)
+			(xy 314 140)
+		)
+		(stroke
+			(width 0.35)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "df0af002-9f7f-525b-b2a3-af9aa772256c")
+	)
+	(polyline
+		(pts
+			(xy 314 140)
+			(xy 311.4 141.1)
+			(xy 311.4 138.9)
+			(xy 314 140)
+		)
+		(stroke
+			(width 0.1)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type color)
+			(color 0 60 120 1)
+		)
+		(uuid "fff6b1eb-9d9b-5586-8ba4-b7f96da0c7a0")
+	)
+	(text "SPI · I2C · RGB"
+		(exclude_from_sim no)
+		(at 258 118.5 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(color 0 60 120 1)
+			)
+			(justify left bottom)
+		)
+		(uuid "2f497416-edb7-5b30-8962-fd447fccc6c4")
+	)
+	(polyline
+		(pts
+			(xy 130 138)
+			(xy 130 118)
+			(xy 30 118)
+			(xy 30 66)
+		)
+		(stroke
+			(width 0.35)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "280f946a-bd89-5c7b-873e-65c250142d60")
+	)
+	(polyline
+		(pts
+			(xy 30 66)
+			(xy 31.1 68.6)
+			(xy 28.9 68.6)
+			(xy 30 66)
+		)
+		(stroke
+			(width 0.1)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type color)
+			(color 0 60 120 1)
+		)
+		(uuid "ce741eb3-9c7c-5f6b-b0e9-4d2e69ab4138")
+	)
+	(text "USB · I2C · VBUS 检测"
+		(exclude_from_sim no)
+		(at 32 116.5 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(color 0 60 120 1)
+			)
+			(justify left bottom)
+		)
+		(uuid "ff2a0020-397b-5810-8741-b8c8ee984193")
+	)
+	(polyline
+		(pts
+			(xy 94 150)
+			(xy 118 150)
+		)
+		(stroke
+			(width 0.35)
+			(type solid)
+			(color 0 60 120 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "280d31ed-fba8-5ced-99a4-5131e04fe61b")
+	)
+	(text "电源/时钟"
+		(exclude_from_sim no)
+		(at 97 148.5 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(color 0 60 120 1)
+			)
+			(justify left bottom)
+		)
+		(uuid "94392999-2646-52e0-8c91-8731cfaa71c0")
+	)
+	(text "说明"
+		(exclude_from_sim no)
+		(at 20 214 0)
+		(effects
+			(font
+				(size 2.2 2.2)
+				(bold yes)
+				(color 0 60 120 1)
+			)
+			(justify left top)
+		)
+		(uuid "cc7225cf-8911-5124-9ae7-c27d580acf88")
+	)
+	(text "本册由 Hardware-C 原理图 C062（嘉立创EDA，11 页）重画。元件、位号、取值和每一个网络都与原图一致，只改了排版。"
+		(exclude_from_sim no)
+		(at 20 219 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "922a812d-f41d-5001-ba7b-46eff74b54be")
+	)
+	(text "每页按信号流从左到右画；电源和地用电源符号；跨页信号用全局标签，标签后的 [n] 是这个信号还出现在哪几页。"
+		(exclude_from_sim no)
+		(at 20 222.4 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "d966d9de-5958-513d-963e-bb84db1ee20e")
+	)
+	(text "打叉、灰色的元件默认不贴（DNP）。点上面的方框可以跳到对应页，点标签后的页码也可以跳转。"
+		(exclude_from_sim no)
+		(at 20 225.8 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "b7588451-b154-5bd8-8d01-2e26f2ef4fab")
+	)
+	(text "U301 STM32H743ZIT6 拆成 5 个单元：GPIO A–G 在第 1 页，电源和时钟引脚在第 2 页（和去耦电容、晶振画在一起）。"
+		(exclude_from_sim no)
+		(at 20 229.2 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "5358da4b-10b7-5870-b3c7-e73c7ccd2378")
+	)
+	(text "校验：用 KiCad 10.0.8 导出网表，与原图逐脚比对，209 个元件、189 个网络以及全部未接引脚完全一致；ERC 0 条。"
+		(exclude_from_sim no)
+		(at 20 232.6 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "eefd4472-c9e4-5d16-8b2d-a5eef05b46ce")
+	)
+	(text "附录 A：第 12 页第 2 版（APM 按键模拟，提案，不在上述网表内）。附录 B：APM 按键采集电路参考。"
+		(exclude_from_sim no)
+		(at 20 236 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "ab288b04-9de1-56f7-8efd-aa2606d42ad8")
+	)
+	(text "待确认（重画时在原图里看到的，原图如此，本册未改）"
+		(exclude_from_sim no)
+		(at 20 243.4 0)
+		(effects
+			(font
+				(size 2.2 2.2)
+				(bold yes)
+				(color 160 40 0 1)
+			)
+			(justify left top)
+		)
+		(uuid "ad6d8d72-8611-554f-8f86-94a5ee5739ae")
+	)
+	(text "1. 第 9 页：U113 TS5A3159 的 NO（1 脚）接 USB_VBUS_RAW。USB_SEL_IN 为高时（默认，Q122 截止）COM 接 NO，"
+		(exclude_from_sim no)
+		(at 20 248.4 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "9950a2fb-6671-5dfa-bb3a-2ebf963033ad")
+	)
+	(text "   TPS2553 的 ILIM 直接接到 VBUS，而不是经电阻接地。请对照 TPS2553 数据手册确认这个默认状态。"
+		(exclude_from_sim no)
+		(at 20 251.8 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "f71c2553-3b4c-5756-99ea-0da250aa3a10")
+	)
+	(text "2. 第 8 页：EFUSE_RTN（U106 的 RTN、EP、MODE，以及 R703 / R704 / C701 的下端）在网表里没有接到 GND，"
+		(exclude_from_sim no)
+		(at 20 255.2 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "a4ce5b5f-aa6b-5f6f-86d9-09ab13b4cfd7")
+	)
+	(text "   U106 的 GND（9 脚）单独接地。请对照 TPS26600 数据手册确认 RTN 与 GND 的接法。"
+		(exclude_from_sim no)
+		(at 20 258.6 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "4b9bb444-854c-565d-9438-a80810a3fcce")
+	)
+	(text "3. 只有上拉、没有接到 MCU 的状态脚：EXT_FAULT_N（第 8 页 U106 FLT#）、PGOOD_3V3（第 10 页 U201 PG）；"
+		(exclude_from_sim no)
+		(at 20 262 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "51d1d655-c7a5-537a-b5ca-7a12fd562bcc")
+	)
+	(text "   U112 /FAULT（第 9 页）只接了测试点 TP112。"
+		(exclude_from_sim no)
+		(at 20 265.4 0)
+		(effects
+			(font
+				(size 1.6 1.6)
+			)
+			(justify left top)
+		)
+		(uuid "d01184e1-10ad-54b6-99d0-7b7ebcfb5758")
+	)
+	(sheet_instances
+		(path "/"
+			(page "0")
+		)
+	)
+	(embedded_fonts no)
+)
